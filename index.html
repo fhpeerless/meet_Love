@@ -24,7 +24,7 @@
 
         /* 侧边栏 */
         .sidebar {
-            width: 160px;
+            width: 200px;
             height: 100%;
             background: rgba(255,255,255,0.3);
             position: fixed;
@@ -40,8 +40,8 @@
         }
 
         .avatar {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             object-fit: cover;
             cursor: pointer;
@@ -56,9 +56,9 @@
         }
 
         .sidebar-btn {
-            width: 120px;
-            padding: 10px;
-            margin: 8px 0;
+            width: 150px;
+            padding: 12px;
+            margin: 10px 0;
             text-align: center;
             cursor: pointer;
             background: rgba(255,255,255,0.4);
@@ -100,69 +100,76 @@
             margin-bottom: 8px;
         }
 
-        /* 主内容区域 */
-        .main-content {
-            margin-left: 160px;
-            width: calc(100% - 160px);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 心形照片墙和计时器容器 */
-        .heart-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            height: 40%;
-            margin-top: 20px;
-        }
-
-        .photo-heart {
-            width: 300px;
-            height: 300px;
-            position: relative;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-content: flex-start;
-        }
-
-        .photo {
-            width: 60px;
-            height: 60px;
-            margin: 3px;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
-            opacity: 0.9;
-            position: absolute;
-        }
-
-        .photo:hover {
-            transform: scale(1.2);
-            z-index: 10;
-        }
-
-        /* 计时器 */
+        /* 计时器在侧边栏中 */
         .timer {
             margin-top: 15px;
             background: rgba(255,255,255,0.9);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
             color: #d46b9c;
             font-weight: bold;
             text-align: center;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             backdrop-filter: blur(5px);
+            width: 150px;
+            word-wrap: break-word;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            margin-left: 200px;
+            width: calc(100% - 200px);
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 照片墙容器 - 放在信件上方 */
+        .photo-container {
+            width: 100%;
+            max-height: 40vh;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-gap: 10px;
+            width: 95%;
+            height: 100%;
+        }
+
+        .photo-item {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
         }
 
         /* 信件列表容器 */
         .letter-container {
             flex: 1;
-            padding: 15px;
+            padding: 0 15px 15px;
             overflow-y: auto;
         }
 
@@ -173,125 +180,41 @@
 
         .letter-item {
             background: white;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 4px solid #ff6b9d;
+            border-left: 5px solid #ff6b9d;
         }
 
         .letter-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
         .letter-title {
             font-weight: bold;
             color: #d46b9c;
-            margin-bottom: 4px;
-            font-size: 1em;
+            margin-bottom: 6px;
+            font-size: 1.1em;
         }
 
         .letter-date {
             color: #888;
-            font-size: 0.85em;
-            margin-bottom: 5px;
+            font-size: 0.9em;
+            margin-bottom: 8px;
         }
 
         .letter-preview {
             color: #555;
-            font-size: 0.9em;
-            line-height: 1.4;
+            font-size: 0.95em;
+            line-height: 1.5;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-        }
-
-        /* 模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            max-width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-            width: 500px;
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes slideIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(-30px) scale(0.95);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-            width: 30px;
-            height: 30px;
-            text-align: center;
-            border-radius: 50%;
-            transition: all 0.3s;
-            z-index: 10;
-        }
-
-        .close-btn:hover {
-            background: #f0f0f0;
-            color: #555;
-        }
-
-        .modal-title {
-            color: #d46b9c;
-            margin-bottom: 12px;
-            font-size: 1.3em;
-            padding-right: 40px;
-        }
-
-        .modal-date {
-            color: #888;
-            font-size: 0.9em;
-            margin-bottom: 18px;
-        }
-
-        .modal-text {
-            line-height: 1.7;
-            color: #444;
-            white-space: pre-line;
-            font-size: 1em;
         }
 
         /* 爱心动画 */
@@ -306,69 +229,58 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .sidebar {
-                width: 120px;
+                width: 150px;
             }
             
             .avatar {
-                width: 60px;
-                height: 60px;
+                width: 70px;
+                height: 70px;
             }
             
             .sidebar-btn {
-                width: 100px;
-                padding: 8px;
+                width: 120px;
+                padding: 10px;
                 font-size: 0.8em;
             }
             
             .main-content {
-                margin-left: 120px;
-                width: calc(100% - 120px);
+                margin-left: 150px;
+                width: calc(100% - 150px);
             }
             
-            .heart-container {
-                height: 35%;
+            .photo-container {
+                max-height: 35vh;
             }
             
-            .photo-heart {
-                width: 250px;
-                height: 250px;
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
             
-            .photo {
-                width: 50px;
-                height: 50px;
-                margin: 2px;
+            .photo-item {
+                height: 120px;
             }
             
             .letter-container {
-                padding: 10px;
+                padding: 0 10px 10px;
             }
             
             .letter-item {
-                padding: 10px;
-                margin-bottom: 10px;
+                padding: 12px;
+                margin-bottom: 12px;
             }
         }
 
         @media (max-width: 480px) {
-            .heart-container {
-                height: 30%;
+            .photo-container {
+                max-height: 30vh;
             }
             
-            .photo-heart {
-                width: 200px;
-                height: 200px;
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
             
-            .photo {
-                width: 45px;
-                height: 45px;
-                margin: 1px;
-            }
-            
-            .modal-content {
-                width: 95%;
-                padding: 15px;
+            .photo-item {
+                height: 100px;
             }
         }
     </style>
@@ -391,18 +303,16 @@
             <p>📱 138-XXXX-XXXX</p>
             <p>📍 城市：北京</p>
         </div>
+        
+        <!-- 计时器放在联系方式下方 -->
+        <div class="timer" id="timer">在一起的时光：00天 00:00:00</div>
     </div>
 
     <!-- 主内容 -->
     <div class="main-content">
-        <!-- 心形照片墙和计时器容器 -->
-        <div class="heart-container">
-            <div style="text-align: center;">
-                <!-- 右半边心形照片墙 -->
-                <div class="photo-heart" id="photoHeart"></div>
-                <!-- 计时器在照片墙下方 -->
-                <div class="timer" id="timer">在一起的时光：00:00:00</div>
-            </div>
+        <!-- 照片墙 - 放在信件上方 -->
+        <div class="photo-container">
+            <div class="photo-grid" id="photoGrid"></div>
         </div>
 
         <!-- 信件列表容器 -->
@@ -413,48 +323,60 @@
         </div>
     </div>
 
-    <!-- 模态框 -->
-    <div class="modal" id="letterModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeLetter()">&times;</span>
-            <div class="modal-title" id="modalTitle"></div>
-            <div class="modal-date" id="modalDate"></div>
-            <div class="modal-text" id="modalText"></div>
-        </div>
-    </div>
-
     <script>
-        // 信件数据
-        const letters = [
+        // 全局信件数据
+        window.lettersData = [
             {
                 id: 1,
                 title: "第一封情书",
                 date: "2025-01-01",
-                text: "亲爱的，\n\n遇见你的那一刻，我的世界开始发光。你的笑容像春天的阳光，温暖了我所有寒冷的日子。我想用一生的时间，写满给你的信。\n\n那些不经意的对视，指尖相触的瞬间，都成了我心底最珍贵的收藏。你是我平凡生活中的奇迹，是我想守护一生的宝藏。\n\n永远爱你的\n我"
+                text: "亲爱的，\n\n遇见你的那一刻，我的世界开始发光。你的笑容像春天的阳光，温暖了我所有寒冷的日子。我想用一生的时间，写满给你的信。\n\n那些不经意的对视，指尖相触的瞬间，都成了我心底最珍贵的收藏。你是我平凡生活中的奇迹，是我想守护一生的宝藏。\n\n永远爱你的\n我",
+                photos: [
+                    "https://picsum.photos/seed/love1/400/300",
+                    "https://picsum.photos/seed/love2/400/300"
+                ]
             },
             {
                 id: 2,
                 title: "纪念日",
                 date: "2025-02-14",
-                text: "今天是我们在一起的第一个情人节。\n\n记得我们第一次约会吗？在那家小小的咖啡馆，你紧张得把糖包打翻了。服务员过来收拾时，你脸红得像苹果。那些笨拙的瞬间，现在回想起来都是最珍贵的回忆。\n\n我买了两条小金鱼，一条叫'你'，一条叫'我'。它们总是在鱼缸里追逐嬉戏，就像我们一样。希望我们的爱，也能像它们的泡泡，永远充满活力。\n\n爱你的\n我"
+                text: "今天是我们在一起的第一个情人节。\n\n记得我们第一次约会吗？在那家小小的咖啡馆，你紧张得把糖包打翻了。服务员过来收拾时，你脸红得像苹果。那些笨拙的瞬间，现在回想起来都是最珍贵的回忆。\n\n我买了两条小金鱼，一条叫'你'，一条叫'我'。它们总是在鱼缸里追逐嬉戏，就像我们一样。希望我们的爱，也能像它们的泡泡，永远充满活力。\n\n爱你的\n我",
+                photos: [
+                    "https://picsum.photos/seed/date1/400/300",
+                    "https://picsum.photos/seed/date2/400/300",
+                    "https://picsum.photos/seed/date3/400/300"
+                ]
             },
             {
                 id: 3,
                 title: "深夜思念",
                 date: "2025-03-08",
-                text: "夜深了，我睡不着，只想告诉你我有多想你。\n\n窗外的月光很美，但不及你眼中的星光。我数着我们的照片，一张，两张...每一张都藏着一个故事。第七张是你在樱花树下转圈，裙摆飞扬；第十五张是我们挤在便利店吃关东煮；第三十三张是你睡着的样子，睫毛在脸上投下小小的影子。\n\n希望我的思念能化作晚风，轻轻拂过你的梦境。\n\n想你的\n我"
+                text: "夜深了，我睡不着，只想告诉你我有多想你。\n\n窗外的月光很美，但不及你眼中的星光。我数着我们的照片，一张，两张...每一张都藏着一个故事。第七张是你在樱花树下转圈，裙摆飞扬；第十五张是我们挤在便利店吃关东煮；第三十三张是你睡着的样子，睫毛在脸上投下小小的影子。\n\n希望我的思念能化作晚风，轻轻拂过你的梦境。\n\n想你的\n我",
+                photos: [
+                    "https://picsum.photos/seed/night1/400/300"
+                ]
             },
             {
                 id: 4,
                 title: "未来憧憬",
                 date: "2025-04-22",
-                text: "我常常想象我们的未来：\n\n一个洒满阳光的厨房，早餐的香气弥漫在空气中；两只依偎的猫，在窗台上晒太阳；书架上塞满了我们共同读过的书；还有无数个像现在这样静静相视而笑的瞬间。\n\n我想要一个小小的花园，种满你喜欢的薰衣草。夏天的夜晚，我们坐在院子里，数星星，聊着今天发生的事。也许会有一只迷路的萤火虫，停在你的发梢。\n\n只要有你在，哪里都是家。\n\n期待未来的\n我"
+                text: "我常常想象我们的未来：\n\n一个洒满阳光的厨房，早餐的香气弥漫在空气中；两只依偎的猫，在窗台上晒太阳；书架上塞满了我们共同读过的书；还有无数个像现在这样静静相视而笑的瞬间。\n\n我想要一个小小的花园，种满你喜欢的薰衣草。夏天的夜晚，我们坐在院子里，数星星，聊着今天发生的事。也许会有一只迷路的萤火虫，停在你的发梢。\n\n只要有你在，哪里都是家。\n\n期待未来的\n我",
+                photos: [
+                    "https://picsum.photos/seed/future1/400/300",
+                    "https://picsum.photos/seed/future2/400/300",
+                    "https://picsum.photos/seed/future3/400/300",
+                    "https://picsum.photos/seed/future4/400/300"
+                ]
             },
             {
                 id: 5,
                 title: "雨天日记",
                 date: "2025-05-15",
-                text: "今天的雨下得很大，我却感到格外温暖。\n\n因为记得去年的今天，我们共撑一把伞回家。伞太小了，我们不得不靠得很近。你的发丝沾着雨珠，贴在我的肩上。我们踩着水坑，笑得像个孩子。\n\n现在窗外的雨滴在玻璃上画着花纹，就像那天你在我手心画的爱心。我泡了一杯热可可，加了双份棉花糖，就像你喜欢的那样。\n\n下雨天，思念也格外绵长。\n\n等雨停后见你的\n我"
+                text: "今天的雨下得很大，我却感到格外温暖。\n\n因为记得去年的今天，我们共撑一把伞回家。伞太小了，我们不得不靠得很近。你的发丝沾着雨珠，贴在我的肩上。我们踩着水坑，笑得像个孩子。\n\n现在窗外的雨滴在玻璃上画着花纹，就像那天你在我手心画的爱心。我泡了一杯热可可，加了双份棉花糖，就像你喜欢的那样。\n\n下雨天，思念也格外绵长。\n\n等雨停后见你的\n我",
+                photos: [
+                    "https://picsum.photos/seed/rain1/400/300",
+                    "https://picsum.photos/seed/rain2/400/300"
+                ]
             }
         ];
 
@@ -495,19 +417,13 @@
         // 每150毫秒创建一个爱心
         setInterval(createHeart, 150);
 
-        // 持久化计时器
+        // 计时器 - 基于2025年1月1日开始
         function startTimer() {
-            let startTime = localStorage.getItem('relationshipStartTime');
-            if (!startTime) {
-                startTime = new Date().getTime();
-                localStorage.setItem('relationshipStartTime', startTime);
-            } else {
-                startTime = parseInt(startTime);
-            }
+            const startDate = new Date('2025-01-01T00:00:00').getTime();
             
             function updateTimer() {
                 const now = new Date().getTime();
-                const diff = now - startTime;
+                const diff = now - startDate;
                 
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -522,45 +438,44 @@
             setInterval(updateTimer, 1000);
         }
 
-        // 创建照片心形（右半边）
-        function createPhotoHeart() {
-            const container = document.getElementById('photoHeart');
-            const photos = [
-                'https://picsum.photos/seed/p1/200/200',
-                'https://picsum.photos/seed/p2/200/200',
-                'https://picsum.photos/seed/p3/200/200',
-                'https://picsum.photos/seed/p4/200/200',
-                'https://picsum.photos/seed/p5/200/200',
-                'https://picsum.photos/seed/p6/200/200',
-                'https://picsum.photos/seed/p7/200/200',
-                'https://picsum.photos/seed/p8/200/200',
-                'https://picsum.photos/seed/p9/200/200',
-                'https://picsum.photos/seed/p10/200/200',
-                'https://picsum.photos/seed/p11/200/200',
-                'https://picsum.photos/seed/p12/200/200'
-            ];
+        // 创建照片墙
+        function createPhotoGrid() {
+            const container = document.getElementById('photoGrid');
+            container.innerHTML = '';
             
-            // 心形坐标（右半部分）
-            const heartPositions = [
-                // 上半部分
-                {x: 125, y: 15}, {x: 105, y: 5}, {x: 85, y: 10}, {x: 65, y: 25},
-                {x: 125, y: 45}, {x: 105, y: 35}, {x: 85, y: 40}, {x: 65, y: 55},
-                {x: 125, y: 75}, {x: 105, y: 65}, {x: 85, y: 70}, {x: 65, y: 85},
-                // 下半部分
-                {x: 125, y: 105}, {x: 105, y: 95}, {x: 85, y: 100}, {x: 65, y: 115},
-                {x: 125, y: 135}, {x: 105, y: 125}, {x: 85, y: 130}, {x: 65, y: 145},
-                {x: 125, y: 165}, {x: 105, y: 155}, {x: 85, y: 160}, {x: 65, y: 175},
-                {x: 125, y: 195}, {x: 105, y: 185}, {x: 85, y: 190}, {x: 65, y: 205},
-                {x: 125, y: 225}, {x: 105, y: 215}, {x: 85, y: 220}, {x: 65, y: 235}
-            ];
+            const allPhotos = [];
+            // 收集所有信件中的照片
+            window.lettersData.forEach(letter => {
+                if (letter.photos && letter.photos.length > 0) {
+                    letter.photos.forEach(photo => {
+                        allPhotos.push({
+                            src: photo,
+                            title: letter.title,
+                            date: letter.date
+                        });
+                    });
+                }
+            });
             
-            heartPositions.forEach((pos, index) => {
+            // 如果没有照片，显示默认提示
+            if (allPhotos.length === 0) {
+                const item = document.createElement('div');
+                item.className = 'photo-item';
+                item.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;">暂无照片</div>';
+                container.appendChild(item);
+                return;
+            }
+            
+            // 创建照片项
+            allPhotos.forEach(photo => {
+                const item = document.createElement('div');
+                item.className = 'photo-item';
                 const img = document.createElement('img');
-                img.src = photos[index % photos.length];
-                img.className = 'photo';
-                img.style.left = `${pos.x}px`;
-                img.style.top = `${pos.y}px`;
-                container.appendChild(img);
+                img.src = photo.src;
+                img.alt = photo.title;
+                img.title = `${photo.title} - ${photo.date}`;
+                item.appendChild(img);
+                container.appendChild(item);
             });
         }
         
@@ -569,15 +484,19 @@
             const letterList = document.getElementById('letterList');
             letterList.innerHTML = '';
             
-            letters.forEach(letter => {
+            window.lettersData.forEach(letter => {
                 const li = document.createElement('li');
                 li.className = 'letter-item';
-                li.onclick = () => openLetter(letter.title, letter.date, letter.text);
+                // 点击后跳转到文章页面
+                li.onclick = () => {
+                    localStorage.setItem('currentLetterId', letter.id);
+                    window.location.href = 'article.html';
+                };
                 
                 li.innerHTML = `
                     <div class="letter-title">${letter.title}</div>
                     <div class="letter-date">${formatDate(letter.date)}</div>
-                    <div class="letter-preview">${letter.text.substring(0, 50)}...</div>
+                    <div class="letter-preview">${letter.text.substring(0, 80)}...</div>
                 `;
                 
                 letterList.appendChild(li);
@@ -590,18 +509,6 @@
             const months = ['一月', '二月', '三月', '四月', '五月', '六月', 
                           '七月', '八月', '九月', '十月', '十一月', '十二月'];
             return `${date.getFullYear()}年${months[date.getMonth()]}${date.getDate()}日`;
-        }
-
-        // 信件模态框
-        function openLetter(title, date, text) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalDate').textContent = formatDate(date);
-            document.getElementById('modalText').textContent = text;
-            document.getElementById('letterModal').style.display = 'flex';
-        }
-        
-        function closeLetter() {
-            document.getElementById('letterModal').style.display = 'none';
         }
 
         // 切换个人介绍和联系方式
@@ -621,7 +528,7 @@
 
         // 页面加载完成后初始化
         window.onload = function() {
-            createPhotoHeart();
+            createPhotoGrid();
             startTimer();
             generateLetters();
             
@@ -640,14 +547,6 @@
                 }
             });
         };
-
-        // 点击空白处关闭模态框
-        window.onclick = function(event) {
-            const modal = document.getElementById('letterModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        }
     </script>
 </body>
 </html>
