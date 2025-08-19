@@ -1,26 +1,27 @@
-/* 1. 重置 html 和 body */
+/* === 满屏飘动小心心样式 === */
+
+/* 确保 html 和 body 全屏、可定位 */
 html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;        /* 关键：让 .heart 可以绝对定位 */
-    background-color: #111;
-    font-family: Arial, sans-serif;
+    overflow: hidden;        /* 防止滚动条 */
+    position: relative;      /* 关键：让 .heart 相对于屏幕定位 */
+    /* 注意：不要在这里设置 background-color，由其他 CSS 控制 */
 }
 
-/* 2. 心形样式 */
+/* 心形样式 */
 .heart {
     position: absolute;
-    pointer-events: none;
+    pointer-events: none;    /* 不影响点击交互 */
     opacity: 0;
-    z-index: 9999;
-    animation: float 6s ease-in-out infinite;
-    font-size: 20px; /* 可由 JS 动态控制 */
+    z-index: 9999;           /* 最高层，飘在所有元素之上 */
+    font-size: 20px;         /* 可由 JS 动态调整 */
+    color: #ff6b6b;          /* 基础色，JS 可覆盖 */
+    animation: heartFloat 6s ease-in-out infinite;
 }
 
-@keyframes float {
+@keyframes heartFloat {
     0% {
         transform: translateY(100vh) rotate(0deg);
         opacity: 0;
@@ -35,20 +36,4 @@ html, body {
         transform: translateY(-100px) rotate(360deg);
         opacity: 0;
     }
-}
-
-/* 3. 内容居中（不影响心形） */
-#content {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-    color: white;
-}
-
-#content h1 {
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
 }
