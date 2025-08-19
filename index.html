@@ -2,8 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>爱的纪念</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -15,87 +22,169 @@
             display: flex;
         }
 
+        /* 侧边栏 */
+        .sidebar {
+            width: 80px;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            border-right: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .profile {
+            display: none;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 200px;
+            font-size: 0.9em;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .profile.show {
+            display: block;
+        }
+
+        .profile h3 {
+            color: #d46b9c;
+            margin-bottom: 8px;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* 心形照片墙容器 */
+        .photo-heart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
         .photo-heart {
-            width: 30%;
-            height: 80%;
-            margin: auto 5% auto 0;
+            width: 100%;
+            height: 300px;
             position: relative;
             display: flex;
             flex-wrap: wrap;
-            align-content: flex-start;
             justify-content: center;
+            align-content: flex-start;
         }
 
         .photo {
-            width: 80px;
-            height: 80px;
-            margin: 5px;
+            width: 60px;
+            height: 60px;
+            margin: 3px;
             object-fit: cover;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: transform 0.3s;
+            opacity: 0.9;
         }
 
         .photo:hover {
-            transform: scale(1.1);
+            transform: scale(1.2);
             z-index: 10;
+        }
+
+        /* 计时器 */
+        .timer {
+            margin-top: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #d46b9c;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
         }
 
         /* 信件列表容器 */
         .letter-container {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
-            margin-right: 20px;
+            margin: 0 10px;
+        }
+
+        /* 信件列表 */
+        .letter-list {
+            list-style: none;
         }
 
         .letter-item {
             background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 5px solid #ff6b9d;
+            border-left: 4px solid #ff6b9d;
         }
 
         .letter-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .letter-title {
             font-weight: bold;
             color: #d46b9c;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            font-size: 1em;
         }
 
         .letter-date {
-            color: #999;
-            font-size: 0.9em;
+            color: #888;
+            font-size: 0.85em;
+            margin-bottom: 5px;
         }
 
         .letter-preview {
             color: #555;
-            margin-top: 8px;
-            font-size: 0.95em;
-        }
-
-        /* 计时器 */
-        .timer {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.9);
-            padding: 10px 20px;
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            font-size: 1.2em;
-            color: #d46b9c;
-            font-weight: bold;
+            font-size: 0.9em;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         /* 模态框 */
@@ -106,106 +195,189 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0,0,0,0.8);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
-            max-width: 500px;
-            max-height: 80vh;
+            max-width: 90%;
+            max-height: 85vh;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            width: 500px;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-30px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
         }
 
         .close-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
+            top: 12px;
+            right: 12px;
+            font-size: 28px;
             cursor: pointer;
             color: #999;
             width: 30px;
             height: 30px;
             text-align: center;
             border-radius: 50%;
-            background: #f0f0f0;
+            transition: all 0.3s;
+            z-index: 10;
         }
 
         .close-btn:hover {
-            background: #e0e0e0;
+            background: #f0f0f0;
+            color: #555;
         }
 
         .modal-title {
             color: #d46b9c;
-            margin-bottom: 15px;
-            font-size: 1.4em;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+            padding-right: 40px;
         }
 
         .modal-date {
-            color: #999;
+            color: #888;
             font-size: 0.9em;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .modal-text {
-            line-height: 1.6;
+            line-height: 1.7;
             color: #444;
+            white-space: pre-line;
+            font-size: 1em;
         }
 
         /* 爱心动画 */
         .heart {
             position: absolute;
-            font-size: 20px;
-            animation: float 3s ease-in-out infinite;
-            opacity: 0.8;
+            font-size: 18px;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-            100% { transform: translateY(0) rotate(0deg); }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 60px;
+                width: calc(100% - 60px);
+            }
+            
+            .sidebar {
+                width: 60px;
+            }
+            
+            .avatar {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .profile {
+                max-width: 180px;
+                font-size: 0.85em;
+                left: 70px;
+                top: 20px;
+            }
+            
+            .photo-heart {
+                height: 250px;
+            }
+            
+            .photo {
+                width: 50px;
+                height: 50px;
+                margin: 2px;
+            }
+            
+            .letter-container {
+                padding: 10px;
+            }
+            
+            .letter-item {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .modal-content {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .photo-heart {
+                height: 200px;
+            }
+            
+            .photo {
+                width: 45px;
+                height: 45px;
+                margin: 1px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .modal-title {
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 信件列表 -->
-    <div class="letter-container">
-        <div class="letter-item" onclick="openLetter('第一封情书', '2025年1月1日', '亲爱的，遇见你的那一刻，我的世界开始发光。你的笑容像春天的阳光，温暖了我所有寒冷的日子。我想用一生的时间，写满给你的信。')">
-            <div class="letter-title">第一封情书</div>
-            <div class="letter-date">2025年1月1日</div>
-            <div class="letter-preview">亲爱的，遇见你的那一刻，我的世界开始发光...</div>
-        </div>
-        
-        <div class="letter-item" onclick="openLetter('纪念日', '2025年2月14日', '今天是我们在一起的第一个情人节。记得我们第一次约会吗？在那家小小的咖啡馆，你紧张得把糖包打翻了。那些笨拙的瞬间，现在回想起来都是最珍贵的回忆。')">
-            <div class="letter-title">纪念日</div>
-            <div class="letter-date">2025年2月14日</div>
-            <div class="letter-preview">今天是我们在一起的第一个情人节。记得我们第一次约会吗？...</div>
-        </div>
-        
-        <div class="letter-item" onclick="openLetter('深夜思念', '2025年3月8日', '夜深了，我睡不着，只想告诉你我有多想你。窗外的月光很美，但不及你眼中的星光。希望我的思念能化作晚风，轻轻拂过你的梦境。')">
-            <div class="letter-title">深夜思念</div>
-            <div class="letter-date">2025年3月8日</div>
-            <div class="letter-preview">夜深了，我睡不着，只想告诉你我有多想你...</div>
-        </div>
-        
-        <div class="letter-item" onclick="openLetter('未来憧憬', '2025年4月22日', '我常常想象我们的未来：一个洒满阳光的厨房，两只依偎的猫，还有无数个像现在这样静静相视而笑的瞬间。只要有你在，哪里都是家。')">
-            <div class="letter-title">未来憧憬</div>
-            <div class="letter-date">2025年4月22日</div>
-            <div class="letter-preview">我常常想象我们的未来：一个洒满阳光的厨房，两只依偎的猫...</div>
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <img src="https://picsum.photos/seed/avatar/200/200" alt="头像" class="avatar" onclick="toggleProfile()">
+        <div class="profile" id="profile">
+            <h3>关于我</h3>
+            <p>一个喜欢记录生活点滴的人，相信爱是世界上最美好的事物。喜欢读书、旅行和写信，希望能用文字留住每一个珍贵的瞬间。</p>
         </div>
     </div>
 
-    <!-- 照片心形墙 -->
-    <div class="photo-heart" id="photoHeart"></div>
+    <!-- 主内容 -->
+    <div class="main-content">
+        <!-- 照片心形和计时器容器 -->
+        <div class="photo-heart-container">
+            <!-- 照片心形墙 -->
+            <div class="photo-heart" id="photoHeart"></div>
+            
+            <!-- 计时器 -->
+            <div class="timer" id="timer">在一起的时光：00:00:00</div>
+        </div>
 
-    <!-- 计时器 -->
-    <div class="timer" id="timer">在一起的时光：00:00:00</div>
+        <!-- 信件列表容器 -->
+        <div class="letter-container">
+            <ul class="letter-list" id="letterList">
+                <!-- 信件将通过JavaScript动态生成 -->
+            </ul>
+        </div>
+    </div>
 
     <!-- 模态框 -->
     <div class="modal" id="letterModal">
@@ -218,6 +390,41 @@
     </div>
 
     <script>
+        // 信件数据（示例，可扩展）
+        const letters = [
+            {
+                id: 1,
+                title: "第一封情书",
+                date: "2025-01-01",
+                text: "亲爱的，\n\n遇见你的那一刻，我的世界开始发光。你的笑容像春天的阳光，温暖了我所有寒冷的日子。我想用一生的时间，写满给你的信。\n\n那些不经意的对视，指尖相触的瞬间，都成了我心底最珍贵的收藏。你是我平凡生活中的奇迹，是我想守护一生的宝藏。\n\n永远爱你的\n我"
+            },
+            {
+                id: 2,
+                title: "纪念日",
+                date: "2025-02-14",
+                text: "今天是我们在一起的第一个情人节。\n\n记得我们第一次约会吗？在那家小小的咖啡馆，你紧张得把糖包打翻了。服务员过来收拾时，你脸红得像苹果。那些笨拙的瞬间，现在回想起来都是最珍贵的回忆。\n\n我买了两条小金鱼，一条叫'你'，一条叫'我'。它们总是在鱼缸里追逐嬉戏，就像我们一样。希望我们的爱，也能像它们的泡泡，永远充满活力。\n\n爱你的\n我"
+            },
+            {
+                id: 3,
+                title: "深夜思念",
+                date: "2025-03-08",
+                text: "夜深了，我睡不着，只想告诉你我有多想你。\n\n窗外的月光很美，但不及你眼中的星光。我数着我们的照片，一张，两张...每一张都藏着一个故事。第七张是你在樱花树下转圈，裙摆飞扬；第十五张是我们挤在便利店吃关东煮；第三十三张是你睡着的样子，睫毛在脸上投下小小的影子。\n\n希望我的思念能化作晚风，轻轻拂过你的梦境。\n\n想你的\n我"
+            },
+            {
+                id: 4,
+                title: "未来憧憬",
+                date: "2025-04-22",
+                text: "我常常想象我们的未来：\n\n一个洒满阳光的厨房，早餐的香气弥漫在空气中；两只依偎的猫，在窗台上晒太阳；书架上塞满了我们共同读过的书；还有无数个像现在这样静静相视而笑的瞬间。\n\n我想要一个小小的花园，种满你喜欢的薰衣草。夏天的夜晚，我们坐在院子里，数星星，聊着今天发生的事。也许会有一只迷路的萤火虫，停在你的发梢。\n\n只要有你在，哪里都是家。\n\n期待未来的\n我"
+            },
+            {
+                id: 5,
+                title: "雨天日记",
+                date: "2025-05-15",
+                text: "今天的雨下得很大，我却感到格外温暖。\n\n因为记得去年的今天，我们共撑一把伞回家。伞太小了，我们不得不靠得很近。你的发丝沾着雨珠，贴在我的肩上。我们踩着水坑，笑得像个孩子。\n\n现在窗外的雨滴在玻璃上画着花纹，就像那天你在我手心画的爱心。我泡了一杯热可可，加了双份棉花糖，就像你喜欢的那样。\n\n下雨天，思念也格外绵长。\n\n等雨停后见你的\n我"
+            }
+            // 可以继续添加更多信件...
+        ];
+
         // 创建多彩爱心
         function createHeart() {
             const heart = document.createElement('div');
@@ -231,48 +438,144 @@
             heart.style.top = `${y}px`;
             
             // 随机颜色
-            const colors = ['#ff6b9d', '#ff8a65', '#ffb74d', '#81c784', '#64b5f6', '#ba68c8'];
+            const colors = ['#ff6b9d', '#ff8a65', '#ffb74d', '#81c784', '#64b5f6', '#ba68c8', '#e1bee7'];
             heart.style.color = colors[Math.floor(Math.random() * colors.length)];
             
             // 随机大小
-            const size = Math.random() * 15 + 10;
+            const size = Math.random() * 12 + 8;
             heart.style.fontSize = `${size}px`;
-            
-            // 动画延迟
-            heart.style.animationDelay = `${Math.random() * 3}s`;
             
             document.body.appendChild(heart);
             
-            // 3秒后移除爱心
-            setTimeout(() => {
-                heart.remove();
-            }, 3000);
+            // 浮动动画
+            const animate = setInterval(() => {
+                const currentY = parseFloat(heart.style.top);
+                const currentX = parseFloat(heart.style.left);
+                
+                // 向上飘动
+                heart.style.top = `${currentY - 1}px`;
+                
+                // 轻微左右摆动
+                heart.style.left = `${currentX + (Math.random() - 0.5)}px`;
+                
+                // 透明度变化
+                heart.style.opacity = parseFloat(heart.style.opacity) - 0.005;
+                
+                // 移除条件
+                if (currentY < -20 || parseFloat(heart.style.opacity) <= 0) {
+                    clearInterval(animate);
+                    heart.remove();
+                }
+            }, 50);
         }
 
-        // 每200毫秒创建一个爱心
-        setInterval(createHeart, 200);
+        // 每150毫秒创建一个爱心
+        setInterval(createHeart, 150);
 
-        // 计时器
-        const startTime = new Date();
-        function updateTimer() {
-            const now = new Date();
-            const diff = now - startTime;
+        // 持久化计时器
+        function startTimer() {
+            // 从localStorage获取开始时间，如果没有则创建新的
+            let startTime = localStorage.getItem('relationshipStartTime');
+            if (!startTime) {
+                startTime = new Date().getTime();
+                localStorage.setItem('relationshipStartTime', startTime);
+            } else {
+                startTime = parseInt(startTime);
+            }
             
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            // 更新计时器
+            function updateTimer() {
+                const now = new Date().getTime();
+                const diff = now - startTime;
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('timer').textContent = 
+                    `在一起的时光：${days}天 ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
             
-            document.getElementById('timer').textContent = 
-                `在一起的时光：${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // 创建照片心形（左半边）
+        function createPhotoHeart() {
+            const container = document.getElementById('photoHeart');
+            const photos = [
+                'https://picsum.photos/seed/p1/200/200',
+                'https://picsum.photos/seed/p2/200/200',
+                'https://picsum.photos/seed/p3/200/200',
+                'https://picsum.photos/seed/p4/200/200',
+                'https://picsum.photos/seed/p5/200/200',
+                'https://picsum.photos/seed/p6/200/200',
+                'https://picsum.photos/seed/p7/200/200',
+                'https://picsum.photos/seed/p8/200/200',
+                'https://picsum.photos/seed/p9/200/200',
+                'https://picsum.photos/seed/p10/200/200',
+                'https://picsum.photos/seed/p11/200/200',
+                'https://picsum.photos/seed/p12/200/200'
+            ];
+            
+            // 心形坐标（左半部分）
+            const heartPositions = [
+                // 上半部分
+                {x: 15, y: 15}, {x: 35, y: 5}, {x: 55, y: 10}, {x: 75, y: 25},
+                {x: 15, y: 45}, {x: 35, y: 35}, {x: 55, y: 40}, {x: 75, y: 55},
+                {x: 15, y: 75}, {x: 35, y: 65}, {x: 55, y: 70}, {x: 75, y: 85},
+                // 下半部分
+                {x: 15, y: 105}, {x: 35, y: 95}, {x: 55, y: 100}, {x: 75, y: 115},
+                {x: 15, y: 135}, {x: 35, y: 125}, {x: 55, y: 130}, {x: 75, y: 145},
+                {x: 15, y: 165}, {x: 35, y: 155}, {x: 55, y: 160}, {x: 75, y: 175},
+                {x: 15, y: 195}, {x: 35, y: 185}, {x: 55, y: 190}, {x: 75, y: 205},
+                {x: 15, y: 225}, {x: 35, y: 215}, {x: 55, y: 220}, {x: 75, y: 235}
+            ];
+            
+            heartPositions.forEach((pos, index) => {
+                const img = document.createElement('img');
+                img.src = photos[index % photos.length];
+                img.className = 'photo';
+                img.style.position = 'absolute';
+                img.style.left = `${pos.x}px`;
+                img.style.top = `${pos.y}px`;
+                container.appendChild(img);
+            });
         }
         
-        setInterval(updateTimer, 1000);
-        updateTimer();
+        // 生成信件列表
+        function generateLetters() {
+            const letterList = document.getElementById('letterList');
+            letterList.innerHTML = '';
+            
+            letters.forEach(letter => {
+                const li = document.createElement('li');
+                li.className = 'letter-item';
+                li.onclick = () => openLetter(letter.title, letter.date, letter.text);
+                
+                li.innerHTML = `
+                    <div class="letter-title">${letter.title}</div>
+                    <div class="letter-date">${formatDate(letter.date)}</div>
+                    <div class="letter-preview">${letter.text.substring(0, 50)}...</div>
+                `;
+                
+                letterList.appendChild(li);
+            });
+        }
+        
+        // 格式化日期显示
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const months = ['一月', '二月', '三月', '四月', '五月', '六月', 
+                          '七月', '八月', '九月', '十月', '十一月', '十二月'];
+            return `${date.getFullYear()}年${months[date.getMonth()]}${date.getDate()}日`;
+        }
 
         // 信件模态框
         function openLetter(title, date, text) {
             document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalDate').textContent = date;
+            document.getElementById('modalDate').textContent = formatDate(date);
             document.getElementById('modalText').textContent = text;
             document.getElementById('letterModal').style.display = 'flex';
         }
@@ -281,34 +584,27 @@
             document.getElementById('letterModal').style.display = 'none';
         }
 
-        // 创建照片心形
-        function createPhotoHeart() {
-            const container = document.getElementById('photoHeart');
-            const photos = [
-                'https://picsum.photos/seed/a/200/200',
-                'https://picsum.photos/seed/b/200/200',
-                'https://picsum.photos/seed/c/200/200',
-                'https://picsum.photos/seed/d/200/200',
-                'https://picsum.photos/seed/e/200/200',
-                'https://picsum.photos/seed/f/200/200',
-                'https://picsum.photos/seed/g/200/200',
-                'https://picsum.photos/seed/h/200/200',
-                'https://picsum.photos/seed/i/200/200',
-                'https://picsum.photos/seed/j/200/200',
-                'https://picsum.photos/seed/k/200/200',
-                'https://picsum.photos/seed/l/200/200'
-            ];
-            
-            // 心形坐标生成
-            for (let i = 0; i < 12; i++) {
-                const img = document.createElement('img');
-                img.src = photos[i];
-                img.className = 'photo';
-                container.appendChild(img);
-            }
+        // 切换个人介绍
+        function toggleProfile() {
+            const profile = document.getElementById('profile');
+            profile.classList.toggle('show');
         }
-        
-        createPhotoHeart();
+
+        // 页面加载完成后初始化
+        window.onload = function() {
+            createPhotoHeart();
+            startTimer();
+            generateLetters();
+            
+            // 点击头像外部关闭个人介绍
+            document.addEventListener('click', function(e) {
+                const profile = document.getElementById('profile');
+                const avatar = document.querySelector('.avatar');
+                if (!avatar.contains(e.target) && !profile.contains(e.target)) {
+                    profile.classList.remove('show');
+                }
+            });
+        };
 
         // 点击空白处关闭模态框
         window.onclick = function(event) {
