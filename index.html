@@ -24,7 +24,7 @@
 
         /* 侧边栏 */
         .sidebar {
-            width: 80px;
+            width: 160px;
             height: 100%;
             background: rgba(255,255,255,0.3);
             position: fixed;
@@ -40,21 +40,43 @@
         }
 
         .avatar {
-            width: 50px;
-            height: 50px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
             cursor: pointer;
             border: 3px solid white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             transition: transform 0.3s;
+            margin-bottom: 15px;
         }
 
         .avatar:hover {
             transform: scale(1.1);
         }
 
-        .profile {
+        .sidebar-btn {
+            width: 120px;
+            padding: 10px;
+            margin: 8px 0;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(255,255,255,0.4);
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #d46b9c;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-btn:hover {
+            background: rgba(255,255,255,0.7);
+            transform: translateY(-2px);
+        }
+
+        .profile, .contact {
             display: none;
             margin-top: 15px;
             background: rgba(255,255,255,0.95);
@@ -66,37 +88,38 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
             backdrop-filter: blur(5px);
+            z-index: 1000;
         }
 
-        .profile.show {
+        .profile.show, .contact.show {
             display: block;
         }
 
-        .profile h3 {
+        .profile h3, .contact h3 {
             color: #d46b9c;
             margin-bottom: 8px;
         }
 
         /* 主内容区域 */
         .main-content {
-            margin-left: 80px;
-            width: calc(100% - 80px);
+            margin-left: 160px;
+            width: calc(100% - 160px);
             height: 100%;
             display: flex;
             flex-direction: column;
         }
 
-        /* 心形照片墙容器 */
-        .photo-heart-container {
+        /* 心形照片墙和计时器容器 */
+        .heart-container {
             display: flex;
-            flex-direction: column;
+            justify-content: flex-end;
             align-items: center;
-            margin: 20px auto;
-            max-width: 500px;
+            height: 40%;
+            margin-top: 20px;
         }
 
         .photo-heart {
-            width: 100%;
+            width: 300px;
             height: 300px;
             position: relative;
             display: flex;
@@ -114,6 +137,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: transform 0.3s;
             opacity: 0.9;
+            position: absolute;
         }
 
         .photo:hover {
@@ -140,7 +164,6 @@
             flex: 1;
             padding: 15px;
             overflow-y: auto;
-            margin: 0 10px;
         }
 
         /* 信件列表 */
@@ -282,28 +305,32 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .main-content {
-                margin-left: 60px;
-                width: calc(100% - 60px);
-            }
-            
             .sidebar {
-                width: 60px;
+                width: 120px;
             }
             
             .avatar {
-                width: 40px;
-                height: 40px;
+                width: 60px;
+                height: 60px;
             }
             
-            .profile {
-                max-width: 180px;
-                font-size: 0.85em;
-                left: 70px;
-                top: 20px;
+            .sidebar-btn {
+                width: 100px;
+                padding: 8px;
+                font-size: 0.8em;
+            }
+            
+            .main-content {
+                margin-left: 120px;
+                width: calc(100% - 120px);
+            }
+            
+            .heart-container {
+                height: 35%;
             }
             
             .photo-heart {
+                width: 250px;
                 height: 250px;
             }
             
@@ -321,15 +348,15 @@
                 padding: 10px;
                 margin-bottom: 10px;
             }
-            
-            .modal-content {
-                width: 90%;
-                padding: 20px;
-            }
         }
 
         @media (max-width: 480px) {
+            .heart-container {
+                height: 30%;
+            }
+            
             .photo-heart {
+                width: 200px;
                 height: 200px;
             }
             
@@ -343,10 +370,6 @@
                 width: 95%;
                 padding: 15px;
             }
-            
-            .modal-title {
-                font-size: 1.2em;
-            }
         }
     </style>
 </head>
@@ -354,21 +377,32 @@
     <!-- 侧边栏 -->
     <div class="sidebar">
         <img src="https://picsum.photos/seed/avatar/200/200" alt="头像" class="avatar" onclick="toggleProfile()">
+        <button class="sidebar-btn" onclick="toggleProfile()">个人介绍</button>
+        <button class="sidebar-btn" onclick="toggleContact()">我的联系方式</button>
+        
         <div class="profile" id="profile">
             <h3>关于我</h3>
             <p>一个喜欢记录生活点滴的人，相信爱是世界上最美好的事物。喜欢读书、旅行和写信，希望能用文字留住每一个珍贵的瞬间。</p>
+        </div>
+        
+        <div class="contact" id="contact">
+            <h3>联系方式</h3>
+            <p>📧 love@example.com</p>
+            <p>📱 138-XXXX-XXXX</p>
+            <p>📍 城市：北京</p>
         </div>
     </div>
 
     <!-- 主内容 -->
     <div class="main-content">
-        <!-- 照片心形和计时器容器 -->
-        <div class="photo-heart-container">
-            <!-- 照片心形墙 -->
-            <div class="photo-heart" id="photoHeart"></div>
-            
-            <!-- 计时器 -->
-            <div class="timer" id="timer">在一起的时光：00:00:00</div>
+        <!-- 心形照片墙和计时器容器 -->
+        <div class="heart-container">
+            <div style="text-align: center;">
+                <!-- 右半边心形照片墙 -->
+                <div class="photo-heart" id="photoHeart"></div>
+                <!-- 计时器在照片墙下方 -->
+                <div class="timer" id="timer">在一起的时光：00:00:00</div>
+            </div>
         </div>
 
         <!-- 信件列表容器 -->
@@ -390,7 +424,7 @@
     </div>
 
     <script>
-        // 信件数据（示例，可扩展）
+        // 信件数据
         const letters = [
             {
                 id: 1,
@@ -422,7 +456,6 @@
                 date: "2025-05-15",
                 text: "今天的雨下得很大，我却感到格外温暖。\n\n因为记得去年的今天，我们共撑一把伞回家。伞太小了，我们不得不靠得很近。你的发丝沾着雨珠，贴在我的肩上。我们踩着水坑，笑得像个孩子。\n\n现在窗外的雨滴在玻璃上画着花纹，就像那天你在我手心画的爱心。我泡了一杯热可可，加了双份棉花糖，就像你喜欢的那样。\n\n下雨天，思念也格外绵长。\n\n等雨停后见你的\n我"
             }
-            // 可以继续添加更多信件...
         ];
 
         // 创建多彩爱心
@@ -431,37 +464,27 @@
             heart.className = 'heart';
             heart.innerHTML = '♥';
             
-            // 随机位置
             const x = Math.random() * window.innerWidth;
             const y = Math.random() * window.innerHeight;
             heart.style.left = `${x}px`;
             heart.style.top = `${y}px`;
             
-            // 随机颜色
             const colors = ['#ff6b9d', '#ff8a65', '#ffb74d', '#81c784', '#64b5f6', '#ba68c8', '#e1bee7'];
             heart.style.color = colors[Math.floor(Math.random() * colors.length)];
             
-            // 随机大小
             const size = Math.random() * 12 + 8;
             heart.style.fontSize = `${size}px`;
             
             document.body.appendChild(heart);
             
-            // 浮动动画
             const animate = setInterval(() => {
                 const currentY = parseFloat(heart.style.top);
                 const currentX = parseFloat(heart.style.left);
                 
-                // 向上飘动
                 heart.style.top = `${currentY - 1}px`;
-                
-                // 轻微左右摆动
                 heart.style.left = `${currentX + (Math.random() - 0.5)}px`;
-                
-                // 透明度变化
                 heart.style.opacity = parseFloat(heart.style.opacity) - 0.005;
                 
-                // 移除条件
                 if (currentY < -20 || parseFloat(heart.style.opacity) <= 0) {
                     clearInterval(animate);
                     heart.remove();
@@ -474,7 +497,6 @@
 
         // 持久化计时器
         function startTimer() {
-            // 从localStorage获取开始时间，如果没有则创建新的
             let startTime = localStorage.getItem('relationshipStartTime');
             if (!startTime) {
                 startTime = new Date().getTime();
@@ -483,7 +505,6 @@
                 startTime = parseInt(startTime);
             }
             
-            // 更新计时器
             function updateTimer() {
                 const now = new Date().getTime();
                 const diff = now - startTime;
@@ -501,7 +522,7 @@
             setInterval(updateTimer, 1000);
         }
 
-        // 创建照片心形（左半边）
+        // 创建照片心形（右半边）
         function createPhotoHeart() {
             const container = document.getElementById('photoHeart');
             const photos = [
@@ -519,25 +540,24 @@
                 'https://picsum.photos/seed/p12/200/200'
             ];
             
-            // 心形坐标（左半部分）
+            // 心形坐标（右半部分）
             const heartPositions = [
                 // 上半部分
-                {x: 15, y: 15}, {x: 35, y: 5}, {x: 55, y: 10}, {x: 75, y: 25},
-                {x: 15, y: 45}, {x: 35, y: 35}, {x: 55, y: 40}, {x: 75, y: 55},
-                {x: 15, y: 75}, {x: 35, y: 65}, {x: 55, y: 70}, {x: 75, y: 85},
+                {x: 125, y: 15}, {x: 105, y: 5}, {x: 85, y: 10}, {x: 65, y: 25},
+                {x: 125, y: 45}, {x: 105, y: 35}, {x: 85, y: 40}, {x: 65, y: 55},
+                {x: 125, y: 75}, {x: 105, y: 65}, {x: 85, y: 70}, {x: 65, y: 85},
                 // 下半部分
-                {x: 15, y: 105}, {x: 35, y: 95}, {x: 55, y: 100}, {x: 75, y: 115},
-                {x: 15, y: 135}, {x: 35, y: 125}, {x: 55, y: 130}, {x: 75, y: 145},
-                {x: 15, y: 165}, {x: 35, y: 155}, {x: 55, y: 160}, {x: 75, y: 175},
-                {x: 15, y: 195}, {x: 35, y: 185}, {x: 55, y: 190}, {x: 75, y: 205},
-                {x: 15, y: 225}, {x: 35, y: 215}, {x: 55, y: 220}, {x: 75, y: 235}
+                {x: 125, y: 105}, {x: 105, y: 95}, {x: 85, y: 100}, {x: 65, y: 115},
+                {x: 125, y: 135}, {x: 105, y: 125}, {x: 85, y: 130}, {x: 65, y: 145},
+                {x: 125, y: 165}, {x: 105, y: 155}, {x: 85, y: 160}, {x: 65, y: 175},
+                {x: 125, y: 195}, {x: 105, y: 185}, {x: 85, y: 190}, {x: 65, y: 205},
+                {x: 125, y: 225}, {x: 105, y: 215}, {x: 85, y: 220}, {x: 65, y: 235}
             ];
             
             heartPositions.forEach((pos, index) => {
                 const img = document.createElement('img');
                 img.src = photos[index % photos.length];
                 img.className = 'photo';
-                img.style.position = 'absolute';
                 img.style.left = `${pos.x}px`;
                 img.style.top = `${pos.y}px`;
                 container.appendChild(img);
@@ -584,10 +604,19 @@
             document.getElementById('letterModal').style.display = 'none';
         }
 
-        // 切换个人介绍
+        // 切换个人介绍和联系方式
         function toggleProfile() {
             const profile = document.getElementById('profile');
+            const contact = document.getElementById('contact');
             profile.classList.toggle('show');
+            contact.classList.remove('show');
+        }
+        
+        function toggleContact() {
+            const contact = document.getElementById('contact');
+            const profile = document.getElementById('profile');
+            contact.classList.toggle('show');
+            profile.classList.remove('show');
         }
 
         // 页面加载完成后初始化
@@ -596,12 +625,18 @@
             startTimer();
             generateLetters();
             
-            // 点击头像外部关闭个人介绍
+            // 点击外部关闭弹窗
             document.addEventListener('click', function(e) {
                 const profile = document.getElementById('profile');
+                const contact = document.getElementById('contact');
                 const avatar = document.querySelector('.avatar');
-                if (!avatar.contains(e.target) && !profile.contains(e.target)) {
+                const btns = document.querySelectorAll('.sidebar-btn');
+                
+                if (!avatar.contains(e.target) && !profile.contains(e.target) && 
+                    !btns[0].contains(e.target) && !profile.contains(e.target) &&
+                    !btns[1].contains(e.target) && !contact.contains(e.target)) {
                     profile.classList.remove('show');
+                    contact.classList.remove('show');
                 }
             });
         };
