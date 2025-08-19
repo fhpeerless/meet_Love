@@ -47,9 +47,10 @@ h2 {
 
 /* 主盒子 */
 #Indexbox {
-    width: 100%;
+   width: 100%;
     height: 100%;
     position: relative;
+    z-index: 1; /* 添加这一行 */
 }
 
 /* 顶部菜单 */
@@ -578,6 +579,8 @@ h2 {
     -o-transition: all .5s;
     -moz-transition: all .5s;
     -webkit-transition: all .5s;
+        position: relative;
+    z-index: 1;
 }
 
 .pages-title {
@@ -761,15 +764,16 @@ h2 {
     width: 100%;
     height: 25px;
     background-color: rgb(33, 37, 43);
-    position: absolute;
+    position: relative;
     bottom: 0;
-    z-index: 2;
+    z-index: 1;
     font-size: .8rem;
     box-shadow: 0 -10px 10px rgba(0, 0, 0, .1);
     transition: all .5s;
     -o-transition: all .5s;
     -moz-transition: all .5s;
     -webkit-transition: all .5s;
+
 }
 
 .footer p {
