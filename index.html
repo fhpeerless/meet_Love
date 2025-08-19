@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>爱的纪念</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: pink;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* 心形照片墙容器 */
+        .photo-heart {
+            width: 30%;
+            height: 80%;
+            margin: auto 5% auto 0;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            justify-content: center;
+        }
+
+        .photo {
+            width: 80px;
+            height: 80px;
+            margin: 5px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .photo:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        /* 信件列表容器 */
+        .letter-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            margin-right: 20px;
+        }
+
+        .letter-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 5px solid #ff6b9d;
+        }
+
+        .letter-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .letter-title {
+            font-weight: bold;
+            color: #d46b9c;
+            margin-bottom: 5px;
+        }
+
+        .letter-date {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .letter-preview {
+            color: #555;
+            margin-top: 8px;
+            font-size: 0.95em;
+        }
+
+        /* 计时器 */
+        .timer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 1.2em;
+            color: #d46b9c;
+            font-weight: bold;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            background: #f0f0f0;
+        }
+
+        .close-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .modal-title {
+            color: #d46b9c;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .modal-date {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .modal-text {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        /* 爱心动画 */
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 信件列表 -->
+    <div class="letter-container">
+        <div class="letter-item" onclick="openLetter('第一封情书', '2025年1月1日', '亲爱的，遇见你的那一刻，我的世界开始发光。你的笑容像春天的阳光，温暖了我所有寒冷的日子。我想用一生的时间，写满给你的信。')">
+            <div class="letter-title">第一封情书</div>
+            <div class="letter-date">2025年1月1日</div>
+            <div class="letter-preview">亲爱的，遇见你的那一刻，我的世界开始发光...</div>
+        </div>
+        
+        <div class="letter-item" onclick="openLetter('纪念日', '2025年2月14日', '今天是我们在一起的第一个情人节。记得我们第一次约会吗？在那家小小的咖啡馆，你紧张得把糖包打翻了。那些笨拙的瞬间，现在回想起来都是最珍贵的回忆。')">
+            <div class="letter-title">纪念日</div>
+            <div class="letter-date">2025年2月14日</div>
+            <div class="letter-preview">今天是我们在一起的第一个情人节。记得我们第一次约会吗？...</div>
+        </div>
+        
+        <div class="letter-item" onclick="openLetter('深夜思念', '2025年3月8日', '夜深了，我睡不着，只想告诉你我有多想你。窗外的月光很美，但不及你眼中的星光。希望我的思念能化作晚风，轻轻拂过你的梦境。')">
+            <div class="letter-title">深夜思念</div>
+            <div class="letter-date">2025年3月8日</div>
+            <div class="letter-preview">夜深了，我睡不着，只想告诉你我有多想你...</div>
+        </div>
+        
+        <div class="letter-item" onclick="openLetter('未来憧憬', '2025年4月22日', '我常常想象我们的未来：一个洒满阳光的厨房，两只依偎的猫，还有无数个像现在这样静静相视而笑的瞬间。只要有你在，哪里都是家。')">
+            <div class="letter-title">未来憧憬</div>
+            <div class="letter-date">2025年4月22日</div>
+            <div class="letter-preview">我常常想象我们的未来：一个洒满阳光的厨房，两只依偎的猫...</div>
+        </div>
+    </div>
+
+    <!-- 照片心形墙 -->
+    <div class="photo-heart" id="photoHeart"></div>
+
+    <!-- 计时器 -->
+    <div class="timer" id="timer">在一起的时光：00:00:00</div>
+
+    <!-- 模态框 -->
+    <div class="modal" id="letterModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLetter()">&times;</span>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-date" id="modalDate"></div>
+            <div class="modal-text" id="modalText"></div>
+        </div>
+    </div>
+
+    <script>
+        // 创建多彩爱心
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '♥';
+            
+            // 随机位置
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            heart.style.left = `${x}px`;
+            heart.style.top = `${y}px`;
+            
+            // 随机颜色
+            const colors = ['#ff6b9d', '#ff8a65', '#ffb74d', '#81c784', '#64b5f6', '#ba68c8'];
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 随机大小
+            const size = Math.random() * 15 + 10;
+            heart.style.fontSize = `${size}px`;
+            
+            // 动画延迟
+            heart.style.animationDelay = `${Math.random() * 3}s`;
+            
+            document.body.appendChild(heart);
+            
+            // 3秒后移除爱心
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }
+
+        // 每200毫秒创建一个爱心
+        setInterval(createHeart, 200);
+
+        // 计时器
+        const startTime = new Date();
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startTime;
+            
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('timer').textContent = 
+                `在一起的时光：${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // 信件模态框
+        function openLetter(title, date, text) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalDate').textContent = date;
+            document.getElementById('modalText').textContent = text;
+            document.getElementById('letterModal').style.display = 'flex';
+        }
+        
+        function closeLetter() {
+            document.getElementById('letterModal').style.display = 'none';
+        }
+
+        // 创建照片心形
+        function createPhotoHeart() {
+            const container = document.getElementById('photoHeart');
+            const photos = [
+                'https://picsum.photos/seed/a/200/200',
+                'https://picsum.photos/seed/b/200/200',
+                'https://picsum.photos/seed/c/200/200',
+                'https://picsum.photos/seed/d/200/200',
+                'https://picsum.photos/seed/e/200/200',
+                'https://picsum.photos/seed/f/200/200',
+                'https://picsum.photos/seed/g/200/200',
+                'https://picsum.photos/seed/h/200/200',
+                'https://picsum.photos/seed/i/200/200',
+                'https://picsum.photos/seed/j/200/200',
+                'https://picsum.photos/seed/k/200/200',
+                'https://picsum.photos/seed/l/200/200'
+            ];
+            
+            // 心形坐标生成
+            for (let i = 0; i < 12; i++) {
+                const img = document.createElement('img');
+                img.src = photos[i];
+                img.className = 'photo';
+                container.appendChild(img);
+            }
+        }
+        
+        createPhotoHeart();
+
+        // 点击空白处关闭模态框
+        window.onclick = function(event) {
+            const modal = document.getElementById('letterModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
