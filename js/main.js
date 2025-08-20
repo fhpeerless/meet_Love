@@ -5,6 +5,10 @@ import { createPhotoGrid } from './photo.js';
 import { generateLetters } from './letter.js';
 import { toggleProfile, toggleContact } from './sidebar.js';
 
+// 将函数暴露到全局作用域
+window.toggleProfile = toggleProfile;
+window.toggleContact = toggleContact;
+
 // 初始化爱心动画
 setInterval(createHeart, 150);
 
@@ -33,3 +37,19 @@ window.onload = function() {
         }
     });
 };
+
+// 动态绑定按钮事件（推荐方式）
+document.addEventListener('DOMContentLoaded', () => {
+  const profileBtn = document.getElementById('profileBtn');
+  const contactBtn = document.getElementById('contactBtn');
+
+  profileBtn.addEventListener('click', () => {
+    const profile = document.getElementById('profile');
+    profile.classList.toggle('show');
+  });
+
+  contactBtn.addEventListener('click', () => {
+    const contact = document.getElementById('contact');
+    contact.classList.toggle('show');
+  });
+});
