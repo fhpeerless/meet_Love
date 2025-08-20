@@ -1,4 +1,5 @@
 // js/article.js
+
 import { formatDate } from './utils.js';
 
 export function displayArticle() {
