@@ -9,8 +9,8 @@ export const lettersData = [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
         ],
-        musicUrl: "https://example.com/music/song1.mp3", // 替换为实际的音乐直链
-        videoUrl: "https://example.com/videos/video1.mp4"  // 替换为实际的视频直链
+        musicUrl: "", // 替换为实际的音乐直链
+        videoUrl: ""  // 替换为实际的视频直链
     },
 
     {
@@ -23,7 +23,7 @@ export const lettersData = [
             "./images/5cda81b90c55443835d42f0fb073b53.jpg",
             "./images/5cda81b90c55443835d42f0fb073b53.jpg"
         ],
-        musicUrl: "https://example.com/music/song2.mp3", // 替换为实际的音乐直链
+        musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
     },
 
