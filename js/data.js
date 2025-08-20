@@ -2,7 +2,7 @@
 export const lettersData = [
     {
         id: 1,
-        title: "让我快一些遇见你！sum=0(代表此帖此时星星的数量)",
+        title: "1.让我快一些遇见你！sum=0(代表此帖此时星星的数量)",
         date: "2025-08-18",
         text: "我想快一些遇见你，这样世界就少了两个孤单的人！\n 在历史的长河中，十年如沧海一粟，但在人生的旅途中，屈指可数，\n 花开堪折直须折 莫待无花空折枝 \n 今日星星数量为0",
         photos: [
@@ -15,7 +15,7 @@ export const lettersData = [
 
     {
         id: 2,
-        title: "我的照片sum=0",
+        title: "2.我的照片sum=0",
         date: "2025-08-20",
         text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！，",
         photos: [
@@ -25,11 +25,11 @@ export const lettersData = [
         ],
         musicUrl: "https://example.com/music/song2.mp3", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
-    }
+    },
 
         {
         id: 3,
-        title: "准备的发光礼盒，sum=0",
+        title: "3.准备的发光礼盒，sum=0",
         date: "2025-08-20",
         text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！，",
         photos: [
