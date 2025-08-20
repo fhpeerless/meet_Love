@@ -1,5 +1,5 @@
 // js/article.js
-import { formatDate } from './js/utils.js';
+import { formatDate } from './utils.js';
 
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
