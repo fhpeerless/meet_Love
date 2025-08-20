@@ -12,7 +12,7 @@ export function generateLetters() {
 
         // ✅ 点击时存储的是索引 index，而不是 letter.id
         li.onclick = () => {
-            localStorage.setItem('currentLetterId', index);
+            localStorage.setItem('currentLetterId', letter.id); // ✅ 存储实际 ID
             window.location.href = 'article.html';
         };
 
