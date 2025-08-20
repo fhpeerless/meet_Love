@@ -16,8 +16,9 @@ export const lettersData = [
         date: "2025-08-20",
         text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！",
         photos: [
-            "https://picsum.photos/seed/love1/400/300",
-            "https://picsum.photos/seed/love2/400/300"
+            "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
+            "./images/5cda81b90c55443835d42f0fb073b53.jpg",
+            "./images/5cda81b90c55443835d42f0fb073b53.jpg"
         ]
     }
     // ... 其他信件
