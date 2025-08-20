@@ -1,4 +1,4 @@
-// utils.js
+// js/utils.js
 export function formatDate(dateString) {
     const date = new Date(dateString);
     const months = ['一月', '二月', '三月', '四月', '五月', '六月', 
