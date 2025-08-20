@@ -1,6 +1,6 @@
 // js/letter.js
-import { lettersData } from './data.js';
-import { formatDate } from './utils.js';
+import { lettersData } from '.js/data.js';
+import { formatDate } from '.js/utils.js';
 
 export function generateLetters() {
     const letterList = document.getElementById('letterList');
