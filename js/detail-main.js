@@ -1,9 +1,9 @@
 // js/detail-main.js
-import { startTimer } from './js/timer.js';
-import { displayArticle } from './js/article.js';
-import { toggleProfile, toggleContact } from './js/sidebar.js';
-import { startHeartAnimation } from './js/heart.js';
-import { lettersData } from './js/data.js';
+import { startTimer } from './timer.js';
+import { displayArticle } from './article.js';
+import { toggleProfile, toggleContact } from './sidebar.js';
+import { startHeartAnimation } from './heart.js';
+import { lettersData } from './data.js';
 
 // 暴露数据到全局
 window.lettersData = lettersData;
