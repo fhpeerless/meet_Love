@@ -1,0 +1,17 @@
+/* base.css - 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: pink;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    position: relative;
+    height: 100vh;
+    display: flex;
+}
