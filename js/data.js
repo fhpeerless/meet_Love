@@ -22,3 +22,4 @@ export const lettersData = [
     }
     // ...其他信件数据
 ];
+window.lettersData = lettersData;
