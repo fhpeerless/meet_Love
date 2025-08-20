@@ -19,6 +19,6 @@ export const lettersData = [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
         ]
-    },
+    }
     // ...其他信件数据
 ];
