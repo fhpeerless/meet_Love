@@ -1,5 +1,5 @@
 // data.js
-const lettersData = [
+export const lettersData = [
     {
         id: 1,
         title: "我的伴侣你何时能出现",
