@@ -14,7 +14,7 @@ const lettersData = [
         id: 2,
         title: "！",
         date: "2025-01-01",
-        text: "让我快一些遇见你，\n\n  头发特瑞特\n",
+        text: "让我快一些遇见你， 头发特瑞特",
         photos: [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
