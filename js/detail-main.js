@@ -9,10 +9,10 @@ import { lettersData } from './js/data.js';
 window.lettersData = lettersData;
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.displayArticle = displayArticle; // ✅ 先暴露到全局
+    window.displayArticle = displayArticle; // ✅ 先暴露
     displayArticle(); // ✅ 再调用
-    startTimer();
-    startHeartAnimation(150);
+    startTimer(); // ✅ 计时器
+    startHeartAnimation(150); // ✅ 心形动画
 });
 
 // 暴露 toggle 函数
