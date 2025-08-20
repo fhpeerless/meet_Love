@@ -2,7 +2,7 @@
 export function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
-    heart.innerHTML = '♥';
+    heart.innerHTML = '♥★';
 
     const x = Math.random() * window.innerWidth;
     const y = Math.random() * window.innerHeight;
