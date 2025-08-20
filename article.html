@@ -300,33 +300,31 @@
     <script type="module">
         // 模拟数据（原 data.js）
 // data.js
-export const lettersData = [
-    {
-        id: 1,
-        title: "我的伴侣你何时能出现",
-        date: "2025-01-01",
-        text: "我想因为有爱，两个人才能长相守吧，那到底什么是爱呢！\n\n是虞姬为爱忠贞赴死吗，是梁山伯病逝后，祝英台化蝶吗\n 这凄美的爱情我不赞扬，我想只要稳稳的幸福就够了，我只是一界外卖员，",
-        photos: [
-            "https://picsum.photos/seed/love1/400/300",
-            "https://picsum.photos/seed/love2/400/300"
-        ]
-    },
-        {
-        id: 2,
-        title: "心情阴晴不定！",
-        date: "2025-01-01",
-        text: "亲爱的，\n\n遇见你的那一刻，我的世界开始发光...永远爱你的\n我",
-        photos: [
-            "https://picsum.photos/seed/love1/400/300",
-            "https://picsum.photos/seed/love2/400/300"
-        ]
-    }
-    // ...其他信件数据
-];
-window.lettersData = lettersData;
+    export const lettersData = [
+            {
+                id: "1",
+                title: "第一次相遇",
+                date: "2025-01-15",
+                text: "那天阳光很好，你穿着白色连衣裙，站在梧桐树下等公交。",
+                photos: [
+                    "https://picsum.photos/seed/1/400/300",
+                    "https://picsum.photos/seed/2/400/300"
+                ]
+            },
+            {
+                id: "2",
+                title: "一起旅行",
+                date: "2025-02-20",
+                text: "我们去了海边，一起看日出。",
+                photos: [
+                    "https://picsum.photos/seed/3/400/300"
+                ]
+            }
+        ];
 
-// data.js
-console.log('✅ data.js 已成功加载');
+        // 暴露数据到全局
+        window.lettersData = lettersData;
+
 
         // 格式化日期（原 utils.js）
  // utils.js
