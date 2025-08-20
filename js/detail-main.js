@@ -5,13 +5,16 @@ import { toggleProfile, toggleContact, setupCloseOnOutsideClick } from './sideba
 import { startHeartAnimation } from './heart.js';
 import { lettersData } from './data.js';
 
-// 暴露数据给全局（兼容旧逻辑）
+// 暴露数据到全局，供 displayArticle 使用
 window.lettersData = lettersData;
 
-// 初始化
 document.addEventListener('DOMContentLoaded', () => {
     startTimer();
-    displayArticle();
+    displayArticle(); // 显示文章
     setupCloseOnOutsideClick();
-    startHeartAnimation(150); // 每150ms一个爱心
+    startHeartAnimation(150);
 });
+
+// 暴露 toggle 函数给 HTML onclick 使用
+window.toggleProfile = toggleProfile;
+window.toggleContact = toggleContact;
