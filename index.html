@@ -146,15 +146,18 @@
             height: 100%;
         }
 
-        .photo-item {
-            width: 100%;
-            height: 150px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            position: relative;
-        }
+.photo-item {
+    width: 100%;
+    height: 150px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    position: absolute; /* 关键：叠在一起 */
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.8s ease;
+}
+
 
         .photo-item:hover {
             transform: scale(1.05);
@@ -165,9 +168,30 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            cursor: pointer;
+            /* cursor: pointer; */
         }
+/* 照片墙下方统一文案 */
+.photo-wall-caption {
+    text-align: center;
+    font-size: 1em;
+    font-weight: 500;
+    margin: 15px 0;
+    padding: 10px 20px;
+    color: #d46b9c;
+    background: rgba(255,255,255,0.7);
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    backdrop-filter: blur(5px);
+    max-width: 90%;
+    /* ✅ 渐变色文字 */
+    background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
 
+        
         /* 信件列表容器 */
         .letter-container {
             flex: 1;
