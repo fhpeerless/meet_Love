@@ -1,6 +1,6 @@
 // js/article.js
-
-import { formatDate } from './utils.js';
+import { lettersData } from './data.js'; // ✅ 正确导入
+import { formatDate } from './utils.js'; // ✅ 正确导入
 
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
@@ -9,21 +9,20 @@ export function displayArticle() {
         window.location.href = 'index.html';
         return;
     }
-
-    const letter = window.lettersData.find(l => l.id == letterId);
+    // ✅ 使用从 data.js 导入的 lettersData
+    const letter = lettersData.find(l => l.id == letterId);
     if (!letter) {
         console.warn('未找到 ID 为', letterId, '的信件');
         window.location.href = 'index.html';
         return;
     }
-
+    
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
     document.getElementById('articleContent').textContent = letter.text;
-
+    
     const photoGrid = document.getElementById('photoGrid');
     photoGrid.innerHTML = '';
-
     if (letter.photos && letter.photos.length > 0) {
         letter.photos.forEach(photoSrc => {
             const item = document.createElement('div');
