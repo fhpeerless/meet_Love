@@ -1,0 +1,33 @@
+// heart.js
+export function createHeart() {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerHTML = '♥';
+
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    heart.style.left = `${x}px`;
+    heart.style.top = `${y}px`;
+
+    const colors = ['#ff6b9d', '#ff8a65', '#ffb74d', '#81c784', '#64b5f6', '#ba68c8', '#e1bee7'];
+    heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+    const size = Math.random() * 12 + 8;
+    heart.style.fontSize = `${size}px`;
+
+    document.body.appendChild(heart);
+
+    const animate = setInterval(() => {
+        const currentY = parseFloat(heart.style.top);
+        const currentX = parseFloat(heart.style.left);
+
+        heart.style.top = `${currentY - 1}px`;
+        heart.style.left = `${currentX + (Math.random() - 0.5)}px`;
+        heart.style.opacity = parseFloat(heart.style.opacity) - 0.005;
+
+        if (currentY < -20 || parseFloat(heart.style.opacity) <= 0) {
+            clearInterval(animate);
+            heart.remove();
+        }
+    }, 50);
+}
