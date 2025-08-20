@@ -10,7 +10,9 @@ window.lettersData = lettersData;
 
 document.addEventListener('DOMContentLoaded', () => {
     startTimer();
+        window.displayArticle = displayArticle; 
     displayArticle();
+
     startHeartAnimation(150);
 });
 
