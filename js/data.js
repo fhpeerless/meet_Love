@@ -26,6 +26,18 @@ export const lettersData = [
         musicUrl: "https://example.com/music/song2.mp3", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
     }
+
+        {
+        id: 3,
+        title: "准备的发光礼盒，sum=0",
+        date: "2025-08-20",
+        text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！，",
+        photos: [
+            "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
+        ],
+        musicUrl: "", // 替换为实际的音乐直链
+        videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
+    }
     // ... 其他信件
 ];
 
