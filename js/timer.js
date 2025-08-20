@@ -12,7 +12,7 @@ export function startTimer() {
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
         document.getElementById('timer').textContent = 
-            `在一起的时光：${days}天 ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            `星星时光：${days}天 ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
     updateTimer();
