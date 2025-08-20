@@ -12,7 +12,7 @@ export const lettersData = [
     },
     {
         id: 2,
-        title: "星星很亮",
+        title: "我的照片",
         date: "2025-08-20",
         text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！",
         photos: [
