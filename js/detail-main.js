@@ -9,10 +9,9 @@ import { lettersData } from './js/data.js';
 window.lettersData = lettersData;
 
 document.addEventListener('DOMContentLoaded', () => {
+    window.displayArticle = displayArticle; // ✅ 先暴露到全局
+    displayArticle(); // ✅ 再调用
     startTimer();
-        window.displayArticle = displayArticle; 
-    displayArticle();
-
     startHeartAnimation(150);
 });
 
