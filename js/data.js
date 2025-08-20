@@ -10,7 +10,7 @@ const lettersData = [
             "https://picsum.photos/seed/love2/400/300"
         ]
     },
-        {
+  {
         id: 2,
         title: "！",
         date: "2025-01-01",
@@ -19,7 +19,7 @@ const lettersData = [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
         ]
-    }
+  }  
     // ...其他信件数据
 ];
 window.lettersData = lettersData;
