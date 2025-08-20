@@ -31,3 +31,7 @@ export function createHeart() {
         }
     }, 50);
 }
+export function startHeartAnimation(duration) {
+    // 每隔一定时间创建一个新心形
+    setInterval(createHeart, duration);
+}
