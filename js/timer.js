@@ -1,6 +1,6 @@
 // timer.js
 export function startTimer() {
-    const startDate = new Date('2025-01-01T00:00:00').getTime();
+    const startDate = new Date('2025-08-18T00:00:00').getTime();
 
     function updateTimer() {
         const now = new Date().getTime();
