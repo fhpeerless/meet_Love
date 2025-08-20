@@ -256,6 +256,38 @@
                 height: 200px;
             }
         }
+
+        /* 新增样式 */
+        .media-container {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .audio-player, .video-player {
+            margin: 10px 0;
+        }
+        
+        .audio-player h3, .video-player h3 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        audio, video {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            audio, video {
+                width: 100%;
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -284,11 +316,18 @@
     <!-- 主内容 -->
     <div class="main-content">
         <a href="index.html" class="back-btn">← 返回</a>
-        
         <h1 class="article-title" id="articleTitle"></h1>
         <div class="article-date" id="articleDate"></div>
-        
         <div class="article-content" id="articleContent"></div>
+
+        <!-- 音乐播放器容器 -->
+        <div class="media-container" id="musicContainer">
+            <!-- 音乐播放器将通过JavaScript动态生成 -->
+        </div>
+        
+        <!-- 视频播放器容器 -->
+        <div class="media-container" id="videoContainer">
+            <!-- 视频播放器将通过JavaScript动态生成 -->
         
         <div class="article-photos" id="articlePhotos">
             <div class="article-photos-title">照片记录</div>
