@@ -8,8 +8,11 @@ export const lettersData = [
         photos: [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
-        ]
+        ],
+        musicUrl: "https://example.com/music/song1.mp3", // 替换为实际的音乐直链
+        videoUrl: "https://example.com/videos/video1.mp4"  // 替换为实际的视频直链
     },
+
     {
         id: 2,
         title: "我的照片sum=0",
@@ -19,7 +22,9 @@ export const lettersData = [
             "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
             "./images/5cda81b90c55443835d42f0fb073b53.jpg",
             "./images/5cda81b90c55443835d42f0fb073b53.jpg"
-        ]
+        ],
+        musicUrl: "https://example.com/music/song2.mp3", // 替换为实际的音乐直链
+        videoUrl: ""  // 如果没有视频，留空
     }
     // ... 其他信件
 ];
