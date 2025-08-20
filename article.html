@@ -295,11 +295,12 @@
             <div class="photo-grid" id="photoGrid"></div>
         </div>
     </div>
-  <script src="./js/data.js"></script>
+ 
     <!-- ✅ 内联 JS 逻辑（原 js/detail-main.js） -->
     <script type="module">
         // 模拟数据（原 data.js）
-    
+       import { lettersData } from './js/data.js';
+    console.log(lettersData); // ✅ 可以访问
 
 
         // 格式化日期（原 utils.js）
