@@ -4,7 +4,7 @@ export const lettersData = [
         id: 1,
         title: "1.☆=0.让我快一些遇见你！☆=0(代表此帖此时星星的数量)",
         date: "2025-08-18",
-        text: "我想快一些遇见你，这样世界就少了两个孤单的人！\n 在历史的长河中，十年如沧海一粟，但在人生的旅途中，屈指可数，\n 花开堪折直须折 莫待无花空折枝 \n 今日星星数量为0",
+        text: "我想快一些遇见你，这样世界就少了两个孤单的人！\n 在历史的长河中，十年如沧海一粟，但在我们人生当中，十年却是屈指可数，所以哦不要让我等好久！\n  \n 今日星星数量为0",
         photos: [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
@@ -31,12 +31,24 @@ export const lettersData = [
         id: 3,
         title: "3.☆=0.准备的发光礼盒",
         date: "2025-08-20",
-        text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想你了地方😂",
+        text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想你了😂",
         photos: [
             "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
         ],
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
+    },
+    // ... 其他信件
+            {
+        id: 4,
+        title: "4.☆=0.秋风凉我♥",
+        date: "2025-08-20",
+        text: "风起了，花落了，我知道，你正在走向我的路上！",
+        photos: [
+            "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
+        ],
+        musicUrl: "", // 替换为实际的音乐直链
+        videoUrl: ""  // 如果没有视频，留空
     }
     // ... 其他信件
 ];
