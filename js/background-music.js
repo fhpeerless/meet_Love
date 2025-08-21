@@ -3,32 +3,30 @@ export class BackgroundMusicPlayer {
     constructor() {
         this.audio = null;
         this.playerContainer = null;
+        this.lyricsContainer = null;
         this.isPlaying = false;
         this.currentSong = {
             title: '未知歌曲',
-            url: ''
+            url: '',
+            lrcUrl: '' // 添加歌词URL
         };
         
-        // 默认的背景音乐配置
+        this.lyrics = []; // 存储解析后的歌词
+        this.currentLyricIndex = -1;
+        
         this.defaultMusic = {
-            title: '温馨时光', // 默认歌名
-            url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a' // 替换为您的音乐直链
+            title: '温馨时光',
+            url: 'https://example.com/music/background.mp3',
+            lrcUrl: 'https://example.com/lyrics/song.lrc' // 默认歌词URL
         };
         
         this.init();
     }
     
     init() {
-        // 创建播放器容器
         this.createPlayer();
-        
-        // 初始化音频对象
         this.createAudio();
-        
-        // 设置默认音乐
-        this.setMusic(this.defaultMusic.title, this.defaultMusic.url);
-        
-        // 自动播放（注意：浏览器策略可能阻止自动播放）
+        this.setMusic(this.defaultMusic.title, this.defaultMusic.url, this.defaultMusic.lrcUrl);
         this.play();
     }
     
@@ -44,6 +42,9 @@ export class BackgroundMusicPlayer {
                     <button id="playPauseBtn" class="control-btn">
                         <i class="icon">▶</i>
                     </button>
+                    <button id="lyricsBtn" class="control-btn">
+                        <i class="icon">📝</i>
+                    </button>
                     <button id="muteBtn" class="control-btn">
                         <i class="icon">🔊</i>
                     </button>
@@ -57,28 +58,36 @@ export class BackgroundMusicPlayer {
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
             </div>
+            <!-- 歌词容器 -->
+            <div class="lyrics-container" id="lyricsContainer">
+                <div class="lyrics-content" id="lyricsContent">
+                    <div class="lyrics-line current">加载歌词中...</div>
+                </div>
+            </div>
         `;
         
         document.body.appendChild(this.playerContainer);
         
-        // 绑定事件
+        this.lyricsContainer = document.getElementById('lyricsContainer');
         this.bindEvents();
     }
     
     createAudio() {
         this.audio = new Audio();
-        this.audio.loop = true; // 循环播放
-        this.audio.volume = 0.8; // 初始音量
+        this.audio.loop = true;
+        this.audio.volume = 0.3;
         
         // 更新进度条
         this.audio.addEventListener('timeupdate', () => {
             if (this.audio.duration) {
                 const progress = (this.audio.currentTime / this.audio.duration) * 100;
                 document.getElementById('progressFill').style.width = `${progress}%`;
+                
+                // 更新歌词
+                this.updateLyrics();
             }
         });
         
-        // 处理播放/暂停状态
         this.audio.addEventListener('play', () => {
             this.isPlaying = true;
             this.updatePlayButton();
@@ -91,22 +100,22 @@ export class BackgroundMusicPlayer {
     }
     
     bindEvents() {
-        // 播放/暂停按钮
         document.getElementById('playPauseBtn').addEventListener('click', () => {
             this.togglePlay();
         });
         
-        // 静音按钮
+        document.getElementById('lyricsBtn').addEventListener('click', () => {
+            this.toggleLyrics();
+        });
+        
         document.getElementById('muteBtn').addEventListener('click', () => {
             this.toggleMute();
         });
         
-        // 关闭按钮
         document.getElementById('closeBtn').addEventListener('click', () => {
             this.close();
         });
         
-        // 点击进度条跳转
         this.playerContainer.querySelector('.progress-bar').addEventListener('click', (e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
@@ -114,25 +123,146 @@ export class BackgroundMusicPlayer {
         });
     }
     
-    setMusic(title, url) {
+    setMusic(title, url, lrcUrl = '') {
         this.currentSong.title = title || '未知歌曲';
         this.currentSong.url = url;
+        this.currentSong.lrcUrl = lrcUrl;
         
-        // 更新显示的歌名
         document.getElementById('currentSongTitle').textContent = this.currentSong.title;
         
-        // 设置音频源
         if (this.audio) {
             this.audio.src = url;
             this.audio.load();
         }
+        
+        // 加载歌词
+        if (lrcUrl) {
+            this.loadLyrics(lrcUrl);
+        } else {
+            this.clearLyrics();
+        }
+    }
+    
+    async loadLyrics(lrcUrl) {
+        try {
+            const response = await fetch(lrcUrl);
+            const lrcText = await response.text();
+            this.parseLyrics(lrcText);
+        } catch (error) {
+            console.warn('加载歌词失败:', error);
+            this.showNoLyrics();
+        }
+    }
+    
+    parseLyrics(lrcText) {
+        this.lyrics = [];
+        const lines = lrcText.split('\n');
+        
+        // 正则表达式匹配时间标签 [mm:ss.xx] 或 [mm:ss]
+        const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
+        
+        lines.forEach(line => {
+            const matches = [...line.matchAll(timeRegex)];
+            if (matches.length > 0) {
+                const time = this.parseTime(matches[0][1], matches[0][2], matches[0][3] || '00');
+                const text = line.replace(timeRegex, '').trim();
+                
+                if (text) {
+                    this.lyrics.push({ time, text });
+                }
+            }
+        });
+        
+        // 按时间排序
+        this.lyrics.sort((a, b) => a.time - b.time);
+        
+        // 初始化歌词显示
+        this.updateLyrics();
+    }
+    
+    parseTime(minutes, seconds, centiseconds) {
+        // 将时间转换为秒数
+        return parseInt(minutes) * 60 + 
+               parseInt(seconds) + 
+               parseInt(centiseconds) / 100;
+    }
+    
+    updateLyrics() {
+        if (this.lyrics.length === 0) return;
+        
+        const currentTime = this.audio.currentTime;
+        let newIndex = -1;
+        
+        // 找到当前应该显示的歌词行
+        for (let i = 0; i < this.lyrics.length; i++) {
+            if (i === this.lyrics.length - 1 || 
+                (this.lyrics[i].time <= currentTime && this.lyrics[i + 1].time > currentTime)) {
+                newIndex = i;
+                break;
+            }
+        }
+        
+        if (newIndex !== this.currentLyricIndex) {
+            this.currentLyricIndex = newIndex;
+            this.displayCurrentLyric();
+        }
+    }
+    
+    displayCurrentLyric() {
+        const lyricsContent = document.getElementById('lyricsContent');
+        lyricsContent.innerHTML = '';
+        
+        if (this.currentLyricIndex >= 0) {
+            // 显示当前歌词（居中高亮）
+            const currentLine = document.createElement('div');
+            currentLine.className = 'lyrics-line current';
+            currentLine.textContent = this.lyrics[this.currentLyricIndex].text;
+            lyricsContent.appendChild(currentLine);
+            
+            // 显示上一行（如果有）
+            if (this.currentLyricIndex > 0) {
+                const prevLine = document.createElement('div');
+                prevLine.className = 'lyrics-line';
+                prevLine.textContent = this.lyrics[this.currentLyricIndex - 1].text;
+                lyricsContent.insertBefore(prevLine, currentLine);
+            }
+            
+            // 显示下一行（如果有）
+            if (this.currentLyricIndex < this.lyrics.length - 1) {
+                const nextLine = document.createElement('div');
+                nextLine.className = 'lyrics-line';
+                nextLine.textContent = this.lyrics[this.currentLyricIndex + 1].text;
+                lyricsContent.appendChild(nextLine);
+            }
+        } else {
+            // 没有匹配的歌词
+            const line = document.createElement('div');
+            line.className = 'lyrics-line';
+            line.textContent = '暂无歌词';
+            lyricsContent.appendChild(line);
+        }
+    }
+    
+    clearLyrics() {
+        this.lyrics = [];
+        this.currentLyricIndex = -1;
+        const lyricsContent = document.getElementById('lyricsContent');
+        lyricsContent.innerHTML = '<div class="lyrics-line">暂无歌词</div>';
+    }
+    
+    showNoLyrics() {
+        const lyricsContent = document.getElementById('lyricsContent');
+        lyricsContent.innerHTML = '<div class="lyrics-line">歌词加载失败</div>';
+    }
+    
+    toggleLyrics() {
+        this.lyricsContainer.classList.toggle('show');
     }
     
     play() {
         if (this.audio && this.currentSong.url) {
             this.audio.play().catch(error => {
                 console.warn('自动播放被浏览器阻止:', error);
-                // 显示提示，需要用户交互才能播放
                 this.showPlayHint();
             });
         }
@@ -164,7 +294,6 @@ export class BackgroundMusicPlayer {
             this.playerContainer.remove();
             this.playerContainer = null;
         }
-        // 可以在这里添加回调或事件通知音乐已关闭
     }
     
     updatePlayButton() {
@@ -173,20 +302,17 @@ export class BackgroundMusicPlayer {
     }
     
     showPlayHint() {
-        // 创建一个临时提示
         const hint = document.createElement('div');
         hint.className = 'play-hint';
         hint.textContent = '点击页面任意位置以播放背景音乐';
         document.body.appendChild(hint);
         
-        // 5秒后自动移除
         setTimeout(() => {
             if (hint.parentElement) {
                 hint.remove();
             }
         }, 5000);
         
-        // 点击页面任意位置播放
         const playHandler = () => {
             this.play();
             hint.remove();
