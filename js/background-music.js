@@ -12,7 +12,7 @@ export class BackgroundMusicPlayer {
         // 默认的背景音乐配置
         this.defaultMusic = {
             title: '温馨时光', // 默认歌名
-            url: 'https://example.com/music/background.mp3' // 替换为您的音乐直链
+            url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a' // 替换为您的音乐直链
         };
         
         this.init();
@@ -68,7 +68,7 @@ export class BackgroundMusicPlayer {
     createAudio() {
         this.audio = new Audio();
         this.audio.loop = true; // 循环播放
-        this.audio.volume = 0.3; // 初始音量
+        this.audio.volume = 0.8; // 初始音量
         
         // 更新进度条
         this.audio.addEventListener('timeupdate', () => {
