@@ -19,9 +19,9 @@ export const lettersData = [
         date: "2025-08-21",
         text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！，",
         photos: [
-            "http://note.youdao.com/yws/api/personal/file/61d6646e885cad7087c4832db892d949?method=download&inline=true&shareKey=ee52693b182bc00d8f5da13cc6dcd16b",
-            "http://note.youdao.com/yws/api/personal/file/fc574f504d05ff09b9239249432bf63b?method=download&inline=true&shareKey=94dcd87abea0a6cb23e48a3038c06c88",
-            "http://note.youdao.com/yws/api/personal/file/7608eb5f65eb4f72e5030198bc144348?method=download&inline=true&shareKey=dc5911918414f812da27138d3048ef64"
+            "https://note.youdao.com/yws/api/personal/file/61d6646e885cad7087c4832db892d949?method=download&inline=true&shareKey=ee52693b182bc00d8f5da13cc6dcd16b",
+            "https://note.youdao.com/yws/api/personal/file/fc574f504d05ff09b9239249432bf63b?method=download&inline=true&shareKey=94dcd87abea0a6cb23e48a3038c06c88",
+            "https://note.youdao.com/yws/api/personal/file/7608eb5f65eb4f72e5030198bc144348?method=download&inline=true&shareKey=dc5911918414f812da27138d3048ef64"
         ],
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
@@ -36,7 +36,7 @@ export const lettersData = [
             ".",
         ],
         musicUrl: "", // 替换为实际的音乐直链
-        videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
+        videoUrl: "https://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
     },
     // ... 其他信件
             {
