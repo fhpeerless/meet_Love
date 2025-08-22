@@ -3,6 +3,7 @@ import { startTimer } from './timer.js';
 import { displayArticle } from './article.js'; // ✅ 导入 displayArticle
 import { toggleProfile, toggleContact } from './sidebar.js';
 import { startHeartAnimation } from './heart.js';
+import { lettersData, formatDate } from './data.js'; // ✅ 补充导入
 
 // 将侧边栏和显示文章函数暴露到全局
 window.toggleProfile = toggleProfile;
@@ -15,3 +16,5 @@ document.addEventListener('DOMContentLoaded', () => {
     startTimer();
     startHeartAnimation(150);
 });
+
+
