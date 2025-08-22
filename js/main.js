@@ -14,7 +14,9 @@ function init() {
     initBackgroundMusic();
     
     // 2. 初始化爱心动画
+    if (window.innerWidth > 768) {
     setInterval(createHeart, 150);
+}
     
     // 3. 初始化计时器
     startTimer();
