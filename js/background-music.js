@@ -143,10 +143,13 @@ export class BackgroundMusicPlayer {
         }
     }
     
-// js/background-music.js
+// background-music.js
 async loadLyrics(lrcUrl) {
     try {
-        const response = await fetch(lrcUrl, {
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // 临时代理
+        const finalLrcUrl = proxyUrl + lrcUrl;
+
+        const response = await fetch(finalLrcUrl, {
             headers: {
                 'Accept': 'text/plain'
             }
@@ -158,11 +161,6 @@ async loadLyrics(lrcUrl) {
 
         const blob = await response.blob();
         const lrcText = await blob.text();
-
-        if (!lrcText || lrcText.trim() === '') {
-            throw new Error('歌词内容为空');
-        }
-
         console.log("【歌词内容】", lrcText);
         this.parseLyrics(lrcText);
     } catch (error) {
