@@ -252,7 +252,7 @@ export class BackgroundMusicPlayer {
     
     showNoLyrics() {
         const lyricsContent = document.getElementById('lyricsContent');
-        lyricsContent.innerHTML = '<div class="lyrics-line">歌词加载中......</div>';
+        lyricsContent.innerHTML = '<div class="lyrics-line">歌词加载失败</div>';
     }
     
     toggleLyrics() {

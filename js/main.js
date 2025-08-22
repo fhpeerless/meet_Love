@@ -33,7 +33,7 @@ function initBackgroundMusic() {
     // 设置背景音乐（替换为您的实际音乐链接）
     bgMusicPlayer.setMusic(
        '孙燕姿-遇见', 
-        'https://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
+        'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
         './lrc/yujian.lrc' // 您的LRC歌词文件URL
     );
 }
