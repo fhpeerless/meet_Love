@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const letterId = urlParams.get('id');
     
     // 根据 ID 获取信件数据并调用 displayArticle
-    const letters = require('./data.js'); // 假设 data.js 导出信件数据
+    import { lettersData } from './data.js'; // 假设 data.js 导出信件数据
     const currentLetter = letters.find(letter => letter.id === parseInt(letterId));
     
     if (currentLetter) {
