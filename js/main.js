@@ -13,8 +13,10 @@ function init() {
     // 1. 初始化背景音乐播放器
     initBackgroundMusic();
     
-    // 2. 初始化爱心动画
-    setInterval(createHeart, 150);
+// 2. 初始化爱心动画（仅在桌面端启用）
+    if (window.innerWidth > 768) {
+        setInterval(createHeart, 150);
+    }
     
     // 3. 初始化计时器
     startTimer();
