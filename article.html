@@ -151,6 +151,10 @@
         .article-photos {
             margin: 20px 0;
         }
+        /* 隐藏模块时不影响布局 */
+.article-photos[style*="display: none"] {
+    display: none !important;
+}
 
         .article-photos-title {
             color: #d46b9c;
@@ -182,7 +186,9 @@
     height: auto; /* 保持图片比例 */
     object-fit: contain; /* 完整显示图片 */
 }
-
+.media-container[style*="display: none"] {
+    display: none !important;
+}
         /* 返回按钮 */
         .back-btn {
             display: inline-block;
