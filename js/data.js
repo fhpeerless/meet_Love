@@ -45,7 +45,7 @@ export const lettersData = [
         date: "2025-08-20",
         text: "风起了，花落了，我知道，你正在走向我的路上！",
         photos: [
-            "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
+            "",
         ],
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
