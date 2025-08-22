@@ -1,26 +1,27 @@
 // js/background-music.js
 export class BackgroundMusicPlayer {
-
-constructor() {
-    this.audio = null;
-    this.playerContainer = null;
-    this.lyricsContainer = null;
-    this.isPlaying = false;
-    this.isPlayHintShown = false; // 新增标志位
-    this.currentSong = {
-        title: '未知歌曲',
-        url: '',
-        lrcUrl: ''
-    };
-    this.lyrics = [];
-    this.currentLyricIndex = -1;
-    this.defaultMusic = {
-        title: '温馨时光',
-        url: 'https://example.com/music/background.mp3',
-        lrcUrl: 'https://example.com/lyrics/song.lrc'
-    };
-    this.init();
-}
+    constructor() {
+        this.audio = null;
+        this.playerContainer = null;
+        this.lyricsContainer = null;
+        this.isPlaying = false;
+        this.currentSong = {
+            title: '未知歌曲',
+            url: '',
+            lrcUrl: '' // 添加歌词URL
+        };
+        
+        this.lyrics = []; // 存储解析后的歌词
+        this.currentLyricIndex = -1;
+        
+        this.defaultMusic = {
+            title: '温馨时光',
+            url: 'https://example.com/music/background.mp3',
+            lrcUrl: 'https://example.com/lyrics/song.lrc' // 默认歌词URL
+        };
+        
+        this.init();
+    }
     
     init() {
         this.createPlayer();
@@ -300,28 +301,24 @@ constructor() {
         playBtn.innerHTML = `<i class="icon">${this.isPlaying ? '⏸' : '▶'}</i>`;
     }
     
-showPlayHint() 
-    {
-    if (this.isPlayHintShown) return; // 如果提示已经显示过，直接返回
-    this.isPlayHintShown = true;
-
-    const hint = document.createElement('div');
-    hint.className = 'play-hint';
-    hint.textContent = '点击页面任意位置以播放背景音乐';
-    document.body.appendChild(hint);
-
-    // 设置提示显示时间为 10 秒
-    setTimeout(() => {
-        if (hint.parentElement) {
+    showPlayHint() {
+        const hint = document.createElement('div');
+        hint.className = 'play-hint';
+        hint.textContent = '点击页面任意位置以播放背景音乐';
+        document.body.appendChild(hint);
+        
+        setTimeout(() => {
+            if (hint.parentElement) {
+                hint.remove();
+            }
+        }, 5000);
+        
+        const playHandler = () => {
+            this.play();
             hint.remove();
-        }
-    }, 10000); // 10秒后移除提示
-
-    const playHandler = () => {
-        this.play();
-        hint.remove();
-        document.removeEventListener('click', playHandler);
-    };
-
-    document.addEventListener('click', playHandler);
+            document.removeEventListener('click', playHandler);
+        };
+        
+        document.addEventListener('click', playHandler);
+    }
 }
