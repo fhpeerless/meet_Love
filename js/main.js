@@ -22,8 +22,9 @@ function init() {
     startTimer();
     
     // 4. 初始化照片墙
+      if (window.innerWidth > 768) {
     createPhotoGrid();
-    
+        }
     // 5. 初始化信件列表
     generateLetters();
 }
