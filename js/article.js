@@ -18,7 +18,7 @@ export function displayArticle() {
         window.location.href = 'index.html';
         return;
     }
-    
+    // 更新标题、日期、正文
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
     document.getElementById('articleContent').textContent = letter.text;
