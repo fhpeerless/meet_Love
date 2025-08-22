@@ -34,7 +34,7 @@ function initBackgroundMusic() {
     bgMusicPlayer.setMusic(
        '孙燕姿-遇见', 
         'https://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
-        'https://gitee.com/dddacc/box_download/blob/master/lrc/yujian.lrc' // 您的LRC歌词文件URL
+        './lrc/yujian.lrc' // 您的LRC歌词文件URL
     );
 }
 
