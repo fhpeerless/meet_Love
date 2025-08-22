@@ -206,8 +206,6 @@
     max-width: 90%;
     backdrop-filter: blur(4px);
     background-color: rgba(255,255,255,0.6); /* 确保文字清晰可见的背景 */
-    overflow: visible;
-    height: auto;
 }
         
         /* 信件列表容器 */
@@ -443,31 +441,10 @@
         /* 响应式设计 */
         @media (max-width: 768px)
         {
-            .carousel-container {
-        display: none !important;
-                }
             .sidebar {
                 width: 150px;
             }
-
-               .photo-wall-caption {
-        max-height: 40px; /* 初始折叠高度 */
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-    }
-
-    .photo-wall-caption.expanded {
-        max-height: 1000px; /* 展开后最大高度 */
-    }
-
-    .toggle-btn {
-        margin-top: 10px;
-        text-align: center;
-        font-size: 0.9em;
-        color: #007BFF;
-        cursor: pointer;
-        display: block;
-    }
+            
             .avatar {
                 width: 70px;
                 height: 70px;
@@ -583,10 +560,9 @@
         <div class="photo-container">
             <div class="photo-carousel" id="photoGrid"></div>
         </div>
-  <div class="photo-wall-caption" id="caption">
+  <div class="photo-wall-caption">
         🌟 我的爱并不是说说而已，我做了一个发光礼盒，礼盒中有星星1314颗（亲手折制而成，正在叠），并创作了这个网站来记录叠每个星星时的感受，来表达我对爱情的守候与诚意！这份礼物代表着相守一生，可以尝试着交往，过程中在某一刻觉得不可能了，就不要耽误彼此，但可以成为好朋友！(星星时光是自从我开始搭建网站并且计划叠星星的时间！)
     </div>
-        <div class="toggle-btn" id="toggleBtn">展开全文</div>
         
  <h1 class="page-title">星星日记</h1>
         <!-- 信件列表容器 -->
