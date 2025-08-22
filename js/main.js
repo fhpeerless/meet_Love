@@ -33,7 +33,7 @@ function initBackgroundMusic() {
     // 设置背景音乐（替换为您的实际音乐链接）
     bgMusicPlayer.setMusic(
        '孙燕姿-遇见', 
-        '',
+        'https://lv-sycdn.kuwo.cn/d53f9032ac8943deadd895a82ddbd0ef/68a80b80/resource/30106/trackmedia/M800004RMLd70LGo7K.mp3',
         './lrc/yujian.lrc' // 您的LRC歌词文件URL
     );
 }
