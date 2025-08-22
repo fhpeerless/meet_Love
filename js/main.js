@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. 执行主初始化
     init();
 
-    // 2. 暴露全局函数
+    // 2. 暴露全局函数（必须在 init() 之后）
     window.toggleProfile = toggleProfile;
     window.toggleContact = toggleContact;
     window.bgMusicPlayer = bgMusicPlayer;
