@@ -40,6 +40,15 @@ function initBackgroundMusic() {
 
 // ✅ 页面加载完成后执行初始化
 document.addEventListener('DOMContentLoaded', function() {
+      // 判断是否为移动端（屏幕宽度 ≤ 768px）
+    if (window.innerWidth <= 768) {
+        // 选择整个 .photo-container 元素
+        const photoContainer = document.querySelector('.photo-container');
+        if (photoContainer) {
+            // 直接移除整个容器
+            photoContainer.remove();
+        }
+    }
     init();
     
     // 将函数暴露到全局（必须在 init() 之后）
