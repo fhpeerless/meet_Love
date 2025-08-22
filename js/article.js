@@ -45,13 +45,26 @@ export function displayArticle() {
     // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
     musicContainer.innerHTML = '';
-    if (letter.musicUrl) {
+    if (letter.musicUrl) 
+    {
         const audio = document.createElement('audio');
         audio.src = letter.musicUrl;
         audio.controls = true;
         audio.autoplay = true; // 自动播放
         audio.loop = true; // 循环播放
         audio.volume = 0.5; // 设置音量
+        audio.style.display = 'none'; // 隐藏音频控件
+
+     // 将音频添加到页面中（但不可见）
+    document.body.appendChild(audio);
+
+    // 用户交互后触发播放
+    window.addEventListener('click', () => {
+        if (!audio.paused) return;
+        audio.play().catch(error => {
+            console.warn('播放音乐失败:', error);
+        });
+    });
         
         // 停止之前播放的音乐
         if (currentAudio && !currentAudio.paused) {
@@ -65,7 +78,9 @@ export function displayArticle() {
         audioWrapper.appendChild(audio);
         musicContainer.appendChild(audioWrapper);
         musicContainer.style.display = 'block';
-    } else {
+    } 
+    else 
+    {
         musicContainer.style.display = 'none';
     }
 
