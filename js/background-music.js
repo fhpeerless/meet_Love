@@ -143,69 +143,42 @@ export class BackgroundMusicPlayer {
         }
     }
     
-// background-music.js
-// js/background-music.js
- async loadLyrics() {
+    async loadLyrics(lrcUrl) {
         try {
-            const response = await fetch(this.lrcUrl, {
-                headers: {
-                    'Accept': 'text/plain'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP 请求失败，状态码：${response.status}`);
-            }
-
-            const blob = await response.blob();
-            const lrcText = await blob.text();
-
-            if (!lrcText || lrcText.trim() === '') {
-                throw new Error('歌词内容为空');
-            }
-
-            if (!/^\[.*\]/.test(lrcText)) {
-                throw new Error('歌词格式不正确');
-            }
-
-            console.log("【歌词内容】", lrcText);
+            const response = await fetch(lrcUrl);
+            const lrcText = await response.text();
             this.parseLyrics(lrcText);
         } catch (error) {
-            console.error("【加载歌词失败】", error.message);
+            console.warn('加载歌词失败:', error);
             this.showNoLyrics();
         }
     }
-
+    
     parseLyrics(lrcText) {
-        // 解析歌词逻辑
-    }
-
-    showNoLyrics() {
-        // 显示无歌词提示
-    }
-}
-    
-parseLyrics(lrcText) {
-    this.lyrics = [];
-    const lines = lrcText.split('\n');
-    const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
-
-    for (const line of lines) {
-        const matches = [...line.matchAll(timeRegex)];
-        if (matches.length > 0) {
-            const time = this.parseTime(matches[0][1], matches[0][2], matches[0][3] || '00');
-            const text = line.replace(timeRegex, '').trim();
-            if (text) {
-                this.lyrics.push({ time, text });
+        this.lyrics = [];
+        const lines = lrcText.split('\n');
+        
+        // 正则表达式匹配时间标签 [mm:ss.xx] 或 [mm:ss]
+        const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
+        
+        lines.forEach(line => {
+            const matches = [...line.matchAll(timeRegex)];
+            if (matches.length > 0) {
+                const time = this.parseTime(matches[0][1], matches[0][2], matches[0][3] || '00');
+                const text = line.replace(timeRegex, '').trim();
+                
+                if (text) {
+                    this.lyrics.push({ time, text });
+                }
             }
-        }
+        });
+        
+        // 按时间排序
+        this.lyrics.sort((a, b) => a.time - b.time);
+        
+        // 初始化歌词显示
+        this.updateLyrics();
     }
-
-    this.lyrics.sort((a, b) => a.time - b.time);
-    this.updateLyrics();
-}
-
-    
     
     parseTime(minutes, seconds, centiseconds) {
         // 将时间转换为秒数
