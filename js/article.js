@@ -19,80 +19,75 @@ export function displayArticle() {
         return;
     }
     
-    // 设置基础内容
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
     document.getElementById('articleContent').textContent = letter.text;
-
+    
     // 处理照片
-    const articlePhotos = document.getElementById('articlePhotos');
     const photoGrid = document.getElementById('photoGrid');
     photoGrid.innerHTML = '';
-
-    if (letter.photos && Array.isArray(letter.photos) && letter.photos.length > 0) {
-        const validPhotos = letter.photos.filter(url => url.trim() !== '');
-        if (validPhotos.length > 0) {
-            articlePhotos.style.display = 'block';
-            validPhotos.forEach(photoUrl => {
-                const img = document.createElement('img');
-                img.src = photoUrl;
-                img.alt = '照片';
-                img.onerror = () => { img.style.display = 'none'; }; // 图片加载失败时隐藏
-                photoGrid.appendChild(img);
-            });
-        } else {
-            articlePhotos.style.display = 'none';
-        }
+    if (letter.photos && letter.photos.length > 0) {
+        letter.photos.forEach(photoSrc => {
+            const item = document.createElement('div');
+            item.className = 'photo-item';
+            const img = document.createElement('img');
+            img.src = photoSrc;
+            img.alt = letter.title;
+            img.loading = 'lazy';
+            item.appendChild(img);
+            photoGrid.appendChild(item);
+        });
+        document.getElementById('articlePhotos').style.display = 'block';
     } else {
-        articlePhotos.style.display = 'none';
-    }
-
-    // 处理视频
-    const videoContainer = document.getElementById('videoContainer');
-    videoContainer.innerHTML = '';
-    if (letter.videoUrl && letter.videoUrl.trim() !== '') {
-        const video = document.createElement('video');
-        video.src = letter.videoUrl;
-        video.controls = true;
-        video.loop = true;
-        video.muted = true; // 默认静音（避免自动播放限制）
-        video.playsInline = true; // iOS内联播放
-        videoContainer.appendChild(video);
-        videoContainer.style.display = 'block';
-    } else {
-        videoContainer.style.display = 'none';
+        document.getElementById('articlePhotos').style.display = 'none';
     }
 
     // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
     musicContainer.innerHTML = '';
-    if (letter.musicUrl && letter.musicUrl.trim() !== '') {
+    if (letter.musicUrl) {
         const audio = document.createElement('audio');
         audio.src = letter.musicUrl;
-        audio.loop = true;
-        audio.style.display = 'none'; // 隐藏原生控件
-        audio.muted = true; // 默认静音
-        audio.addEventListener('ended', () => {
-            audio.currentTime = 0;
-            audio.play();
-        });
-
-        // 用户交互后触发播放
-        window.addEventListener('click', () => {
-            if (!audio.paused) return;
-            audio.play().catch(error => {
-                console.warn('播放音乐失败:', error);
-            });
-        });
-
+        audio.controls = true;
+        audio.autoplay = true; // 自动播放
+        audio.loop = true; // 循环播放
+        audio.volume = 0.5; // 设置音量
+        
         // 停止之前播放的音乐
         if (currentAudio && !currentAudio.paused) {
             currentAudio.pause();
         }
         currentAudio = audio;
-        musicContainer.appendChild(audio);
+        
+        const audioWrapper = document.createElement('div');
+        audioWrapper.className = 'audio-player';
+        audioWrapper.innerHTML = '<h3>背景音乐</h3>';
+        audioWrapper.appendChild(audio);
+        musicContainer.appendChild(audioWrapper);
         musicContainer.style.display = 'block';
     } else {
         musicContainer.style.display = 'none';
+    }
+
+    // 处理视频
+    const videoContainer = document.getElementById('videoContainer');
+    videoContainer.innerHTML = '';
+    if (letter.videoUrl) {
+        const video = document.createElement('video');
+        video.src = letter.videoUrl;
+        video.controls = true;
+        video.autoplay = true; // 自动播放
+        video.loop = true; // 循环播放
+        video.muted = false; // 不静音
+        video.playsInline = true; // 在iOS上内联播放
+        
+        const videoWrapper = document.createElement('div');
+        videoWrapper.className = 'video-player';
+        videoWrapper.innerHTML = '<h3>视频</h3>';
+        videoWrapper.appendChild(video);
+        videoContainer.appendChild(videoWrapper);
+        videoContainer.style.display = 'block';
+    } else {
+        videoContainer.style.display = 'none';
     }
 }
