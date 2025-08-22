@@ -9,21 +9,42 @@ import { toggleProfile, toggleContact } from './sidebar.js';
 let bgMusicPlayer = null;
 
 // 初始化函数 - 集中所有初始化逻辑
+// 修改 main.js 中的 init 函数
 function init() {
-    // 1. 初始化背景音乐播放器
-    initBackgroundMusic();
-    
-    // 2. 初始化爱心动画
-    setInterval(createHeart, 150);
-    
-    // 3. 初始化计时器
-    startTimer();
-    
-    // 4. 初始化照片墙
-    createPhotoGrid();
-    
-    // 5. 初始化信件列表
-    generateLetters();
+    try {
+        // 1. 初始化背景音乐播放器
+        initBackgroundMusic();
+    } catch (error) {
+        console.error('背景音乐初始化失败:', error);
+    }
+
+    try {
+        // 2. 初始化爱心动画
+        setInterval(createHeart, 150);
+    } catch (error) {
+        console.error('爱心动画初始化失败:', error);
+    }
+
+    try {
+        // 3. 初始化计时器
+        startTimer();
+    } catch (error) {
+        console.error('计时器初始化失败:', error);
+    }
+
+    try {
+        // 4. 初始化照片墙
+        createPhotoGrid();
+    } catch (error) {
+        console.error('照片墙初始化失败:', error);
+    }
+
+    try {
+        // 5. 初始化信件列表
+        generateLetters();
+    } catch (error) {
+        console.error('信件列表初始化失败:', error);
+    }
 }
 
 function initBackgroundMusic() {
