@@ -19,9 +19,9 @@ export const lettersData = [
         date: "2025-08-20",
         text: "去干饭吧！去运动吧，去看剧吧，去逛逛大街吧，嗯，只不过是一个人！，",
         photos: [
-            "./images/5b50a9502e745b6480ee27afafe17bf.jpg",
-            "./images/5cda81b90c55443835d42f0fb073b53.jpg",
-            "./images/5cda81b90c55443835d42f0fb073b53.jpg"
+            "http://note.youdao.com/yws/api/personal/file/61d6646e885cad7087c4832db892d949?method=download&inline=true&shareKey=ee52693b182bc00d8f5da13cc6dcd16b",
+            "http://note.youdao.com/yws/api/personal/file/fc574f504d05ff09b9239249432bf63b?method=download&inline=true&shareKey=94dcd87abea0a6cb23e48a3038c06c88",
+            "http://note.youdao.com/yws/api/personal/file/7608eb5f65eb4f72e5030198bc144348?method=download&inline=true&shareKey=dc5911918414f812da27138d3048ef64"
         ],
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
