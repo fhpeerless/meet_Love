@@ -163,11 +163,15 @@
             font-size: 1.2em;
         }
 
-       .photo-grid {
+/* 修改 photo-grid 的最大高度 */
+.photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     grid-gap: 15px;
+    max-height: 400px; /* 限制最大高度 */
+    overflow-y: auto; /* 超出时滚动 */
 }
+
 
         .photo-item {
             border-radius: 12px;
@@ -181,10 +185,12 @@
         }
 
    /* 确保图片完整显示 */
+/* 限制图片最大高度 */
 .photo-item img {
     width: 100%;
-    height: auto; /* 保持图片比例 */
-    object-fit: contain; /* 完整显示图片 */
+    height: auto;
+    max-height: 300px; /* 最大高度限制 */
+    object-fit: cover; /* 按比例裁剪填充 */
 }
 .media-container[style*="display: none"] {
     display: none !important;
