@@ -143,42 +143,56 @@ export class BackgroundMusicPlayer {
         }
     }
     
-    async loadLyrics(lrcUrl) {
-        try {
-            const response = await fetch(lrcUrl);
-            const lrcText = await response.text();
-            this.parseLyrics(lrcText);
-        } catch (error) {
-            console.warn('加载歌词失败:', error);
-            this.showNoLyrics();
-        }
-    }
-    
-    parseLyrics(lrcText) {
-        this.lyrics = [];
-        const lines = lrcText.split('\n');
-        
-        // 正则表达式匹配时间标签 [mm:ss.xx] 或 [mm:ss]
-        const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
-        
-        lines.forEach(line => {
-            const matches = [...line.matchAll(timeRegex)];
-            if (matches.length > 0) {
-                const time = this.parseTime(matches[0][1], matches[0][2], matches[0][3] || '00');
-                const text = line.replace(timeRegex, '').trim();
-                
-                if (text) {
-                    this.lyrics.push({ time, text });
-                }
+// js/background-music.js
+async loadLyrics(lrcUrl) {
+    try {
+        const response = await fetch(lrcUrl, {
+            headers: {
+                'Accept': 'text/plain' // 强制请求纯文本格式
             }
         });
-        
-        // 按时间排序
-        this.lyrics.sort((a, b) => a.time - b.time);
-        
-        // 初始化歌词显示
-        this.updateLyrics();
+
+        if (!response.ok) {
+            throw new Error(`HTTP 请求失败，状态码：${response.status}`);
+        }
+
+        // 强制以文本形式解析响应（即使服务器返回 application/octet-stream）
+        const lrcText = await response.text();
+
+        // 调试输出歌词内容（便于验证）
+        console.log("【歌词内容】", lrcText);
+
+        // 解析歌词
+        this.parseLyrics(lrcText);
+    } catch (error) {
+        console.error("【加载歌词失败】", error.message);
+
+        // 显示“暂无歌词”提示
+        this.showNoLyrics();
     }
+}
+    
+parseLyrics(lrcText) {
+    this.lyrics = [];
+    const lines = lrcText.split('\n');
+    const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
+
+    for (const line of lines) {
+        const matches = [...line.matchAll(timeRegex)];
+        if (matches.length > 0) {
+            const time = this.parseTime(matches[0][1], matches[0][2], matches[0][3] || '00');
+            const text = line.replace(timeRegex, '').trim();
+            if (text) {
+                this.lyrics.push({ time, text });
+            }
+        }
+    }
+
+    this.lyrics.sort((a, b) => a.time - b.time);
+    this.updateLyrics();
+}
+
+    
     
     parseTime(minutes, seconds, centiseconds) {
         // 将时间转换为秒数
