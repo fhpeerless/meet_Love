@@ -139,15 +139,14 @@
     align-items: center;
     position: relative;
 }
-/* 轮播图容器 - 保持宽高比为 16:9（或与图片一致） */
 .photo-carousel {
     width: 100%;
-    padding-top: 56.25%; /* 16:9 = 9/16 * 100% = 56.25% */
+    height: 220px; /* 适当高度，避免遮挡 */
     position: relative;
-    overflow: hidden;
     border-radius: 12px;
+    overflow: hidden;
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    background: #f8f8f8; /* 避免空白区域发白 */
+    background: #f8f8f8;
 }
 
         .photo-grid {
@@ -158,14 +157,13 @@
             height: 100%;
         }
 
-/* 图片绝对定位，覆盖整个容器 */
+/* 每张轮播图 */
 .photo-item {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* 图片覆盖容器，超出部分裁剪 */
     opacity: 0;
     z-index: 1;
     transition: opacity 1s ease-in-out;
@@ -556,8 +554,8 @@
     <!-- 侧边栏 -->
     <div class="sidebar">
         <img src="./images/tx.jpg" alt="头像" class="avatar" onclick="toggleProfile()">
-<button id="profileBtn" class="sidebar-btn">个人介绍</button>
-<button id="contactBtn" class="sidebar-btn">我的联系方式</button>
+        <button class="sidebar-btn" onclick="toggleProfile()">个人介绍</button>
+        <button class="sidebar-btn" onclick="toggleContact()">我的联系方式</button>
         
         <div class="profile" id="profile">
             <h3>宣言~~</h3>
@@ -598,7 +596,7 @@
     </div>
 
  <script type="module" src="./js/main.js"></script>
-<script src="js/profileModule.js"></script>
+
 
 </body>
 </html>
