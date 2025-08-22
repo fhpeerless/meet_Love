@@ -258,15 +258,30 @@
         }
 
         /* 新增样式 */
-        .media-container {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        .audio-player, .video-player {
+/* 在 article.html.txt 的 CSS 部分添加或确认存在 */
+.media-container {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    text-align: center; /* 确保内容居中 */
+}
+
+.video-player {
+    margin: 0 auto; /* 水平居中 */
+    text-align: center;
+}
+
+video {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    height: auto;
+    display: block;
+    margin: 0 auto; /* 视频本身也居中 */
+}
+        .audio-player {
             margin: 10px 0;
         }
         
