@@ -22,7 +22,13 @@ function init() {
     startTimer();
     
     // 4. 初始化照片墙
-    createPhotoGrid();
+    if (window.innerWidth <= 768) {
+    // 找到目标容器
+    const photoGrid = document.getElementById('photoGrid');
+    if (photoGrid) {
+        // 移除整个图片区域
+        photoGrid.remove();
+    }
     
     // 5. 初始化信件列表
     generateLetters();
@@ -74,12 +80,6 @@ document.addEventListener('click', function(e) {
         contact.classList.remove('show');
     }
     // 检测移动端（屏幕宽度 ≤ 768px）
-if (window.innerWidth <= 768) {
-    // 找到目标容器
-    const photoGrid = document.getElementById('photoGrid');
-    if (photoGrid) {
-        // 移除整个图片区域
-        photoGrid.remove();
-    }
+
 }
 });
