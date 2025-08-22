@@ -38,37 +38,54 @@ function initBackgroundMusic() {
     );
 }
 
-// ✅ 页面加载完成后执行初始化
+// ✅ 将所有初始化和事件绑定集中在一个 DOMContentLoaded 中
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. 执行主初始化
     init();
-    
-    // 将函数暴露到全局（必须在 init() 之后）
+
+    // 2. 暴露全局函数
     window.toggleProfile = toggleProfile;
     window.toggleContact = toggleContact;
     window.bgMusicPlayer = bgMusicPlayer;
-});
 
-// 点击页面空白处关闭侧边栏
-document.addEventListener('click', function(e) {
-    const profile = document.getElementById('profile');
-    const contact = document.getElementById('contact');
-    const avatar = document.querySelector('.avatar');
-    const profileBtn = document.getElementById('profileBtn');
-    const contactBtn = document.getElementById('contactBtn');
-    
-    // 检查点击是否在相关元素之外
-    const isOutsideProfile = !avatar.contains(e.target) && 
-                           !profileBtn.contains(e.target) && 
-                           !profile.contains(e.target);
-    
-    const isOutsideContact = !contactBtn.contains(e.target) && 
-                           !contact.contains(e.target);
-    
-    if (isOutsideProfile) {
-        profile.classList.remove('show');
+    // 3. 添加移动端折叠逻辑
+    const caption = document.getElementById('caption');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    if (caption && toggleBtn) { // ✅ 安全检查：确保元素存在
+        if (window.innerWidth <= 768) {
+            toggleBtn.style.display = 'block';
+
+            toggleBtn.addEventListener('click', () => {
+                caption.classList.toggle('expanded');
+                toggleBtn.textContent = caption.classList.contains('expanded') ? '收起' : '展开全文';
+            });
+        } else {
+            toggleBtn.style.display = 'none';
+        }
     }
-    
-    if (isOutsideContact) {
-        contact.classList.remove('show');
-    }
+
+    // 4. 点击页面空白处关闭侧边栏
+    document.addEventListener('click', function(e) {
+        const profile = document.getElementById('profile');
+        const contact = document.getElementById('contact');
+        const avatar = document.querySelector('.avatar');
+        const profileBtn = document.getElementById('profileBtn');
+        const contactBtn = document.getElementById('contactBtn');
+        
+        const isOutsideProfile = !avatar?.contains(e.target) && 
+                               !profileBtn?.contains(e.target) && 
+                               !profile?.contains(e.target);
+        
+        const isOutsideContact = !contactBtn?.contains(e.target) && 
+                               !contact?.contains(e.target);
+        
+        if (isOutsideProfile) {
+            profile?.classList.remove('show');
+        }
+        
+        if (isOutsideContact) {
+            contact?.classList.remove('show');
+        }
+    });
 });
