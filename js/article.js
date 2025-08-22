@@ -1,7 +1,9 @@
-// js/article.js (修正后的代码)
+// js/article.js
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
+
 let currentAudio = null; // 用于跟踪当前播放的音频
+
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
     if (!letterId) {
@@ -9,15 +11,18 @@ export function displayArticle() {
         window.location.href = 'index.html';
         return;
     }
+    
     const letter = lettersData.find(l => l.id == letterId);
     if (!letter) {
         console.warn('未找到 ID 为', letterId, '的信件');
         window.location.href = 'index.html';
         return;
     }
+    
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
     document.getElementById('articleContent').textContent = letter.text;
+    
     // 处理照片
     const photoGrid = document.getElementById('photoGrid');
     photoGrid.innerHTML = '';
@@ -36,6 +41,7 @@ export function displayArticle() {
     } else {
         document.getElementById('articlePhotos').style.display = 'none';
     }
+
     // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
     musicContainer.innerHTML = '';
@@ -46,11 +52,13 @@ export function displayArticle() {
         audio.autoplay = true; // 自动播放
         audio.loop = true; // 循环播放
         audio.volume = 0.5; // 设置音量
+        
         // 停止之前播放的音乐
         if (currentAudio && !currentAudio.paused) {
             currentAudio.pause();
         }
         currentAudio = audio;
+        
         const audioWrapper = document.createElement('div');
         audioWrapper.className = 'audio-player';
         audioWrapper.innerHTML = '<h3>背景音乐</h3>';
@@ -60,6 +68,7 @@ export function displayArticle() {
     } else {
         musicContainer.style.display = 'none';
     }
+
     // 处理视频
     const videoContainer = document.getElementById('videoContainer');
     videoContainer.innerHTML = '';
@@ -71,6 +80,7 @@ export function displayArticle() {
         video.loop = true; // 循环播放
         video.muted = false; // 不静音
         video.playsInline = true; // 在iOS上内联播放
+        
         const videoWrapper = document.createElement('div');
         videoWrapper.className = 'video-player';
         videoWrapper.innerHTML = '<h3>视频</h3>';
