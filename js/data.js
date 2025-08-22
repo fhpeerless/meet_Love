@@ -9,7 +9,7 @@ export const lettersData = [
             "https://picsum.photos/seed/love1/400/300",
             "https://picsum.photos/seed/love2/400/300"
         ],
-        musicUrl: "", // 替换为实际的音乐直链
+        musicUrl: "https://lv-sycdn.kuwo.cn/326b76bcf133ab85578100bc6c3796ec/68a83219/resource/30106/trackmedia/M800004RMLd70LGo7K.mp3", // 替换为实际的音乐直链
         videoUrl: ""  // 替换为实际的视频直链
     },
 
