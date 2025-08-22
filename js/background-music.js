@@ -145,27 +145,43 @@ export class BackgroundMusicPlayer {
     
 // background-music.js
 // js/background-music.js
-async loadLyrics(lrcUrl) {
-    try {
-        const workerUrl = 'https://123.68208932.workers.dev?url='; // 替换为你的 Worker URL
-        const finalLrcUrl = workerUrl + encodeURIComponent(lrcUrl);
+ async loadLyrics() {
+        try {
+            const response = await fetch(this.lrcUrl, {
+                headers: {
+                    'Accept': 'text/plain'
+                }
+            });
 
-        const response = await fetch(finalLrcUrl, {
-            headers: {
-                'Accept': 'text/plain'
+            if (!response.ok) {
+                throw new Error(`HTTP 请求失败，状态码：${response.status}`);
             }
-        });
 
-        if (!response.ok) {
-            throw new Error(`HTTP 请求失败，状态码：${response.status}`);
+            const blob = await response.blob();
+            const lrcText = await blob.text();
+
+            if (!lrcText || lrcText.trim() === '') {
+                throw new Error('歌词内容为空');
+            }
+
+            if (!/^\[.*\]/.test(lrcText)) {
+                throw new Error('歌词格式不正确');
+            }
+
+            console.log("【歌词内容】", lrcText);
+            this.parseLyrics(lrcText);
+        } catch (error) {
+            console.error("【加载歌词失败】", error.message);
+            this.showNoLyrics();
         }
+    }
 
-        const lrcText = await response.text();
-        console.log("【歌词内容】", lrcText);
-        this.parseLyrics(lrcText);
-    } catch (error) {
-        console.error("【加载歌词失败】", error.message);
-        this.showNoLyrics();
+    parseLyrics(lrcText) {
+        // 解析歌词逻辑
+    }
+
+    showNoLyrics() {
+        // 显示无歌词提示
     }
 }
     
