@@ -26,25 +26,31 @@ export function displayArticle() {
     // 处理照片
     const photoGrid = document.getElementById('photoGrid');
     photoGrid.innerHTML = '';
-    if (letter.photos && letter.photos.length > 0) {
-        letter.photos.forEach(photoSrc => {
-            const item = document.createElement('div');
-            item.className = 'photo-item';
-            const img = document.createElement('img');
-            img.src = photoSrc;
-            img.alt = letter.title;
-            img.loading = 'lazy';
-            item.appendChild(img);
-            photoGrid.appendChild(item);
-        });
-        document.getElementById('articlePhotos').style.display = 'block';
-    } else {
-        document.getElementById('articlePhotos').style.display = 'none';
-    }
+    
+if (letter.photos && letter.photos.length > 0) {
+    const photoGrid = document.createElement('div');
+    photoGrid.className = 'photo-grid';
+    
+    letter.photos.forEach(photoUrl => {
+        const img = document.createElement('img');
+        img.src = photoUrl;
+        img.alt = '照片';
+        photoGrid.appendChild(img);
+    });
+
+    const articlePhotos = document.getElementById('articlePhotos');
+    articlePhotos.innerHTML = ''; // 清空旧内容
+    articlePhotos.appendChild(photoGrid);
+} else {
+    // 如果没有照片，移除照片模块
+    const articlePhotos = document.getElementById('articlePhotos');
+    articlePhotos.style.display = 'none';
+}
 
     // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
     musicContainer.innerHTML = '';
+    
     if (letter.musicUrl) 
     {
         const audio = document.createElement('audio');
@@ -83,6 +89,7 @@ export function displayArticle() {
     {
         musicContainer.style.display = 'none';
     }
+    
 
     // 处理视频
     const videoContainer = document.getElementById('videoContainer');
