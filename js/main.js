@@ -38,11 +38,10 @@ function initBackgroundMusic() {
     );
 }
 
-// ✅ 将所有初始化和事件绑定集中在一个 DOMContentLoaded 中
+// 修改 main.js 中的 DOMContentLoaded 事件处理程序
 document.addEventListener('DOMContentLoaded', function() {
     // 1. 执行主初始化
     init();
-
     // 2. 暴露全局函数（必须在 init() 之后）
     window.toggleProfile = toggleProfile;
     window.toggleContact = toggleContact;
@@ -51,11 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. 添加移动端折叠逻辑
     const caption = document.getElementById('caption');
     const toggleBtn = document.getElementById('toggleBtn');
-
-    if (caption && toggleBtn) { // ✅ 安全检查：确保元素存在
+    if (caption && toggleBtn) {
         if (window.innerWidth <= 768) {
             toggleBtn.style.display = 'block';
-
             toggleBtn.addEventListener('click', () => {
                 caption.classList.toggle('expanded');
                 toggleBtn.textContent = caption.classList.contains('expanded') ? '收起' : '展开全文';
@@ -72,18 +69,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const avatar = document.querySelector('.avatar');
         const profileBtn = document.getElementById('profileBtn');
         const contactBtn = document.getElementById('contactBtn');
-        
+
         const isOutsideProfile = !avatar?.contains(e.target) && 
                                !profileBtn?.contains(e.target) && 
                                !profile?.contains(e.target);
-        
         const isOutsideContact = !contactBtn?.contains(e.target) && 
                                !contact?.contains(e.target);
-        
+
         if (isOutsideProfile) {
             profile?.classList.remove('show');
         }
-        
         if (isOutsideContact) {
             contact?.classList.remove('show');
         }
