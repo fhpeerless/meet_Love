@@ -83,6 +83,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // main.js
+document.addEventListener('DOMContentLoaded', function () {
+    // 初始化其他功能（背景音乐、爱心动画等）
+    init();
+
+    // 绑定个人介绍和联系方式按钮事件
+    const profileBtn = document.getElementById('profileBtn');
+    const contactBtn = document.getElementById('contactBtn');
+
+    if (profileBtn) {
+        profileBtn.addEventListener('click', () => {
+            window.profileModule.toggleProfile();
+        });
+    }
+
+    if (contactBtn) {
+        contactBtn.addEventListener('click', () => {
+            window.profileModule.toggleContact();
+        });
+    }
+
+    // 其他逻辑...
+});
+
     // 4. 点击页面空白处关闭侧边栏
     document.addEventListener('click', function(e) {
         const profile = document.getElementById('profile');
