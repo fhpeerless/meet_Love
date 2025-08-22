@@ -144,10 +144,11 @@ export class BackgroundMusicPlayer {
     }
     
 // background-music.js
+// js/background-music.js
 async loadLyrics(lrcUrl) {
     try {
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // 临时代理
-        const finalLrcUrl = proxyUrl + lrcUrl;
+        const workerUrl = 'https://123.68208932.workers.dev?url='; // 替换为你的 Worker URL
+        const finalLrcUrl = workerUrl + encodeURIComponent(lrcUrl);
 
         const response = await fetch(finalLrcUrl, {
             headers: {
@@ -159,8 +160,7 @@ async loadLyrics(lrcUrl) {
             throw new Error(`HTTP 请求失败，状态码：${response.status}`);
         }
 
-        const blob = await response.blob();
-        const lrcText = await blob.text();
+        const lrcText = await response.text();
         console.log("【歌词内容】", lrcText);
         this.parseLyrics(lrcText);
     } catch (error) {
