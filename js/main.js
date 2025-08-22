@@ -14,15 +14,13 @@ function init() {
     initBackgroundMusic();
     
     // 2. 初始化爱心动画
-    if (window.innerWidth > 768) {
     setInterval(createHeart, 150);
-}
     
     // 3. 初始化计时器
     startTimer();
     
     // 4. 初始化照片墙
-createPhotoGrid();
+    createPhotoGrid();
     
     // 5. 初始化信件列表
     generateLetters();
@@ -73,7 +71,4 @@ document.addEventListener('click', function(e) {
     if (isOutsideContact) {
         contact.classList.remove('show');
     }
-    // 检测移动端（屏幕宽度 ≤ 768px）
-
-}
 });
