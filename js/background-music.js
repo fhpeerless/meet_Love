@@ -148,7 +148,7 @@ async loadLyrics(lrcUrl) {
     try {
         const response = await fetch(lrcUrl, {
             headers: {
-                'Accept': 'text/plain' // 强制请求纯文本格式
+                'Accept': 'text/plain'
             }
         });
 
@@ -156,18 +156,17 @@ async loadLyrics(lrcUrl) {
             throw new Error(`HTTP 请求失败，状态码：${response.status}`);
         }
 
-        // 强制以文本形式解析响应（即使服务器返回 application/octet-stream）
-        const lrcText = await response.text();
+        const blob = await response.blob();
+        const lrcText = await blob.text();
 
-        // 调试输出歌词内容（便于验证）
+        if (!lrcText || lrcText.trim() === '') {
+            throw new Error('歌词内容为空');
+        }
+
         console.log("【歌词内容】", lrcText);
-
-        // 解析歌词
         this.parseLyrics(lrcText);
     } catch (error) {
         console.error("【加载歌词失败】", error.message);
-
-        // 显示“暂无歌词”提示
         this.showNoLyrics();
     }
 }
