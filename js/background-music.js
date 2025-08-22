@@ -313,7 +313,7 @@ export class BackgroundMusicPlayer {
             if (hint.parentElement) {
                 hint.remove();
             }
-        }, 8000);
+        }, 10000);
         
         const playHandler = () => {
             this.play();
