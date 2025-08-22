@@ -302,6 +302,8 @@ export class BackgroundMusicPlayer {
     }
     
     showPlayHint() {
+        if (this.isPlayHintShown) return; // 如果提示已经显示过，直接返回
+             this.isPlayHintShown = true;
         const hint = document.createElement('div');
         hint.className = 'play-hint';
         hint.textContent = '点击页面任意位置以播放背景音乐';
@@ -311,7 +313,7 @@ export class BackgroundMusicPlayer {
             if (hint.parentElement) {
                 hint.remove();
             }
-        }, 5000);
+        }, 8000);
         
         const playHandler = () => {
             this.play();
