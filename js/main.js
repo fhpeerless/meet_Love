@@ -22,13 +22,7 @@ function init() {
     startTimer();
     
     // 4. 初始化照片墙
-    if (window.innerWidth <= 768) {
-    // 找到目标容器
-    const photoGrid = document.getElementById('photoGrid');
-    if (photoGrid) {
-        // 移除整个图片区域
-        photoGrid.remove();
-    }
+createPhotoGrid();
     
     // 5. 初始化信件列表
     generateLetters();
