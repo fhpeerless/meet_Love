@@ -37,7 +37,7 @@ export const lettersData = [
         videoUrl: "https://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
     },
     // ... 其他信件
-            {
+    {
         id: 4,
         title: "4.☆=0.秋风凉我♥",
         date: "2025-08-22",
@@ -46,7 +46,7 @@ export const lettersData = [
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
     }
-    // ... 其他信件
+
 ];
 
 // ✅ 移除了：window.lettersData = lettersData;
