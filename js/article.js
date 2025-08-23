@@ -4,8 +4,8 @@ import { formatDate } from './utils.js';
 
 let currentAudio = null; // 用于跟踪当前播放的音频
 
-export function displayArticle() {
-   const letterId = localStorage.getItem('currentLetterId');
+export function displayArticle(container) {
+    const letterId = localStorage.getItem('currentLetterId');
     if (!letterId) {
         console.warn('未找到信件 ID');
         return;
@@ -16,28 +16,23 @@ export function displayArticle() {
         return;
     }
 
-     // 创建详情页内容
+    // 创建详情页内容
     const articleContent = document.createElement('div');
     articleContent.innerHTML = `
         <a href="index.html" class="back-btn">← 返回</a>
-        <h1 class="article-title" id="articleTitle">${letter.title}</h1>
-        <div class="article-date" id="articleDate">${formatDate(letter.date)}</div>
-        <div class="article-content" id="articleContent">${letter.text}</div>
-        <div class="article-photos" id="articlePhotos">
+        <h1 class="article-title">${letter.title}</h1>
+        <div class="article-date">${formatDate(letter.date)}</div>
+        <div class="article-content">${letter.text}</div>
+        <div class="article-photos">
             <div class="article-photos-title">照片记录</div>
-            <div class="photo-grid" id="photoGrid"></div>
+            <div class="photo-grid"></div>
         </div>
         <div class="media-container" id="musicContainer"></div>
         <div class="media-container" id="videoContainer"></div>
     `;
-    // 更新标题、日期、正文
-    document.getElementById('articleTitle').textContent = letter.title;
-    document.getElementById('articleDate').textContent = formatDate(letter.date);
-    document.getElementById('articleContent').textContent = letter.text;
-    
+
     // 处理照片
-    const photoGrid = document.getElementById('photoGrid');
-    photoGrid.innerHTML = '';
+    const photoGrid = articleContent.querySelector('.photo-grid');
     if (letter.photos && letter.photos.length > 0) {
         letter.photos.forEach(photoSrc => {
             const item = document.createElement('div');
@@ -49,57 +44,42 @@ export function displayArticle() {
             item.appendChild(img);
             photoGrid.appendChild(item);
         });
-        document.getElementById('articlePhotos').style.display = 'block';
     } else {
-        document.getElementById('articlePhotos').style.display = 'none';
+        articleContent.querySelector('.article-photos').style.display = 'none';
     }
 
     // 处理音乐
-    const musicContainer = document.getElementById('musicContainer');
-    musicContainer.innerHTML = '';
+    const musicContainer = articleContent.querySelector('#musicContainer');
     if (letter.musicUrl) {
         const audio = document.createElement('audio');
         audio.src = letter.musicUrl;
         audio.controls = true;
-        audio.autoplay = true; // 自动播放
-        audio.loop = true; // 循环播放
-        audio.volume = 0.5; // 设置音量
-        
-        // 停止之前播放的音乐
+        audio.autoplay = true;
+        audio.loop = true;
+        audio.volume = 0.5;
+
         if (currentAudio && !currentAudio.paused) {
             currentAudio.pause();
         }
         currentAudio = audio;
-        
-        const audioWrapper = document.createElement('div');
-        audioWrapper.className = 'audio-player';
-        audioWrapper.innerHTML = '<h3>背景音乐</h3>';
-        audioWrapper.appendChild(audio);
-        musicContainer.appendChild(audioWrapper);
-        musicContainer.style.display = 'block';
-    } else {
-        musicContainer.style.display = 'none';
+
+        musicContainer.appendChild(audio);
     }
 
     // 处理视频
-    const videoContainer = document.getElementById('videoContainer');
-    videoContainer.innerHTML = '';
+    const videoContainer = articleContent.querySelector('#videoContainer');
     if (letter.videoUrl) {
         const video = document.createElement('video');
         video.src = letter.videoUrl;
         video.controls = true;
-        video.autoplay = true; // 自动播放
-        video.loop = true; // 循环播放
-        video.muted = false; // 不静音
-        video.playsInline = true; // 在iOS上内联播放
-        
-        const videoWrapper = document.createElement('div');
-        videoWrapper.className = 'video-player';
-        videoWrapper.innerHTML = '<h3>视频</h3>';
-        videoWrapper.appendChild(video);
-        videoContainer.appendChild(videoWrapper);
-        videoContainer.style.display = 'block';
-    } else {
-        videoContainer.style.display = 'none';
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = false;
+        video.playsInline = true;
+        videoContainer.appendChild(video);
     }
+
+    // 将内容添加到传入的容器中
+    container.innerHTML = ''; // 清空容器
+    container.appendChild(articleContent);
 }
