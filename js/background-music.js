@@ -259,9 +259,17 @@ createPlayer() {
         lyricsContent.innerHTML = '<div class="lyrics-line">歌词加载中</div>';
     }
     
-    toggleLyrics() {
-        this.lyricsContainer.classList.toggle('show');
+toggleLyrics() {
+    const btn = document.getElementById('lyricsBtn');
+    
+    if (this.lyricsContainer.style.display === 'none') {
+        this.lyricsContainer.style.display = 'block';
+        btn.innerHTML = '<i class="icon">📝</i>'; // 显示歌词
+    } else {
+        this.lyricsContainer.style.display = 'none';
+        btn.innerHTML = '<i class="icon">👁️</i>'; // 隐藏了，提示可查看
     }
+}
     
     play() {
         if (this.audio && this.currentSong.url) {
