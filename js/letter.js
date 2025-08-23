@@ -1,7 +1,10 @@
-// js/letter.js
+import { lettersData } from './data.js';
+import { formatDate } from './utils.js';
+
 export function generateLetters() {
     const letterList = document.getElementById('letterList');
     if (!letterList) return;
+
     letterList.innerHTML = '';
     lettersData.forEach(letter => {
         const li = document.createElement('li');
