@@ -293,11 +293,9 @@
     z-index: 1000;
     transition: all 0.3s ease;
 }
-
 .bg-music-player:hover {
     background: linear-gradient(145deg, #16213e, #0f3460);
 }
-
 .player-content {
     display: flex;
     justify-content: space-between;
@@ -305,21 +303,17 @@
     padding: 8px 15px;
     color: #e9e9e9;
 }
-
 .song-info {
     flex: 1;
 }
-
 .song-title {
     font-size: 0.9em;
     font-weight: 500;
 }
-
 .player-controls {
     display: flex;
     gap: 10px;
 }
-
 .control-btn {
     background: rgba(255, 255, 255, 0.1);
     border: none;
@@ -334,39 +328,32 @@
     transition: all 0.2s ease;
     font-size: 0.8em;
 }
-
 .control-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
 }
-
 .control-btn.close {
     background: rgba(255, 87, 87, 0.2);
 }
-
 .control-btn.close:hover {
     background: rgba(255, 87, 87, 0.3);
     transform: scale(1.1) rotate(90deg);
 }
-
 .progress-container {
     height: 2px;
     background: rgba(255, 255, 255, 0.1);
 }
-
 .progress-bar {
     height: 100%;
     width: 100%;
     cursor: pointer;
 }
-
 .progress-fill {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #ff6b6b, #feca57);
     transition: width 0.1s linear;
 }
-
 /* 播放提示 */
 .play-hint {
     position: fixed;
@@ -396,20 +383,17 @@
 /* 背景音乐播放器样式 完*/
 
 /* 歌词相关样式 */
-/* 默认隐藏（用 max-height 控制动画） */
 .lyrics-container {
-    max-height: 120px; /* 默认就设为可显示的高度 */
+    max-height: 120px;
     overflow: hidden;
     transition: max-height 0.3s ease, padding 0.3s ease;
-    padding: 10px 0; /* 默认就有 padding */
+    padding: 10px 0;
     display: block;
 }
-/* 隐藏状态：通过 JS 添加 hidden 类 */
 .lyrics-container.hidden {
     max-height: 0;
     padding: 0;
 }
-
 .lyrics-content {
     text-align: center;
     color: #e9e9e9;
@@ -417,7 +401,6 @@
     line-height: 1.6;
     transition: opacity 0.2s ease;
 }
-
 .lyrics-line {
     opacity: 0.7;
     transition: all 0.2s ease;
@@ -427,7 +410,6 @@
     max-width: 80%;
     margin: 0 auto;
 }
-
 .lyrics-line.current {
     opacity: 1;
     font-weight: 500;
