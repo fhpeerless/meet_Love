@@ -11,15 +11,7 @@ let bgMusicPlayer = null;
 // 初始化函数 - 集中所有初始化逻辑
 function init() {
     // 1. 初始化背景音乐播放器
-    // 初始化背景音乐播放器
-    if (!bgMusicPlayer) {
-        bgMusicPlayer = new BackgroundMusicPlayer();
-        bgMusicPlayer.setMusic(
-            '孙燕姿-遇见',
-            'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
-            './lrc/yujian.lrc'
-        );
-    }
+    initBackgroundMusic();
     
     // 2. 初始化爱心动画
     setInterval(createHeart, 150);
