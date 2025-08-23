@@ -17,13 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
     startTimer();
     startHeartAnimation(150);
 
-    if (!bgMusicPlayer) {
-        bgMusicPlayer = new BackgroundMusicPlayer();
-        bgMusicPlayer.setMusic(
-            '孙燕姿-遇见', 
-            'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
-            './lrc/yujian.lrc'
+  if (!bgMusicPlayer) {
+        import('./background-music.js').then(({ BackgroundMusicPlayer }) => {
+            bgMusicPlayer = new BackgroundMusicPlayer();
+            window.bgMusicPlayerInstance = bgMusicPlayer;
+            bgMusicPlayer.setMusic(
+                '孙燕姿-遇见', 
+                '音乐URL',
+                './lrc/yujian.lrc'
         );
-        bgMusicPlayer.play();
+
     }
 });
