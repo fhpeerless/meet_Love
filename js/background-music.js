@@ -30,47 +30,51 @@ export class BackgroundMusicPlayer {
         this.play();
     }
     
-    createPlayer() {
-        this.playerContainer = document.createElement('div');
-        this.playerContainer.className = 'bg-music-player';
-        this.playerContainer.innerHTML = `
-            <div class="player-content">
-                <div class="song-info">
-                    <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
-                </div>
-                <div class="player-controls">
-                    <button id="playPauseBtn" class="control-btn">
-                        <i class="icon">▶</i>
-                    </button>
-                    <button id="lyricsBtn" class="control-btn">
-                        <i class="icon">📝</i>
-                    </button>
-                    <button id="muteBtn" class="control-btn">
-                        <i class="icon">🔊</i>
-                    </button>
-                    <button id="closeBtn" class="control-btn close">
-                        <i class="icon">×</i>
-                    </button>
-                </div>
+createPlayer() {
+    this.playerContainer = document.createElement('div');
+    this.playerContainer.className = 'bg-music-player';
+    this.playerContainer.innerHTML = `
+        <div class="player-content">
+            <div class="song-info">
+                <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
             </div>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
+            <div class="player-controls">
+                <button id="playPauseBtn" class="control-btn">
+                    <i class="icon">▶</i>
+                </button>
+                <button id="lyricsBtn" class="control-btn">
+                    <i class="icon">📝</i>
+                </button>
+                <button id="muteBtn" class="control-btn">
+                    <i class="icon">🔊</i>
+                </button>
+                <button id="closeBtn" class="control-btn close">
+                    <i class="icon">×</i>
+                </button>
             </div>
-            <!-- 歌词容器 -->
-            <div class="lyrics-container" id="lyricsContainer">
-                <div class="lyrics-content" id="lyricsContent">
-                    <div class="lyrics-line current">加载歌词中...</div>
-                </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
-        `;
-        
-        document.body.appendChild(this.playerContainer);
-        
-        this.lyricsContainer = document.getElementById('lyricsContainer');
-        this.bindEvents();
-    }
+        </div>
+        <!-- 🔻 修改：移除 'show' 类，让默认不显示，但我们会在 JS 中控制 -->
+        <div class="lyrics-container" id="lyricsContainer">
+            <div class="lyrics-content" id="lyricsContent">
+                <div class="lyrics-line current">加载歌词中...</div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(this.playerContainer);
+
+    this.lyricsContainer = document.getElementById('lyricsContainer');
+    
+    // 🔥 新增：设置默认显示
+    this.lyricsContainer.style.display = 'block'; // 或 'flex'，根据布局
+    
+    this.bindEvents();
+}
     
     createAudio() {
         this.audio = new Audio();
