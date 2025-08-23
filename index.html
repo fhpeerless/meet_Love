@@ -396,18 +396,18 @@
 /* 背景音乐播放器样式 完*/
 
 /* 歌词相关样式 */
+/* 默认隐藏（用 max-height 控制动画） */
 .lyrics-container {
-    max-height: 0;
+    max-height: 120px; /* 默认就设为可显示的高度 */
     overflow: hidden;
     transition: max-height 0.3s ease, padding 0.3s ease;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    padding: 10px 0; /* 默认就有 padding */
+    display: block;
 }
-
-.lyrics-container.show {
-    max-height: 120px;
-    padding: 10px 0;
+/* 隐藏状态：通过 JS 添加 hidden 类 */
+.lyrics-container.hidden {
+    max-height: 0;
+    padding: 0;
 }
 
 .lyrics-content {
