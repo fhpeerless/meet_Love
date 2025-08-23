@@ -1,34 +1,74 @@
 // js/background-music.js
+// 修改背景音乐播放器类
 export class BackgroundMusicPlayer {
     constructor() {
         this.audio = null;
         this.playerContainer = null;
         this.lyricsContainer = null;
         this.isPlaying = false;
-        this.currentSong = {
-            title: '未知歌曲',
-            url: '',
-            lrcUrl: '' // 添加歌词URL
-        };
-        
-        this.lyrics = []; // 存储解析后的歌词
-        this.currentLyricIndex = -1;
-        
-        this.defaultMusic = {
-            title: '温馨时光',
-            url: 'https://example.com/music/background.mp3',
-            lrcUrl: 'https://example.com/lyrics/song.lrc' // 默认歌词URL
-        };
-        
+        this.musicList = []; // 新增：音乐列表
+        this.currentSongIndex = 0; // 当前播放的歌曲索引
         this.init();
     }
-    
+
     init() {
         this.createPlayer();
         this.createAudio();
-        this.setMusic(this.defaultMusic.title, this.defaultMusic.url, this.defaultMusic.lrcUrl);
+        // 默认音乐列表（可从外部传入）
+        this.setMusicList([
+            {
+                title: '遇见 - 孙燕姿',
+                url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
+                lrcUrl: './lrc/yujian.lrc'
+            },
+            {
+                title: '第二首歌',
+                url: 'https://yourdomain.com/music/second.mp3',
+                lrcUrl: ''
+            },
+            {
+                title: '第三首歌',
+                url: 'https://yourdomain.com/music/third.mp3',
+                lrcUrl: ''
+            }
+        ]);
+        this.play();
+        // 监听音频结束事件，自动播放下一首
+        this.audio.addEventListener('ended', () => {
+            this.nextSong();
+        });
+    }
+
+    setMusicList(musicList) {
+        this.musicList = musicList;
+        if (this.musicList.length > 0) {
+            this.setMusic(this.musicList[this.currentSongIndex]);
+        }
+    }
+
+    setMusic(song) {
+        this.currentSong = song;
+        document.getElementById('currentSongTitle').textContent = song.title;
+        if (this.audio) {
+            this.audio.src = song.url;
+            this.audio.load();
+        }
+        // 加载歌词
+        if (song.lrcUrl) {
+            this.loadLyrics(song.lrcUrl);
+        } else {
+            this.clearLyrics();
+        }
+    }
+
+    nextSong() {
+        this.currentSongIndex = (this.currentSongIndex + 1) % this.musicList.length;
+        this.setMusic(this.musicList[this.currentSongIndex]);
         this.play();
     }
+
+    // 其余方法保持不变（play、pause、togglePlay 等）
+}
     
 createPlayer() {
     this.playerContainer = document.createElement('div');
