@@ -79,18 +79,12 @@ createPlayer() {
                 <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
             </div>
             <div class="player-controls">
-                <button id="playPauseBtn" class="control-btn">
-                    <i class="icon">▶</i>
-                </button>
-                <button id="lyricsBtn" class="control-btn">
-                    <i class="icon">📝</i>
-                </button>
-                <button id="muteBtn" class="control-btn">
-                    <i class="icon">🔊</i>
-                </button>
-                <button id="closeBtn" class="control-btn close">
-                    <i class="icon">×</i>
-                </button>
+                <button id="prevBtn" class="control-btn">⏮</button>
+                <button id="playPauseBtn" class="control-btn">▶</button>
+                <button id="nextBtn" class="control-btn">⏭</button>
+                <button id="lyricsBtn" class="control-btn">📝</button>
+                <button id="muteBtn" class="control-btn">🔊</button>
+                <button id="closeBtn" class="control-btn close">×</button>
             </div>
         </div>
         <div class="progress-container">
