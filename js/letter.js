@@ -1,18 +1,16 @@
 // js/letter.js
-import { lettersData } from './data.js'; // ✅ 正确导入
-import { formatDate } from './utils.js'; // ✅ 正确导入
-
 export function generateLetters() {
     const letterList = document.getElementById('letterList');
-    if (!letterList) return; // ✅ 防御性编程
+    if (!letterList) return;
     letterList.innerHTML = '';
-    
     lettersData.forEach(letter => {
         const li = document.createElement('li');
         li.className = 'letter-item';
         li.onclick = () => {
+            // 保存当前信件ID到localStorage
             localStorage.setItem('currentLetterId', letter.id);
-            window.location.href = 'article.html';
+            // 动态加载详情页内容到index.html
+            loadArticleContent();
         };
         li.innerHTML = `
             <div class="letter-title">${letter.title}</div>
@@ -20,5 +18,19 @@ export function generateLetters() {
             <div class="letter-preview">${letter.text.substring(0, 80)}...</div>
         `;
         letterList.appendChild(li);
+    });
+}
+
+// 新增：动态加载详情页内容
+function loadArticleContent() {
+    const articleContainer = document.getElementById('articleContainer');
+    if (!articleContainer) return;
+
+    // 清空现有内容
+    articleContainer.innerHTML = '';
+
+    // 使用 fetch 或直接调用 displayArticle 函数生成内容
+    import('./article.js').then(module => {
+        module.displayArticle(articleContainer);
     });
 }
