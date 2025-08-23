@@ -260,15 +260,16 @@ createPlayer() {
     }
     
 toggleLyrics() {
+
     const btn = document.getElementById('lyricsBtn');
-    
-    if (this.lyricsContainer.style.display === 'none') {
-        this.lyricsContainer.style.display = 'block';
-        btn.innerHTML = '<i class="icon">📝</i>'; // 显示歌词
+    if (this.lyricsContainer.classList.contains('hidden')) {
+        this.lyricsContainer.classList.remove('hidden');
+        btn.innerHTML = '<i class="icon">📝</i>';
     } else {
-        this.lyricsContainer.style.display = 'none';
-        btn.innerHTML = '<i class="icon">👁️</i>'; // 隐藏了，提示可查看
+        this.lyricsContainer.classList.add('hidden');
+        btn.innerHTML = '<i class="icon">👁️</i>';
     }
+
 }
     
     play() {
