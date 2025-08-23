@@ -26,37 +26,51 @@ function init() {
     generateLetters();
 }
 
+/ 初始化背景音乐播放器
 function initBackgroundMusic() {
     // 创建背景音乐播放器实例
     bgMusicPlayer = new BackgroundMusicPlayer();
-    
-    // 设置背景音乐（替换为您的实际音乐链接）
-    bgMusicPlayer.setMusic(
-       '孙燕姿-遇见', 
-        'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
-        './lrc/yujian.lrc' // 您的LRC歌词文件URL
-    );
+    // 设置多首音乐列表（替换为你的实际音乐链接）
+    bgMusicPlayer.setMusicList([
+        {
+            title: '遇见 - 孙燕姿',
+            url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
+            lrcUrl: './lrc/yujian.lrc'
+        },
+        {
+            title: '第二首歌',
+            url: 'https://yourdomain.com/music/second.mp3',
+            lrcUrl: ''
+        },
+        {
+            title: '第三首歌',
+            url: 'https://yourdomain.com/music/third.mp3',
+            lrcUrl: ''
+        }
+    ]);
 }
 
-// ✅ 页面加载完成后执行初始化
+// 初始化函数
+function init() {
+    initBackgroundMusic(); // 调用新的初始化逻辑
+    setInterval(createHeart, 150);
+    startTimer();
+    createPhotoGrid();
+    generateLetters();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-      // 判断是否为移动端（屏幕宽度 ≤ 768px）
     if (window.innerWidth <= 768) {
-        // 选择整个 .photo-container 元素
         const photoContainer = document.querySelector('.photo-container');
         if (photoContainer) {
-            // 直接移除整个容器
             photoContainer.remove();
         }
     }
     init();
-    
-    // 将函数暴露到全局（必须在 init() 之后）
     window.toggleProfile = toggleProfile;
     window.toggleContact = toggleContact;
     window.bgMusicPlayer = bgMusicPlayer;
 });
-
 // 点击页面空白处关闭侧边栏
 document.addEventListener('click', function(e) {
     const profile = document.getElementById('profile');
