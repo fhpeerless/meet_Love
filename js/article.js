@@ -5,19 +5,31 @@ import { formatDate } from './utils.js';
 let currentAudio = null; // 用于跟踪当前播放的音频
 
 export function displayArticle() {
-    const letterId = localStorage.getItem('currentLetterId');
+   const letterId = localStorage.getItem('currentLetterId');
     if (!letterId) {
-        console.warn('未找到信件 ID，跳回首页');
-        window.location.href = 'index.html';
+        console.warn('未找到信件 ID');
         return;
     }
-    
     const letter = lettersData.find(l => l.id == letterId);
     if (!letter) {
-        console.warn('未找到 ID 为', letterId, '的信件');
-        window.location.href = 'index.html';
+        console.warn('未找到信件');
         return;
     }
+
+     // 创建详情页内容
+    const articleContent = document.createElement('div');
+    articleContent.innerHTML = `
+        <a href="index.html" class="back-btn">← 返回</a>
+        <h1 class="article-title" id="articleTitle">${letter.title}</h1>
+        <div class="article-date" id="articleDate">${formatDate(letter.date)}</div>
+        <div class="article-content" id="articleContent">${letter.text}</div>
+        <div class="article-photos" id="articlePhotos">
+            <div class="article-photos-title">照片记录</div>
+            <div class="photo-grid" id="photoGrid"></div>
+        </div>
+        <div class="media-container" id="musicContainer"></div>
+        <div class="media-container" id="videoContainer"></div>
+    `;
     // 更新标题、日期、正文
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
