@@ -31,7 +31,7 @@ function initBackgroundMusic() {
     if (!bgMusicPlayer) {
         bgMusicPlayer = new BackgroundMusicPlayer();
     }
-    
+    window.bgMusicPlayerInstance = bgMusicPlayer; // 挂载到全局变量
     // 设置背景音乐
     bgMusicPlayer.setMusic(
         '孙燕姿-遇见', 
