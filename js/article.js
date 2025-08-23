@@ -1,8 +1,7 @@
-// js/article.js
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
 
-let currentAudio = null; // 用于跟踪当前播放的音频
+let currentAudio = null;
 
 export function displayArticle(container) {
     const letterId = localStorage.getItem('currentLetterId');
@@ -79,7 +78,7 @@ export function displayArticle(container) {
         videoContainer.appendChild(video);
     }
 
-    // 将内容添加到传入的容器中
-    container.innerHTML = ''; // 清空容器
+    // 将内容添加到容器中
+    container.innerHTML = '';
     container.appendChild(articleContent);
 }
