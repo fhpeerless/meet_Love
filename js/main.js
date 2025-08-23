@@ -26,7 +26,7 @@ function init() {
     generateLetters();
 }
 
-/ 初始化背景音乐播放器
+// 初始化背景音乐播放器
 function initBackgroundMusic() {
     // 创建背景音乐播放器实例
     bgMusicPlayer = new BackgroundMusicPlayer();
@@ -50,27 +50,25 @@ function initBackgroundMusic() {
     ]);
 }
 
-// 初始化函数
-function init() {
-    initBackgroundMusic(); // 调用新的初始化逻辑
-    setInterval(createHeart, 150);
-    startTimer();
-    createPhotoGrid();
-    generateLetters();
-}
-
+// DOMContentLoaded 事件监听器
 document.addEventListener('DOMContentLoaded', function() {
+    // 移除移动端照片墙
     if (window.innerWidth <= 768) {
         const photoContainer = document.querySelector('.photo-container');
         if (photoContainer) {
             photoContainer.remove();
         }
     }
-    init();
+
+    // 绑定全局函数
     window.toggleProfile = toggleProfile;
     window.toggleContact = toggleContact;
     window.bgMusicPlayer = bgMusicPlayer;
+
+    // 执行初始化
+    init();
 });
+
 // 点击页面空白处关闭侧边栏
 document.addEventListener('click', function(e) {
     const profile = document.getElementById('profile');
