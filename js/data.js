@@ -45,7 +45,7 @@ export const lettersData = [
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
-    }
+    },
 
             {
         id: 5,
