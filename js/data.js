@@ -36,7 +36,7 @@ export const lettersData = [
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
     },
-    // ... 其他信件
+
             {
         id: 4,
         title: "4.☆=0.秋风凉我♥",
@@ -46,6 +46,17 @@ export const lettersData = [
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
     }
+
+            {
+        id: 5,
+        title: "4.☆=2.踏遍千山万水，让我找到你",
+        date: "2025-08-20",
+        text: "纵使你与我相隔高山大海，虽然我不能翻过，但为了这份爱，我也可以乘船横渡；山道再险，我也可以寻路穿行，山山海海都不能阻挡我的脚步。纵使难于蹬天，但我仍然在奔赴向你的路上，那时请你张开怀抱，抱紧我！",
+        photos: [],
+        musicUrl: "", // 替换为实际的音乐直链
+        videoUrl: ""  // 如果没有视频，留空
+    }
+    
     // ... 其他信件
 ];
 
