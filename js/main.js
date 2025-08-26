@@ -5,6 +5,9 @@ import { startTimer } from './timer.js';
 import { createPhotoGrid } from './photo.js';
 import { generateLetters } from './letter.js';
 import { toggleProfile, toggleContact } from './sidebar.js';
+// js/main.js
+import { lettersData } from './data.js'; // ✅ 导入信件数据
+
 
 let bgMusicPlayer = null;
 
@@ -24,6 +27,7 @@ function init() {
     
     // 5. 初始化信件列表
     generateLetters();
+     updateLetterCount(); // ✅ 新增：更新信件统计
 }
 
 function initBackgroundMusic() {
@@ -36,6 +40,12 @@ function initBackgroundMusic() {
         'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
         './lrc/yujian.lrc' // 您的LRC歌词文件URL
     );
+}
+
+// 定义更新信件统计的函数
+function updateLetterCount() {
+    const count = lettersData.length;
+    document.getElementById('letterCount').textContent = `总计信件：${count}封`;
 }
 
 // ✅ 页面加载完成后执行初始化
