@@ -29,7 +29,7 @@ export const lettersData = [
 
         {
         id: 3,
-        title: "3.☆=0.准备的发光礼盒",
+        title: "3.☆=0.用心准备的发光礼盒",
         date: "2025-08-21",
         text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想你了😂",
         photos: [ ],
@@ -63,7 +63,17 @@ export const lettersData = [
         date: "2025-08-26",
         text: "星星叠的越来越熟练了，但在指缝中溜走的时光，谁知它去学了魔法，可恶的染白了亲人的白发，我该怎么找到这么一个喜欢我的你，我不知道，但是我尽力了，但我也应该有彼时该有的脊梁，所以不要怪我来的太迟，我会慢慢变好，慢慢找到一个爱我的你，你也遇到满怀真情的我！",
         photos: [],
-        musicUrl: "http://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931", // 替换为实际的音乐直链
+        musicUrl: "http://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768", // 替换为实际的音乐直链
+        videoUrl: ""  // 如果没有视频，留空
+    },
+
+            {
+        id: 6,
+        title: "7.☆=21.未来的你什么样子我都喜欢",
+        date: "2025-08-27",
+        text: "我不知道，我该如何遇见你，或是你是我交往的第几个朋友，我不知道要错过多少人才会等到一个喜欢我全部的你，我幻想过你的职业，你的相貌，或是胖或是瘦弱，高或矮，好像都不重要，我觉得我不爱收拾自己，说我邋遢也好，只要你不嫌弃就好！",
+        photos: [],
+        musicUrl: "", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
     }
     
