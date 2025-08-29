@@ -95,6 +95,16 @@ export const lettersData = [
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c", // 替换为实际的音乐直链
         videoUrl: ""  // 如果没有视频，留空
+    },
+
+            {
+        id: 10,
+        title: "10.☆=56.叠了六个，我想是寓意诸事顺利吧",
+        date: "2025-08-30",
+        text: "之后我可能会叠的越来越慢，我觉得这是我表达爱的一种形式吧，因为我觉得爱是一种细水长流，爱是小火慢炖的粥，慢慢的走进彼此心里！",
+        photos: [],
+        musicUrl: "", // 替换为实际的音乐直链
+        videoUrl: ""  // 如果没有视频，留空
     }
     
     // ... 其他信件
