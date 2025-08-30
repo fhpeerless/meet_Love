@@ -11,7 +11,7 @@ export const lettersData = [
         ],
         musicUrl: "", // 替换为实际的音乐直链
         musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-        lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+        lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 替换为实际的视频直链
     },
 
@@ -27,7 +27,7 @@ export const lettersData = [
         ],
         musicUrl: "", // 替换为实际的音乐直链
         musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-        lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+        lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -38,8 +38,8 @@ export const lettersData = [
         text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想你了😂",
         photos: [ ],
         musicUrl: "", // 替换为实际的音乐直链
-            musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-            lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+            musicTitle: "", // ✅ 新增字段：实际音乐名称
+            lrcUrl: "", // 可选歌词链接
         videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
     },
 
@@ -50,8 +50,8 @@ export const lettersData = [
         text: "风起了，花落了，我知道，你正在走向我的路上！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+                musicTitle: "", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -62,8 +62,8 @@ export const lettersData = [
         text: "这是我第一次折星星，圈圈绕绕有些难啊，但纵使难于跨山海，虽然我不能翻过，但为了爱，在宽广的海，我也可以乘船横渡，再危险的山道，我也可以寻路穿行，山山海海都不能阻挡我的脚步，因为外卖员的身份，为找到你提供了便利，如果看见我来了请你张开双臂抱紧我！这是我叠的第二颗星星，如果我的另一半你还没出现，我就一直叠一直，叠到你出现为止，我想慢一点叠，我怕叠到1314你还没有出现！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+                musicTitle: "毛不易 - 给你给我", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -74,7 +74,7 @@ export const lettersData = [
         text: "星星叠的越来越熟练了，但在指缝中溜走的时光，谁知它去学了魔法，可恶的染白了亲人的白发，我该怎么找到这么一个喜欢我的你，我不知道，但是我尽力了，但我也应该有彼时该有的脊梁，所以不要怪我来的太迟，我会慢慢变好，慢慢找到一个爱我的你，你也遇到满怀真情的我！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
+                musicTitle: "张杰 - 少年中国说", // ✅ 新增字段：实际音乐名称
                 lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
@@ -86,8 +86,8 @@ export const lettersData = [
         text: "我不知道，我该如何遇见你，或是你是我交往的第几个朋友，我不知道要错过多少人才会等到一个喜欢我全部的你，我幻想过你的职业，你的相貌，或是胖或是瘦弱，高或矮，好像都不重要，我觉得我不爱收拾自己，说我邋遢也好，只要你不嫌弃就好！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+                musicTitle: "", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -98,8 +98,8 @@ export const lettersData = [
         text: "时光的风不羁的吹着带着我的思绪，带着秋日里的潮湿吹的让人瑟瑟发抖，但我想我是快乐的，心里始终有着一片寂静的地方，皎洁如月，让我总会有一份踏实感，尽管被不喜欢，被讨厌，被拒绝，仍思飞揽月，向阳生长",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+                musicTitle: "", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -110,8 +110,8 @@ export const lettersData = [
         text: "不知道，心里空落落的，不知道你有没有过这种感觉，好像丢失了什么东西，却又无力找回，只好等时间一点一点的治愈，好像做什么都没有力气！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+                musicTitle: "群星 - 失控", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -122,8 +122,8 @@ export const lettersData = [
         text: "之后我可能会叠的越来越慢，我觉得这是我表达爱的一种形式吧，因为我觉得爱是一种细水长流，是小火慢炖的粥，慢慢的走进彼此心里！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-              musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+              musicTitle: "", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -134,8 +134,8 @@ export const lettersData = [
         text: "两个手指推的往里面一些，这样叠出的五角星形状真的很好看。真不知道，我会把这日日夜夜叠出来的五角星送给谁，我的真情会成为你的负担吗，如果那天在人海我们遇到了，请你向我招招手，站在我面前和我说话，不然我不敢相信，有人会为我停留！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-                musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "http://note.youdao.com/yws/api/personal/file/...lrc", // 可选歌词链接
+                musicTitle: "", // ✅ 新增字段：实际音乐名称
+                lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     }
     
