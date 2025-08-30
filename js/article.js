@@ -45,26 +45,17 @@ export function displayArticle() {
     // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
     musicContainer.innerHTML = '';
+    let bgMusicPlayer = null;
     if (letter.musicUrl) {
-        const audio = document.createElement('audio');
-        audio.src = letter.musicUrl;
-        audio.controls = true;
-        audio.autoplay = true; // 自动播放
-        audio.loop = true; // 循环播放
-        audio.volume = 0.5; // 设置音量
-        
-        // 停止之前播放的音乐
-        if (currentAudio && !currentAudio.paused) {
-            currentAudio.pause();
-        }
-        currentAudio = audio;
-        
-        const audioWrapper = document.createElement('div');
-        audioWrapper.className = 'audio-player';
-        audioWrapper.innerHTML = '<h3>背景音乐</h3>';
-        audioWrapper.appendChild(audio);
-        musicContainer.appendChild(audioWrapper);
-        musicContainer.style.display = 'block';
+         bgMusicPlayer = new BackgroundMusicPlayer();
+        const title = letter.title || '未知歌曲';
+        const lrcUrl = letter.lrcUrl || ''; // 从 data.js 中获取歌词 URL
+      // 设置音乐并播放
+        bgMusicPlayer.setMusic(title, letter.musicUrl, lrcUrl);
+        bgMusicPlayer.play();
+
+        // 将播放器挂载到 DOM 上
+        document.body.appendChild(bgMusicPlayer.playerContainer);
     } else {
         musicContainer.style.display = 'none';
     }
