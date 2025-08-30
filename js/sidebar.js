@@ -14,6 +14,12 @@ export function toggleContact() {
     profile.classList.remove('show');
 }
 
+// js/sidebar.js
+export function toggleDeclaration() {
+    const declaration = document.getElementById('xuanshi');
+    declaration.classList.toggle('show');
+}
+
 // ✅ 新增：点击外部关闭侧边栏
 export function setupCloseOnOutsideClick() {
     document.addEventListener('click', function(e) {
