@@ -10,6 +10,7 @@ export const lettersData = [
             "https://picsum.photos/seed/love2/400/300"
         ],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 替换为实际的视频直链
     },
 
@@ -24,6 +25,7 @@ export const lettersData = [
             "http://note.youdao.com/yws/api/personal/file/7608eb5f65eb4f72e5030198bc144348?method=download&inline=true&shareKey=dc5911918414f812da27138d3048ef64"
         ],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -34,6 +36,7 @@ export const lettersData = [
         text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想你了😂",
         photos: [ ],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
     },
 
@@ -44,6 +47,7 @@ export const lettersData = [
         text: "风起了，花落了，我知道，你正在走向我的路上！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -76,6 +80,7 @@ export const lettersData = [
         text: "我不知道，我该如何遇见你，或是你是我交往的第几个朋友，我不知道要错过多少人才会等到一个喜欢我全部的你，我幻想过你的职业，你的相貌，或是胖或是瘦弱，高或矮，好像都不重要，我觉得我不爱收拾自己，说我邋遢也好，只要你不嫌弃就好！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -86,6 +91,7 @@ export const lettersData = [
         text: "时光的风不羁的吹着带着我的思绪，带着秋日里的潮湿吹的让人瑟瑟发抖，但我想我是快乐的，心里始终有着一片寂静的地方，皎洁如月，让我总会有一份踏实感，尽管被不喜欢，被讨厌，被拒绝，仍思飞揽月，向阳生长",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -96,6 +102,7 @@ export const lettersData = [
         text: "不知道，心里空落落的，不知道你有没有过这种感觉，好像丢失了什么东西，却又无力找回，只好等时间一点一点的治愈，好像做什么都没有力气！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -106,6 +113,7 @@ export const lettersData = [
         text: "之后我可能会叠的越来越慢，我觉得这是我表达爱的一种形式吧，因为我觉得爱是一种细水长流，是小火慢炖的粥，慢慢的走进彼此心里！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -116,6 +124,7 @@ export const lettersData = [
         text: "两个手指推的往里面一些，这样叠出的五角星形状真的很好看。真不知道，我会把这日日夜夜叠出来的五角星送给谁，我的真情会成为你的负担吗，如果那天在人海我们遇到了，请你向我招招手，站在我面前和我说话，不然我不敢相信，有人会为我停留！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
+        lrcUrl: "http://note.youdao.com/yws/api/personal/file/lrc5.lrc",
         videoUrl: ""  // 如果没有视频，留空
     }
     
