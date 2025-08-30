@@ -7,12 +7,11 @@ export function toggleProfile() {
     contact.classList.remove('show');
 }
 
-// js/sidebar.js
-function toggleContact(targetId) {
-    const content = document.getElementById(targetId);
-    if (content) {
-        content.classList.toggle('show');
-    }
+export function toggleContact() {
+    const contact = document.getElementById('contact');
+    const profile = document.getElementById('profile');
+    contact.classList.toggle('show');
+    profile.classList.remove('show');
 }
 
 // ✅ 新增：点击外部关闭侧边栏
