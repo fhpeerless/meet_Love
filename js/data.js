@@ -10,7 +10,7 @@ export const lettersData = [
             "https://picsum.photos/seed/love2/400/300"
         ],
         musicUrl: "", // 替换为实际的音乐直链
-        musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
+        musicTitle: "", // ✅ 新增字段：实际音乐名称
         lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 替换为实际的视频直链
     },
@@ -26,7 +26,7 @@ export const lettersData = [
             "http://note.youdao.com/yws/api/personal/file/7608eb5f65eb4f72e5030198bc144348?method=download&inline=true&shareKey=dc5911918414f812da27138d3048ef64"
         ],
         musicUrl: "", // 替换为实际的音乐直链
-        musicTitle: "遇见 - 孙燕姿", // ✅ 新增字段：实际音乐名称
+        musicTitle: "", // ✅ 新增字段：实际音乐名称
         lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
@@ -110,8 +110,8 @@ export const lettersData = [
         text: "不知道，心里空落落的，不知道你有没有过这种感觉，好像丢失了什么东西，却又无力找回，只好等时间一点一点的治愈，好像做什么都没有力气！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c", // 替换为实际的音乐直链
-                musicTitle: "群星 - 失控", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "", // 可选歌词链接
+        musicTitle: "群星 - 失控", // ✅ 新增字段：实际音乐名称
+        lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -122,8 +122,8 @@ export const lettersData = [
         text: "之后我可能会叠的越来越慢，我觉得这是我表达爱的一种形式吧，因为我觉得爱是一种细水长流，是小火慢炖的粥，慢慢的走进彼此心里！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-              musicTitle: "", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "", // 可选歌词链接
+        musicTitle: "", // ✅ 新增字段：实际音乐名称
+        lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
@@ -134,8 +134,8 @@ export const lettersData = [
         text: "两个手指推的往里面一些，这样叠出的五角星形状真的很好看。真不知道，我会把这日日夜夜叠出来的五角星送给谁，我的真情会成为你的负担吗，如果那天在人海我们遇到了，请你向我招招手，站在我面前和我说话，不然我不敢相信，有人会为我停留！",
         photos: [],
         musicUrl: "", // 替换为实际的音乐直链
-                musicTitle: "", // ✅ 新增字段：实际音乐名称
-                lrcUrl: "", // 可选歌词链接
+        musicTitle: "", // ✅ 新增字段：实际音乐名称
+        lrcUrl: "", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     }
     
