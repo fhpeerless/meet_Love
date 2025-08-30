@@ -19,6 +19,7 @@ export function toggleDeclaration() {
     const declaration = document.getElementById('xuanshi');
     declaration.classList.toggle('show');
 }
+window.toggleDeclaration = toggleDeclaration;
 
 // ✅ 新增：点击外部关闭侧边栏
 export function setupCloseOnOutsideClick() {
