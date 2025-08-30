@@ -92,6 +92,10 @@
             text-align: center;
             backdrop-filter: blur(5px);
             z-index: 1000;
+             /* 新增：固定高度并启用垂直滚动 */
+    max-height: 200px;        /* 最大高度 */
+    overflow-y: auto;          /* 垂直滚动 */
+    overflow-x: hidden;        /* 防止横向滚动 */
         }
 
         .profile.show, .contact.show, .declaration.show {
