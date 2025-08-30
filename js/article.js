@@ -58,7 +58,7 @@ export function displayArticle() {
     if (letter.musicUrl) {
         try {
             bgMusicPlayerInstance = new BackgroundMusicPlayer();
-            const title = letter.title || '未知歌曲';
+            const title = letter.musicTitle || '未知歌曲'; // ✅ 使用 musicTitle
             const lrcUrl = letter.lrcUrl || ''; // 从 data.js 中获取歌词 URL
 
             // 设置音乐并播放
