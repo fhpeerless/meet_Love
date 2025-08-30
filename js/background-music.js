@@ -1,6 +1,6 @@
 // js/background-music.js
 export class BackgroundMusicPlayer {
-    constructor() {
+   constructor() {
         this.audio = null;
         this.playerContainer = null;
         this.lyricsContainer = null;
@@ -10,71 +10,61 @@ export class BackgroundMusicPlayer {
             url: '',
             lrcUrl: '' // 添加歌词URL
         };
-        
         this.lyrics = []; // 存储解析后的歌词
         this.currentLyricIndex = -1;
-        
         this.defaultMusic = {
             title: '温馨时光',
             url: 'https://example.com/music/background.mp3',
             lrcUrl: 'https://example.com/lyrics/song.lrc' // 默认歌词URL
         };
-        
         this.init();
     }
-    
+
     init() {
         this.createPlayer();
         this.createAudio();
         this.setMusic(this.defaultMusic.title, this.defaultMusic.url, this.defaultMusic.lrcUrl);
         this.play();
     }
-    
-createPlayer() {
-    this.playerContainer = document.createElement('div');
-    this.playerContainer.className = 'bg-music-player';
-    this.playerContainer.innerHTML = `
-        <div class="player-content">
-            <div class="song-info">
-                <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
-            </div>
-            <div class="player-controls">
-                <button id="playPauseBtn" class="control-btn">
-                    <i class="icon">▶</i>
-                </button>
-                <button id="lyricsBtn" class="control-btn">
-                    <i class="icon">📝</i>
-                </button>
-                <button id="muteBtn" class="control-btn">
-                    <i class="icon">🔊</i>
-                </button>
-                <button id="closeBtn" class="control-btn close">
-                    <i class="icon">×</i>
-                </button>
-            </div>
-        </div>
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
-        <!-- 🔻 修改：移除 'show' 类，让默认不显示，但我们会在 JS 中控制 -->
-        <div class="lyrics-container" id="lyricsContainer">
-            <div class="lyrics-content" id="lyricsContent">
-                <div class="lyrics-line current">加载歌词中...</div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(this.playerContainer);
 
-    this.lyricsContainer = document.getElementById('lyricsContainer');
+    createPlayer() {
+        this.playerContainer = document.createElement('div');
+        this.playerContainer.className = 'bg-music-player';
+        // 构建播放器 HTML 内容
+        this.playerContainer.innerHTML = `
+            <div class="player-content">
+                <div class="song-info">
+                    <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
+                </div>
+                <div class="player-controls">
+                    <button id="playPauseBtn" class="control-btn">▶</button>
+                    <button id="lyricsBtn" class="control-btn">📜</button>
+                    <button id="muteBtn" class="control-btn">🔊</button>
+                    <button id="closeBtn" class="control-btn close">×</button>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            <div class="lyrics-container" id="lyricsContainer">
+                <div class="lyrics-content" id="lyricsContent">
+                    <div class="lyrics-line current">加载歌词中...</div>
+                </div>
+            </div>
+        `;
+        this.bindEvents();
+    }
+
+    mount(container) {
+        if (this.playerContainer && container) {
+            container.innerHTML = '';
+            container.appendChild(this.playerContainer);
+        }
+    }
+
     
-    // 🔥 新增：设置默认显示
-    this.lyricsContainer.style.display = 'block'; // 或 'flex'，根据布局
-    
-    this.bindEvents();
-}
     
     createAudio() {
         this.audio = new Audio();
