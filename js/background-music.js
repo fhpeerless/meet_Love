@@ -167,7 +167,7 @@ createPlayer() {
         const lines = lrcText.split('\n');
         
         // 正则表达式匹配时间标签 [mm:ss.xx] 或 [mm:ss]
-        const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
+        const timeRegex = /\[(\d{2,}):(\d{2})(?:\.(\d{2,3}))?\]/g;
         
         lines.forEach(line => {
             const matches = [...line.matchAll(timeRegex)];
