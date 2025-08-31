@@ -1,10 +1,8 @@
 // js/article.js
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
-import { BackgroundMusicPlayer } from './background-music.js'; // 🔑 新增：导入播放器类
 
 let currentAudio = null; // 用于跟踪当前播放的音频
-let bgMusicPlayerInstance = null; // 🔄 跟踪当前播放器实例
 
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
@@ -13,19 +11,18 @@ export function displayArticle() {
         window.location.href = 'index.html';
         return;
     }
-
+    
     const letter = lettersData.find(l => l.id == letterId);
     if (!letter) {
         console.warn('未找到 ID 为', letterId, '的信件');
         window.location.href = 'index.html';
         return;
     }
-
     // 更新标题、日期、正文
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
     document.getElementById('articleContent').textContent = letter.text;
-
+    
     // 处理照片
     const photoGrid = document.getElementById('photoGrid');
     photoGrid.innerHTML = '';
@@ -47,31 +44,27 @@ export function displayArticle() {
 
     // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
-    musicContainer.innerHTML = ''; // 清空旧内容
-
-    // 🚫 清理旧的播放器实例（如果存在）
-    if (bgMusicPlayerInstance) {
-        bgMusicPlayerInstance.close();
-        bgMusicPlayerInstance = null;
-    }
-
+    musicContainer.innerHTML = '';
     if (letter.musicUrl) {
-        try {
-            bgMusicPlayerInstance = new BackgroundMusicPlayer();
-            const title = letter.musicTitle || '未知歌曲'; // ✅ 使用 musicTitle
-            const lrcUrl = letter.lrcUrl || ''; // 从 data.js 中获取歌词 URL
-
-            // 设置音乐并播放
-            bgMusicPlayerInstance.setMusic(title, letter.musicUrl, lrcUrl);
-            bgMusicPlayerInstance.play();
-
-            // 将播放器挂载到指定容器（而非 document.body）
-            const playerContainer = document.getElementById('musicContainer');
-            playerContainer.appendChild(bgMusicPlayerInstance.playerContainer);
-        } catch (error) {
-            console.error('初始化播放器失败:', error);
-            musicContainer.style.display = 'none'; // 出错则隐藏播放器
+        const audio = document.createElement('audio');
+        audio.src = letter.musicUrl;
+        audio.controls = true;
+        audio.autoplay = true; // 自动播放
+        audio.loop = true; // 循环播放
+        audio.volume = 0.5; // 设置音量
+        
+        // 停止之前播放的音乐
+        if (currentAudio && !currentAudio.paused) {
+            currentAudio.pause();
         }
+        currentAudio = audio;
+        
+        const audioWrapper = document.createElement('div');
+        audioWrapper.className = 'audio-player';
+        audioWrapper.innerHTML = '<h3>背景音乐</h3>';
+        audioWrapper.appendChild(audio);
+        musicContainer.appendChild(audioWrapper);
+        musicContainer.style.display = 'block';
     } else {
         musicContainer.style.display = 'none';
     }
@@ -83,11 +76,11 @@ export function displayArticle() {
         const video = document.createElement('video');
         video.src = letter.videoUrl;
         video.controls = true;
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = false;
-        video.playsInline = true;
-
+        video.autoplay = true; // 自动播放
+        video.loop = true; // 循环播放
+        video.muted = false; // 不静音
+        video.playsInline = true; // 在iOS上内联播放
+        
         const videoWrapper = document.createElement('div');
         videoWrapper.className = 'video-player';
         videoWrapper.innerHTML = '<h3>视频</h3>';

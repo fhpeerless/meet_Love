@@ -123,13 +123,12 @@
 
     /* ========== 主内容区域 ========== */
     .main-content {
-    margin-left: 200px;
-    width: calc(100% - 200px);
-    height: 100vh; /* 固定高度为视口高度 */
-    overflow-y: auto; /* 允许内容超出时滚动 */
-    padding: 20px;
-    box-sizing: border-box;
-}
+        margin-left: 200px;
+        width: calc(100% - 200px);
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px;
+    }
 
     /* 返回按钮 */
     .back-btn {
@@ -245,28 +244,6 @@
         z-index: 1;
         pointer-events: none;
     }
-    /* 在 article.html 的 <style> 中补充以下 CSS */
-
-.play-hint {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #ff6b6b;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 24px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 2000;
-    font-size: 1em;
-    animation: fadeInOut 2s ease-in-out infinite alternate;
-    pointer-events: none;
-}
-
-@keyframes fadeInOut {
-    from { opacity: 0.8; transform: translateX(-50%) translateY(-10px); }
-    to { opacity: 1; transform: translateX(-50%); }
-}
 
     /* ========== 响应式设计 ========== */
     @media (max-width: 768px) {
@@ -361,9 +338,7 @@
         <div class="media-container" id="musicContainer">
             <!-- 音乐播放器将通过JavaScript动态生成 -->
         </div>
-        <div id="lyricsContainer">
-    <div id="lyricsContent"></div>
-</div>
+        
         <!-- 视频播放器容器 -->
         <div class="media-container" id="videoContainer">
             <!-- 视频播放器将通过JavaScript动态生成 -->
@@ -373,8 +348,5 @@
  
     <!-- ✅ 内联 JS 逻辑（原 js/detail-main.js） -->
  <script type="module" src="./js/detail-main.js"></script>
-        <!-- article.html -->
-<script type="module" src="./js/background-music.js"></script>
-<script type="module" src="./js/heart.js"></script>
 </body>
 </html>

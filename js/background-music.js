@@ -131,8 +131,6 @@ createPlayer() {
         this.currentSong.title = title || '未知歌曲';
         this.currentSong.url = url;
         this.currentSong.lrcUrl = lrcUrl;
-          const lyricsBtn = document.getElementById('lyricsBtn');
-    const lyricsContainer = document.getElementById('lyricsContainer');
         
         document.getElementById('currentSongTitle').textContent = this.currentSong.title;
         
@@ -142,13 +140,11 @@ createPlayer() {
         }
         
         // 加载歌词
-   if (lrcUrl) {
-        lyricsBtn.classList.remove('hidden');
-        lyricsContainer.classList.remove('hidden');
-    } else {
-        lyricsBtn.classList.add('hidden');
-        lyricsContainer.classList.add('hidden');
-    }
+        if (lrcUrl) {
+            this.loadLyrics(lrcUrl);
+        } else {
+            this.clearLyrics();
+        }
     }
     
     async loadLyrics(lrcUrl) {
@@ -167,7 +163,7 @@ createPlayer() {
         const lines = lrcText.split('\n');
         
         // 正则表达式匹配时间标签 [mm:ss.xx] 或 [mm:ss]
-        const timeRegex = /\[(\d{2,}):(\d{2})(?:\.(\d{2,3}))?\]/g;
+        const timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
         
         lines.forEach(line => {
             const matches = [...line.matchAll(timeRegex)];
