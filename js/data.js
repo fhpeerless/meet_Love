@@ -111,7 +111,7 @@ export const lettersData = [
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c", // 替换为实际的音乐直链
         musicTitle: "群星 - 失控", // ✅ 新增字段：实际音乐名称
-        lrcUrl: "./lrc/shikong.lrc", // 可选歌词链接
+        lrcUrl: "https://meet.xtwa.org/lrc/shikong.lrc", // 可选歌词链接
         videoUrl: ""  // 如果没有视频，留空
     },
 
