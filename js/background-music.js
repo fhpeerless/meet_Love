@@ -23,6 +23,20 @@ export class BackgroundMusicPlayer {
         this.init();
          window.bgMusicPlayer = this; // 暴露全局
     }
+    clear() {
+        if (this.audio) {
+            this.audio.pause();
+            this.audio.src = '';
+        }
+        this.currentSong = {
+            title: '',
+            url: '',
+            lrcUrl: ''
+        };
+        this.lyrics = [];
+        this.currentLyricIndex = -1;
+        this.updateUI();
+    }
     
     init() {
         this.createPlayer();
