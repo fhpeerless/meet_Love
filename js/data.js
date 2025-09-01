@@ -99,7 +99,9 @@ export const lettersData = [
         date: "2025-08-29",
         text: "不知道，心里空落落的，不知道你有没有过这种感觉，好像丢失了什么东西，却又无力找回，只好等时间一点一点的治愈，好像做什么都没有力气！",
         photos: [],
+                songTitle: "遇见你", // 歌曲名称字段
         musicUrl: "http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c", // 替换为实际的音乐直链
+                lrcUrl: "./lrc/yujian.lrc" // 歌词文件路径
         videoUrl: ""  // 如果没有视频，留空
     },
 
