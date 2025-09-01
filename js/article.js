@@ -2,7 +2,6 @@
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
 
-// 假设全局有 bgMusicPlayer 实例
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
     if (!letterId) {
@@ -44,15 +43,21 @@ export function displayArticle() {
 
     // 处理音乐
     if (letter.musicUrl) {
+        const songTitle = letter.songTitle || letter.title; // 优先用 songTitle，否则用信件标题
         if (window.bgMusicPlayer) {
             window.bgMusicPlayer.setMusic(
-                letter.title || '未知歌曲',
+                songTitle,
                 letter.musicUrl,
                 letter.lrcUrl || ''
             );
             window.bgMusicPlayer.play();
         } else {
             console.warn('背景音乐播放器未初始化');
+        }
+    } else {
+        // 如果没有音乐，清空播放器
+        if (window.bgMusicPlayer) {
+            window.bgMusicPlayer.clear(); // 假设播放器支持 clear() 方法
         }
     }
 
