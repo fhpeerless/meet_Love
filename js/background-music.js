@@ -21,6 +21,7 @@ export class BackgroundMusicPlayer {
         };
         
         this.init();
+         window.bgMusicPlayer = this; // 暴露全局
     }
     
     init() {
