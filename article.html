@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>信件详情</title>
 <style>
- /* ========== 页面基础样式 ========== */
+/* ========== 页面基础样式 ========== */
 * {
     margin: 0;
     padding: 0;
@@ -183,9 +183,11 @@ body {
     font-size: 1.1em;
     margin-bottom: 30px;
     white-space: pre-line;
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
     padding: 0 10px;
+    text-align: left;
 }
 
 /* 照片展示 */
@@ -226,15 +228,17 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* 媒体容器 */
+/* 媒体容器（音频/视频） */
 .media-container {
-    margin: 20px auto;
+    margin: 20px 0;
     max-width: 800px;
+    width: 100%;
     padding: 15px;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    text-align: center;
+    text-align: left;
+    align-self: flex-start;
 }
 
 .media-container h3 {
@@ -245,10 +249,18 @@ body {
 audio,
 video {
     width: 100%;
-    max-width: 600px;
+    max-width: 100%;
     border-radius: 8px;
     display: block;
-    margin: 0 auto;
+    margin-top: 10px;
+}
+
+audio::-webkit-media-controls {
+    width: 100%;
+}
+
+audio::-webkit-media-controls-time {
+    font-size: 0.9em;
 }
 
 .audio-player h3 {
