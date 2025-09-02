@@ -7,10 +7,18 @@
     <title>信件详情</title>
 <style>
 /* ========== 页面基础样式 ========== */
+ /* ========== 页面基础样式 ========== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    max-width: 100%; /* 防止内容溢出视口宽度 */
+}
+
+/* 禁止水平滚动条 */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 body {
@@ -33,7 +41,6 @@ body {
 
 /* ========== 侧边栏 ========== */
 .sidebar {
-    /* 自适应宽度：最小宽度为按钮总宽度 + 内边距 */
     min-width: 180px;
     width: fit-content;
     max-width: 220px;
@@ -66,8 +73,8 @@ body {
 
 .sidebar-btn {
     width: fit-content;
-    min-width: 140px; /* 最小宽度适配按钮文字 */
-    max-width: 90%; /* 防止过长 */
+    min-width: 140px;
+    max-width: 90%;
     padding: 12px 16px;
     margin: 10px 0;
     text-align: center;
@@ -132,7 +139,8 @@ body {
 /* ========== 主内容区域 ========== */
 .main-content {
     flex-grow: 1;
-    overflow-y: auto; /* 垂直滚动 */
+    overflow-y: auto; /* 允许垂直滚动 */
+    overflow-x: hidden; /* 禁止水平滚动 */
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -164,13 +172,11 @@ body {
 .article-date,
 .article-content {
     display: inline-block;
-    
     width: 100%;
-
     margin: 0 auto;
     padding: 0 3px;
     text-align: left;
-    align-self: flex-start; /* 与返回按钮垂直对齐 */
+    align-self: flex-start;
 }
 
 .article-title {
@@ -269,18 +275,18 @@ video {
     transition: transform 0.3s ease;
 }
 
-/* 歌词容器 */
+/* ========== 歌词容器 ========== */
 .lyrics-container {
     margin-top: 20px;
     padding: 0;
     background-color: pink;
-    max-width: 100%;
+    min-height: 130px; /* 最小高度防止容器塌陷 */
     width: 100%;
-    height: 130px;
-    overflow-y: hidden;
+    overflow-y: auto; /* 允许垂直滚动 */
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     box-sizing: border-box;
 }
@@ -294,7 +300,6 @@ video {
     align-items: center;
     width: 100%;
     padding: 0 10px;
-    height: 100%;
     box-sizing: border-box;
     word-break: break-word;
 }
@@ -319,15 +324,20 @@ video {
     100% { transform: scale(2); opacity: 0; }
 }
 
-/* 移动端隐藏爱心动画 */
 @media (max-width: 768px) {
     .heart {
         display: none;
     }
-}
 
-/* ========== 响应式设计 ========== */
-@media (max-width: 768px) {
+    .lyrics {
+        font-size: 14px;
+        padding: 0 5px;
+    }
+
+    .lyrics-container {
+        min-height: 150px; /* 移动端适当增加最小高度 */
+    }
+
     .container {
         flex-direction: column;
     }
@@ -394,6 +404,11 @@ video {
 
     .photo-item img {
         height: 150px;
+    }
+
+    .lyrics {
+        font-size: 12px;
+        padding: 0 3px;
     }
 }
 </style>
