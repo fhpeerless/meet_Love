@@ -247,19 +247,31 @@
 /* 限制歌词容器大小并控制文本显示 */
 /* 限制歌词容器大小并控制文本显示 */
 
-/* 歌词容器 */
+/* 歌词容器 */.main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 新增：使内部元素水平居中 */
+}
 .lyrics-container {
     margin-top: 20px;
     padding: 0;
     background-color: pink;
-    max-width: 500px;
-    height: 60px; /* 三行歌词高度（假设每行 20px） */
-    overflow-y: auto; /* 启用垂直滚动 */
+    max-width: 100%; /* 宽度自适应，不超过父容器 */
+    width: 100%;
+    height: 60px; /* 三行歌词高度（每行约 20px） */
+    overflow-y: hidden; /* 保持垂直滚动 */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-}/* 歌词内容 */
+    box-sizing: border-box;
+}
+    /* 歌词内容 */
 .lyrics {
     line-height: 1.5;
     font-size: 16px;
@@ -269,8 +281,9 @@
     align-items: center;
     width: 100%;
     padding: 0 10px;
-    height: 100%; /* 填满容器高度 */
+    height: 100%;
     box-sizing: border-box;
+    word-break: break-word; /* 新增：自动换行，避免溢出 */
 }
 
 .lyrics .current {
