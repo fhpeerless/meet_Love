@@ -24,21 +24,29 @@ body {
     width: 100vw;
 }
 
+/* ========== 主容器（flex 布局） ========== */
+.container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100%;
+}
+
 /* ========== 侧边栏 ========== */
 .sidebar {
-    width: 200px;
+    /* 自适应宽度：最小宽度为按钮总宽度 + 内边距 */
+    min-width: 180px;
+    width: fit-content;
+    max-width: 220px;
     height: 100%;
     background: rgba(255, 255, 255, 0.3);
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 100;
-    padding: 20px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     backdrop-filter: blur(5px);
     border-right: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 20px 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .avatar {
@@ -122,9 +130,7 @@ body {
 
 /* ========== 主内容区域 ========== */
 .main-content {
-    margin-left: 200px;
-    width: calc(100% - 200px);
-    height: 100%;
+    flex-grow: 1;
     overflow-y: auto;
     padding: 20px;
     display: flex;
@@ -331,8 +337,19 @@ video {
 
 /* ========== 响应式设计 ========== */
 @media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
     .sidebar {
-        width: 150px;
+        width: 100%;
+        max-width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 20px;
+        height: auto;
+        box-shadow: none;
+        border: none;
     }
 
     .avatar {
@@ -341,9 +358,15 @@ video {
     }
 
     .sidebar-btn {
-        width: 120px;
+        width: 100%;
+        margin: 10px 0;
         padding: 10px;
         font-size: 0.8em;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 10px;
     }
 
     .article-title {
@@ -351,11 +374,11 @@ video {
     }
 
     .photo-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .photo-item img {
-        height: 150px;
+        height: 200px;
     }
 
     .media-container {
@@ -371,27 +394,15 @@ video {
 
 @media (max-width: 480px) {
     .sidebar {
-        width: 100%;
-        position: relative;
-        height: auto;
-        padding: 10px 0;
+        padding: 10px;
     }
 
-    .main-content {
-        margin-left: 0;
-    }
-
-    .photo-grid {
-        grid-template-columns: 1fr;
+    .sidebar-btn {
+        font-size: 0.7em;
     }
 
     .photo-item img {
-        height: 200px;
-    }
-
-    audio,
-    video {
-        width: 100%;
+        height: 150px;
     }
 }
 </style>
