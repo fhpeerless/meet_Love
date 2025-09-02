@@ -83,6 +83,61 @@ export function displayArticle() {
 } else {
         musicContainer.style.display = 'none';
     }
+    // 获取并解析 LRC 歌词
+async function fetchLyrics(url) {
+    const res = await fetch(url);
+    const text = await res.text();
+    return parseLRC(text);
+}
+
+function parseLRC(text) {
+    const lines = text.trim().split('\n');
+    const lyrics = [];
+    for (const line of lines) {
+        const timeMatch = line.match(/\[(\d{2}):(\d{2})\.(\d{2})\]/);
+        if (timeMatch) {
+            const mins = parseInt(timeMatch[1]);
+            const secs = parseInt(timeMatch[2]);
+            const msecs = parseInt(timeMatch[3]);
+            const time = mins * 60 + secs + msecs / 100;
+            const content = line.replace(/\[[^\]]+\]/g, '').trim();
+            if (content) {
+                lyrics.push({ time, content });
+            }
+        }
+    }
+    return lyrics.sort((a, b) => a.time - b.time);
+}
+
+// 渲染歌词并绑定播放事件
+function renderLyrics(lyrics, audio) {
+    const lyricsEl = document.getElementById('lyrics');
+    lyricsEl.innerHTML = '';
+
+    for (const { time, content } of lyrics) {
+        const line = document.createElement('div');
+        line.textContent = content;
+        lyricsEl.appendChild(line);
+    }
+
+    let currentLine = -1;
+    audio.addEventListener('timeupdate', () => {
+        const currentTime = audio.currentTime;
+        for (let i = 0; i < lyrics.length; i++) {
+            if (currentTime >= lyrics[i].time && i !== currentLine) {
+                const lines = lyricsEl.children;
+                if (lines[i]) {
+                    for (let j = 0; j < lines.length; j++) {
+                        lines[j].classList.remove('current');
+                    }
+                    lines[i].classList.add('current');
+                    currentLine = i;
+                }
+                break;
+            }
+        }
+    });
+}
 
     // 处理视频
     const videoContainer = document.getElementById('videoContainer');
