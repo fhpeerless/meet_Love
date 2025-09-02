@@ -67,7 +67,7 @@ export const lettersData = [
         text: "星星叠的越来越熟练了，但在指缝中溜走的时光，谁知它去学了魔法，可恶的染白了亲人的白发，我该怎么找到这么一个喜欢我的你，我不知道，但是我尽力了，但我也应该有彼时该有的脊梁，所以不要怪我来的太迟，我会慢慢变好，慢慢找到一个爱我的你，你也遇到满怀真情的我！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768", // 替换为实际的音乐直链
-                musicTitle: "孙燕姿 - 遇见", // ← 新增字段
+                musicTitle: "张杰 - 少年中国说", // ← 新增字段
         videoUrl: ""  // 如果没有视频，留空
     },
 
