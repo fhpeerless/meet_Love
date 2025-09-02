@@ -144,6 +144,7 @@ function parseLRC(text) {
 }
 
 // 渲染歌词并绑定播放事件
+// 在 article.js 中修改 renderLyrics 函数
 function renderLyrics(lyrics, audio) {
     const lyricsEl = document.getElementById('lyrics');
     lyricsEl.innerHTML = '';
@@ -155,18 +156,37 @@ function renderLyrics(lyrics, audio) {
     }
 
     let currentLine = -1;
+
+    // 滚动到当前歌词行
+    function scrollToCurrentLine(index) {
+        if (index < 0 || index >= lyrics.length) return;
+
+        const line = lyricsEl.children[index];
+        const lineTop = line.offsetTop;
+        const lineHeight = line.clientHeight;
+
+        // 计算容器应滚动的位置（使当前行居中）
+        const scrollTop = lineTop - (lyricsEl.clientHeight / 2 - lineHeight / 2);
+
+        // 平滑滚动到目标位置
+        lyricsEl.style.transition = 'transform 0.3s ease';
+        lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
+    }
+
     audio.addEventListener('timeupdate', () => {
         const currentTime = audio.currentTime;
         for (let i = 0; i < lyrics.length; i++) {
             if (currentTime >= lyrics[i].time && i !== currentLine) {
+                // 高亮当前歌词
                 const lines = lyricsEl.children;
-                if (lines[i]) {
-                    for (let j = 0; j < lines.length; j++) {
-                        lines[j].classList.remove('current');
-                    }
-                    lines[i].classList.add('current');
-                    currentLine = i;
+                for (let j = 0; j < lines.length; j++) {
+                    lines[j].classList.remove('current');
                 }
+                lines[i].classList.add('current');
+                currentLine = i;
+
+                // 自动滚动到当前歌词行
+                scrollToCurrentLine(i);
                 break;
             }
         }
