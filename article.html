@@ -327,73 +327,24 @@ video {
 }
 
 /* ========== 响应式设计 ========== */
+/* 移动端：隐藏侧边栏 */
 @media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-
     .sidebar {
-        width: 100%;
-        max-width: 100%;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px 20px;
-        height: auto;
-        box-shadow: none;
-        border: none;
-    }
-
-    .avatar {
-        width: 70px;
-        height: 70px;
-    }
-
-    .sidebar-btn {
-        width: 100%;
-        margin: 10px 0;
-        padding: 10px;
-        font-size: 0.8em;
+        display: none;
     }
 
     .main-content {
         margin-left: 0;
-        padding: 10px;
-    }
-
-    .article-title {
-        font-size: 1.5em;
-    }
-
-    .photo-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .photo-item img {
-        height: 200px;
-    }
-
-    .media-container {
         width: 100%;
-        padding: 10px;
     }
 
-    .article-content {
-        font-size: 1em;
-        padding: 0 5px;
-    }
-}
-
-@media (max-width: 480px) {
-    .sidebar {
-        padding: 10px;
-    }
-
-    .sidebar-btn {
-        font-size: 0.7em;
-    }
-
-    .photo-item img {
-        height: 150px;
+    /* 移除所有针对移动端侧边栏的特殊样式 */
+    .sidebar-btn,
+    .avatar,
+    .profile,
+    .contact,
+    .timer {
+        display: none;
     }
 }
 </style>
