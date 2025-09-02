@@ -68,6 +68,7 @@ export const lettersData = [
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768", // 替换为实际的音乐直链
                 musicTitle: "张杰 - 少年中国说", // ← 新增字段
+                lyricsUrl: "./lrc/china_say.lrc", // ← 新增字段
         videoUrl: ""  // 如果没有视频，留空
     },
 
