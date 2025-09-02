@@ -123,13 +123,16 @@
     }
 
     /* ========== 主内容区域 ========== */
-    .main-content {
-        margin-left: 200px;
-        width: calc(100% - 200px);
-        height: 100%;
-        overflow-y: auto;
-        padding: 20px;
-    }
+.main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* 移除 align-items: center */
+}
 
     /* 返回按钮 */
 .back-btn {
@@ -167,6 +170,7 @@
         margin-bottom: 20px;
     }
 
+
     /* 文章内容 */
     .article-content {
         line-height: 1.8;
@@ -175,7 +179,13 @@
         margin-bottom: 30px;
         white-space: pre-line;
     }
-
+    .article-title,
+.article-content {
+    width: 100%; /* 确保宽度占满容器 */
+    max-width: 800px; /* 添加最大宽度，避免过宽 */
+    margin: 0 auto; /* 保持在容器内左对齐，但不超出 */
+    padding: 0 10px; /* 添加内边距 */
+}
     /* 照片展示 */
     .article-photos {
         margin: 20px 0;
@@ -248,16 +258,7 @@
 /* 限制歌词容器大小并控制文本显示 */
 /* 限制歌词容器大小并控制文本显示 */
 
-/* 歌词容器 */.main-content {
-    margin-left: 200px;
-    width: calc(100% - 200px);
-    height: 100%;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 新增：使内部元素水平居中 */
-}
+/* 歌词容器 */
 .lyrics-container {
     margin-top: 20px;
     padding: 0;
@@ -320,12 +321,16 @@
             font-size: 0.8em;
         }
 
-        .main-content {
-            margin-left: 150px;
-            width: calc(100% - 150px);
-            padding: 15px;
-        }
-
+.main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* 移除 align-items: center */
+}
         .article-title {
             font-size: 1.5em;
         }
