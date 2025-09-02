@@ -20,7 +20,6 @@ body {
     font-family: Arial, sans-serif;
     height: 100vh;
     display: flex;
-    overflow: hidden;
     width: 100vw;
 }
 
@@ -66,8 +65,10 @@ body {
 }
 
 .sidebar-btn {
-    width: 150px;
-    padding: 12px;
+    width: fit-content;
+    min-width: 140px; /* 最小宽度适配按钮文字 */
+    max-width: 90%; /* 防止过长 */
+    padding: 12px 16px;
     margin: 10px 0;
     text-align: center;
     cursor: pointer;
@@ -131,7 +132,7 @@ body {
 /* ========== 主内容区域 ========== */
 .main-content {
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* 垂直滚动 */
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -149,7 +150,7 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
-    align-self: flex-start;
+    align-self: flex-start; /* 左对齐 */
 }
 
 .back-btn:hover {
@@ -158,15 +159,16 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 文章标题 */
+/* 文章标题 + 日期 + 内容（左对齐 + 垂直对齐） */
 .article-title,
-/* 文章日期 */
-.article-date {
+.article-date,
+.article-content {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
     padding: 0 10px;
     text-align: left;
+    align-self: flex-start; /* 与返回按钮垂直对齐 */
 }
 
 .article-title {
@@ -182,17 +184,12 @@ body {
     margin-bottom: 20px;
 }
 
-/* 文章内容（信件内容） */
 .article-content {
     line-height: 1.8;
     color: #444;
     font-size: 1.1em;
     margin-bottom: 30px;
     white-space: pre-line;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 10px;
     text-align: left;
 }
 
@@ -221,14 +218,6 @@ audio {
     border-radius: 8px;
     display: block;
     margin: 0 auto;
-}
-
-audio::-webkit-media-controls {
-    width: 100%;
-}
-
-audio::-webkit-media-controls-time {
-    font-size: 0.9em;
 }
 
 /* 视频播放器 */
