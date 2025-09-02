@@ -242,7 +242,23 @@
     font-size: 1em;
     color: #d46b9c;
 }
+.lyrics-container {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
 
+.lyrics {
+    line-height: 1.5;
+    font-size: 14px;
+    color: #333;
+}
+
+.lyrics .current {
+    color: red;
+    font-weight: bold;
+}
     /* 爱心动画（保留占位） */
     .heart {
         position: absolute;
@@ -345,7 +361,10 @@
         <div class="media-container" id="musicContainer">
             <!-- 音乐播放器将通过JavaScript动态生成 -->
         </div>
-        
+        <div id="lyrics-container" class="lyrics-container">
+    <h4>歌词</h4>
+    <div id="lyrics" class="lyrics"></div>
+</div>
         <!-- 视频播放器容器 -->
         <div class="media-container" id="videoContainer">
             <!-- 视频播放器将通过JavaScript动态生成 -->
