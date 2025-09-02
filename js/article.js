@@ -157,42 +157,37 @@ function renderLyrics(lyrics, audio) {
 
     let currentLine = -1;
 
-    // 计算并滚动到当前歌词行
-function scrollToCurrentLine(index) {
-    if (index < 0 || index >= lyrics.length) return;
+    function scrollToCurrentLine(index) {
+        if (index < 0 || index >= lyrics.length) return;
 
-    const line = lyricsEl.children[index];
-    const lineRect = line.getBoundingClientRect();
-    const containerRect = lyricsEl.getBoundingClientRect();
+        const line = lyricsEl.children[index];
+        const lineRect = line.getBoundingClientRect();
+        const containerRect = lyricsEl.getBoundingClientRect();
 
-    // ✅ 使用固定容器高度，避免动态计算错误
-    const scrollTop = lineRect.top - containerRect.top + lyricsEl.scrollTop -
-                     (60 / 2 - lineRect.height / 2); // 60px 是 .lyrics-container 的 max-height
+        const scrollTop = lineRect.top - containerRect.top + lyricsEl.scrollTop -
+                         (60 / 2 - lineRect.height / 2);
 
-    // ✅ 确保 transform 不被重复设置
-    lyricsEl.style.transition = 'transform 0.3s ease';
-    lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
-}
+        lyricsEl.style.transition = 'transform 0.3s ease';
+        lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
+    }
 
-audio.addEventListener('timeupdate', () => {
-    const currentTime = audio.currentTime;
-    for (let i = 0; i < lyrics.length; i++) {
-        // ✅ 添加时间容差（0.2秒），避免频繁切换
-        if (currentTime >= lyrics[i].time - 0.2 && currentTime < lyrics[i + 1]?.time) {
-            if (i !== currentLine) {
-                // 高亮当前歌词
-                const lines = lyricsEl.children;
-                for (let j = 0; j < lines.length; j++) {
-                    lines[j].classList.remove('current');
+    audio.addEventListener('timeupdate', () => {
+        const currentTime = audio.currentTime;
+        for (let i = 0; i < lyrics.length; i++) {
+            // ✅ 修正逻辑：匹配当前行和下一行之间的时间段
+            if (currentTime >= lyrics[i].time - 0.2 && currentTime < lyrics[i + 1]?.time) {
+                if (i !== currentLine) {
+                    const lines = lyricsEl.children;
+                    for (let j = 0; j < lines.length; j++) {
+                        lines[j].classList.remove('current');
+                    }
+                    lines[i].classList.add('current');
+                    currentLine = i;
+
+                    scrollToCurrentLine(i);
+                    break;
                 }
-                lines[i].classList.add('current');
-                currentLine = i;
-
-                // 自动滚动到当前歌词行
-                scrollToCurrentLine(i);
-                break;
             }
         }
-    }
-});
+    });
 }
