@@ -158,37 +158,37 @@ function renderLyrics(lyrics, audio) {
     let currentLine = -1;
 
     // 滚动到当前歌词行
-    function scrollToCurrentLine(index) {
-        if (index < 0 || index >= lyrics.length) return;
+function scrollToCurrentLine(index) {
+    if (index < 0 || index >= lyrics.length) return;
+    const line = lyricsEl.children[index];
+    const lineRect = line.getBoundingClientRect(); // 获取当前行的绝对位置
+    const containerRect = lyricsEl.getBoundingClientRect(); // 获取容器的绝对位置
 
-        const line = lyricsEl.children[index];
-        const lineTop = line.offsetTop;
-        const lineHeight = line.clientHeight;
+    // 计算需要滚动的距离（使当前行垂直居中）
+    const scrollTop = lineRect.top - containerRect.top + lyricsEl.scrollTop - 
+                     (containerRect.height / 2 - lineRect.height / 2);
 
-        // 计算容器应滚动的位置（使当前行居中）
-        const scrollTop = lineTop - (lyricsEl.clientHeight / 2 - lineHeight / 2);
+    // 平滑滚动到目标位置
+    lyricsEl.style.transition = 'transform 0.3s ease';
+    lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
+}
 
-        // 平滑滚动到目标位置
-        lyricsEl.style.transition = 'transform 0.3s ease';
-        lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
-    }
-
-    audio.addEventListener('timeupdate', () => {
-        const currentTime = audio.currentTime;
-        for (let i = 0; i < lyrics.length; i++) {
-            if (currentTime >= lyrics[i].time && i !== currentLine) {
-                // 高亮当前歌词
-                const lines = lyricsEl.children;
-                for (let j = 0; j < lines.length; j++) {
-                    lines[j].classList.remove('current');
-                }
-                lines[i].classList.add('current');
-                currentLine = i;
-
-                // 自动滚动到当前歌词行
-                scrollToCurrentLine(i);
-                break;
+   audio.addEventListener('timeupdate', () => {
+    const currentTime = audio.currentTime;
+    for (let i = 0; i < lyrics.length; i++) {
+        if (currentTime >= lyrics[i].time && i !== currentLine) {
+            // 高亮当前歌词
+            const lines = lyricsEl.children;
+            for (let j = 0; j < lines.length; j++) {
+                lines[j].classList.remove('current');
             }
+            lines[i].classList.add('current');
+            currentLine = i;
+
+            // 自动滚动到当前歌词行
+            scrollToCurrentLine(i);
+            break;
         }
-    });
+    }
+});
 }
