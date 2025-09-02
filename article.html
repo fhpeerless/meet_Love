@@ -246,19 +246,20 @@
 /* 确保歌词容器限制高度且支持滚动 */
 /* 限制歌词容器大小并控制文本显示 */
 /* 限制歌词容器大小并控制文本显示 */
+/* 歌词容器 */
 .lyrics-container {
     margin-top: 20px;
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* 确保背景色可见 */
     border: 1px solid #ddd;
-    max-height: 60px; /* 限制容器高度为单行歌词高度 */
-    max-width: 500px; /* 限制容器最大宽度 */
+    max-width: 500px;
     overflow: hidden; /* 隐藏默认滚动条 */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* 歌词内容区域 */
 .lyrics {
     line-height: 1.5;
     font-size: 16px;
@@ -267,11 +268,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 60px; /* 与容器高度一致 */
     width: 100%;
-    white-space: nowrap; /* 防止歌词换行 */
-    text-overflow: ellipsis; /* 超出部分显示省略号 */
+    white-space: nowrap;
+    text-overflow: ellipsis;
     overflow: hidden;
+    height: auto; /* 自动适应内容高度 */
+    min-height: 60px; /* 保证最小高度 */
 }
 .lyrics .current {
     color: red;
