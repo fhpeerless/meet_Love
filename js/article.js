@@ -70,6 +70,16 @@ export function displayArticle() {
     audioWrapper.appendChild(audio);
     musicContainer.appendChild(audioWrapper);
     musicContainer.style.display = 'block';
+
+ // 加载并解析歌词
+        try {
+            const lyrics = await fetchLyrics(letter.lyricsUrl);
+            renderLyrics(lyrics, audio);
+        } catch (err) {
+            console.error("加载歌词失败:", err);
+            document.getElementById('lyrics').innerText = "无法加载歌词。";
+        }
+        
 } else {
         musicContainer.style.display = 'none';
     }
