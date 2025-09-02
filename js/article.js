@@ -4,7 +4,8 @@ import { formatDate } from './utils.js';
 
 let currentAudio = null; // 用于跟踪当前播放的音频
 
-export function displayArticle() {
+// 主函数：显示文章内容
+export async function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
     if (!letterId) {
         console.warn('未找到信件 ID，跳回首页');
@@ -18,6 +19,7 @@ export function displayArticle() {
         window.location.href = 'index.html';
         return;
     }
+
     // 更新标题、日期、正文
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
@@ -60,30 +62,52 @@ export function displayArticle() {
         currentAudio = audio;
         
         const audioWrapper = document.createElement('div');
-    audioWrapper.className = 'audio-player';
+        audioWrapper.className = 'audio-player';
 
-    // 添加歌曲标题
-    const songTitle = document.createElement('h3');
-    songTitle.textContent = letter.musicTitle || '未知歌曲';
-    audioWrapper.appendChild(songTitle);
+        // 添加歌曲标题
+        const songTitle = document.createElement('h3');
+        songTitle.textContent = letter.musicTitle || '未知歌曲';
+        audioWrapper.appendChild(songTitle);
 
-    audioWrapper.appendChild(audio);
-    musicContainer.appendChild(audioWrapper);
-    musicContainer.style.display = 'block';
+        audioWrapper.appendChild(audio);
+        musicContainer.appendChild(audioWrapper);
+        musicContainer.style.display = 'block';
 
- // 加载并解析歌词
+        // 加载并解析歌词
         try {
-            const lyrics = await fetchLyrics(letter.lyricsUrl);
-            renderLyrics(lyrics, audio);
+            await fetchLyrics(letter.lyricsUrl, audio);
         } catch (err) {
             console.error("加载歌词失败:", err);
             document.getElementById('lyrics').innerText = "无法加载歌词。";
         }
-        
-} else {
+    } else {
         musicContainer.style.display = 'none';
     }
-    // 获取并解析 LRC 歌词
+
+    // 处理视频
+    const videoContainer = document.getElementById('videoContainer');
+    videoContainer.innerHTML = '';
+    if (letter.videoUrl) {
+        const video = document.createElement('video');
+        video.src = letter.videoUrl;
+        video.controls = true;
+        video.autoplay = true; // 自动播放
+        video.loop = true; // 循环播放
+        video.muted = false; // 不静音
+        video.playsInline = true; // 在iOS上内联播放
+        
+        const videoWrapper = document.createElement('div');
+        videoWrapper.className = 'video-player';
+        videoWrapper.innerHTML = '<h3>视频</h3>';
+        videoWrapper.appendChild(video);
+        videoContainer.appendChild(videoWrapper);
+        videoContainer.style.display = 'block';
+    } else {
+        videoContainer.style.display = 'none';
+    }
+}
+
+// 获取并解析 LRC 歌词
 async function fetchLyrics(url, audio) {
     try {
         const response = await fetch(url);
@@ -99,6 +123,7 @@ async function fetchLyrics(url, audio) {
     }
 }
 
+// 解析 LRC 格式文本
 function parseLRC(text) {
     const lines = text.trim().split('\n');
     const lyrics = [];
@@ -146,27 +171,4 @@ function renderLyrics(lyrics, audio) {
             }
         }
     });
-}
-
-    // 处理视频
-    const videoContainer = document.getElementById('videoContainer');
-    videoContainer.innerHTML = '';
-    if (letter.videoUrl) {
-        const video = document.createElement('video');
-        video.src = letter.videoUrl;
-        video.controls = true;
-        video.autoplay = true; // 自动播放
-        video.loop = true; // 循环播放
-        video.muted = false; // 不静音
-        video.playsInline = true; // 在iOS上内联播放
-        
-        const videoWrapper = document.createElement('div');
-        videoWrapper.className = 'video-player';
-        videoWrapper.innerHTML = '<h3>视频</h3>';
-        videoWrapper.appendChild(video);
-        videoContainer.appendChild(videoWrapper);
-        videoContainer.style.display = 'block';
-    } else {
-        videoContainer.style.display = 'none';
-    }
 }
