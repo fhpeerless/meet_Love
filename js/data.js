@@ -56,8 +56,8 @@ export const lettersData = [
         text: "这是我第一次折星星，圈圈绕绕有些难啊，但纵使难于跨山海，虽然我不能翻过，但为了爱，在宽广的海，我也可以乘船横渡，再危险的山道，我也可以寻路穿行，山山海海都不能阻挡我的脚步，因为外卖员的身份，为找到你提供了便利，如果看见我来了请你张开双臂抱紧我！这是我叠的第二颗星星，如果我的另一半你还没出现，我就一直叠一直，叠到你出现为止，我想慢一点叠，我怕叠到1314你还没有出现！",
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931", // 替换为实际的音乐直链
-                musicTitle: "毛不易 - 给你给我", // ← 新增字段
-                 lyricsUrl: "./lrc/gngwo.lrc", // ← 新增字段
+        musicTitle: "毛不易 - 给你给我", // ← 新增字段
+        lyricsUrl: "./lrc/gngwo.lrc", // ← 新增字段
         videoUrl: ""  // 如果没有视频，留空
     },
 
