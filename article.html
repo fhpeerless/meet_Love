@@ -246,22 +246,20 @@
 /* 确保歌词容器限制高度且支持滚动 */
 /* 限制歌词容器大小并控制文本显示 */
 /* 限制歌词容器大小并控制文本显示 */
+
 /* 歌词容器 */
-/* 歌词容器 */
-    .lyrics-container {
+.lyrics-container {
     margin-top: 20px;
     padding: 0;
     background-color: pink;
-    border: none;
     max-width: 500px;
-    height: auto; /* 自动适应内容高度 */
-    min-height: 60px; /* 保证最小高度 */
-    overflow: hidden; /* 隐藏溢出内容 */
+    height: 60px; /* 三行歌词高度（假设每行 20px） */
+    overflow-y: auto; /* 启用垂直滚动 */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-}
+}/* 歌词内容 */
 .lyrics {
     line-height: 1.5;
     font-size: 16px;
@@ -270,13 +268,17 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: 10px 0;
+    padding: 0 10px;
+    height: 100%; /* 填满容器高度 */
+    box-sizing: border-box;
 }
 
 .lyrics .current {
     color: red;
     font-weight: bold;
 }
+
+
 
     /* 爱心动画（保留占位） */
     .heart {
