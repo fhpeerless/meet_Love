@@ -1,8 +1,10 @@
-// js/detail-main.js
+// detail-main.js
+import { BackgroundMusicPlayer } from './background-music.js'; // ✅ 新增
 import { startTimer } from './timer.js';
-import { displayArticle } from './article.js'; // ✅ 导入 displayArticle
+import { displayArticle } from './article.js';
 import { toggleProfile, toggleContact } from './sidebar.js';
 import { startHeartAnimation } from './heart.js';
+import { lettersData } from './data.js';
 
 // js/detail-main.js
 import { lettersData } from './data.js'; // ✅ 导入信件数据
