@@ -174,10 +174,12 @@ function renderLyrics(lyrics, audio) {
         lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
     }
 
-    audio.addEventListener('timeupdate', () => {
-        const currentTime = audio.currentTime;
-        for (let i = 0; i < lyrics.length; i++) {
-            if (currentTime >= lyrics[i].time && i !== currentLine) {
+audio.addEventListener('timeupdate', () => {
+    const currentTime = audio.currentTime;
+    for (let i = 0; i < lyrics.length; i++) {
+        // ✅ 添加时间容差（0.2秒），避免频繁切换
+        if (currentTime >= lyrics[i].time - 0.2 && currentTime < lyrics[i + 1]?.time) {
+            if (i !== currentLine) {
                 // 高亮当前歌词
                 const lines = lyricsEl.children;
                 for (let j = 0; j < lines.length; j++) {
@@ -191,5 +193,6 @@ function renderLyrics(lyrics, audio) {
                 break;
             }
         }
-    });
+    }
+});
 }
