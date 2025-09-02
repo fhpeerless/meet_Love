@@ -60,12 +60,17 @@ export function displayArticle() {
         currentAudio = audio;
         
         const audioWrapper = document.createElement('div');
-        audioWrapper.className = 'audio-player';
-        audioWrapper.innerHTML = '<h3>背景音乐</h3>';
-        audioWrapper.appendChild(audio);
-        musicContainer.appendChild(audioWrapper);
-        musicContainer.style.display = 'block';
-    } else {
+    audioWrapper.className = 'audio-player';
+
+    // 添加歌曲标题
+    const songTitle = document.createElement('h3');
+    songTitle.textContent = letter.musicTitle || '未知歌曲';
+    audioWrapper.appendChild(songTitle);
+
+    audioWrapper.appendChild(audio);
+    musicContainer.appendChild(audioWrapper);
+    musicContainer.style.display = 'block';
+} else {
         musicContainer.style.display = 'none';
     }
 
