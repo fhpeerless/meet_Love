@@ -57,6 +57,7 @@ export const lettersData = [
         photos: [],
         musicUrl: "http://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931", // 替换为实际的音乐直链
                 musicTitle: "毛不易 - 给你给我", // ← 新增字段
+                 lyricsUrl: "./lrc/gngwo.lrc", // ← 新增字段
         videoUrl: ""  // 如果没有视频，留空
     },
 
