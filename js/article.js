@@ -84,10 +84,19 @@ export function displayArticle() {
         musicContainer.style.display = 'none';
     }
     // 获取并解析 LRC 歌词
-async function fetchLyrics(url) {
-    const res = await fetch(url);
-    const text = await res.text();
-    return parseLRC(text);
+async function fetchLyrics(url, audio) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`歌词文件加载失败（状态码：${response.status}）`);
+        }
+        const text = await response.text();
+        const lyrics = parseLRC(text);
+        renderLyrics(lyrics, audio);
+    } catch (err) {
+        console.error("加载歌词失败:", err);
+        document.getElementById('lyrics').innerHTML = `<p style="color:red;">歌词加载失败：${err.message}</p>`;
+    }
 }
 
 function parseLRC(text) {
