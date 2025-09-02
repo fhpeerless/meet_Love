@@ -247,16 +247,19 @@
 /* 限制歌词容器大小并控制文本显示 */
 /* 限制歌词容器大小并控制文本显示 */
 /* 歌词容器 */
+/* 歌词容器 */
 .lyrics-container {
     margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9; /* 确保背景色可见 */
-    border: 1px solid #ddd;
+    padding: 0; /* 移除外边距 */
+    background-color: pink; /* 与网页背景一致 */
+    border: none; /* 移除外边框 */
     max-width: 500px;
-    overflow: hidden; /* 隐藏默认滚动条 */
+    height: 60px; /* 严格限制为两行歌词高度 */
+    overflow: hidden; /* 隐藏滚动条 */
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 /* 歌词内容区域 */
@@ -270,10 +273,14 @@
     align-items: center;
     width: 100%;
     white-space: nowrap;
-    text-overflow: ellipsis;
     overflow: hidden;
-    height: auto; /* 自动适应内容高度 */
-    min-height: 60px; /* 保证最小高度 */
+    height: 60px; /* 与容器高度一致 */
+    padding: 0 10px; /* 添加内边距避免文字贴边 */
+}
+
+.lyrics .current {
+    color: red;
+    font-weight: bold;
 }
 .lyrics .current {
     color: red;
