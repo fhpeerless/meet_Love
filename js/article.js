@@ -174,8 +174,8 @@ function renderLyrics(lyrics, audio) {
     audio.addEventListener('timeupdate', () => {
         const currentTime = audio.currentTime;
         for (let i = 0; i < lyrics.length; i++) {
-            // ✅ 修正逻辑：匹配当前行和下一行之间的时间段
-            if (currentTime >= lyrics[i].time - 0.2 && currentTime < lyrics[i + 1]?.time) {
+            const nextTime = lyrics[i + 1]?.time || Infinity;
+            if (currentTime >= lyrics[i].time - 0.2 && currentTime < nextTime) {
                 if (i !== currentLine) {
                     const lines = lyricsEl.children;
                     for (let j = 0; j < lines.length; j++) {
