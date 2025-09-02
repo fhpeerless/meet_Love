@@ -164,11 +164,11 @@ function renderLyrics(lyrics, audio) {
         const lineRect = line.getBoundingClientRect();
         const containerRect = lyricsEl.getBoundingClientRect();
 
+        // 计算滚动偏移量，使当前行在容器中间
         const scrollTop = lineRect.top - containerRect.top + lyricsEl.scrollTop -
-                         (60 / 2 - lineRect.height / 2);
+                         (containerRect.height / 2 - lineRect.height / 2);
 
-        lyricsEl.style.transition = 'transform 0.3s ease';
-        lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
+        lyricsEl.scrollTop = scrollTop;
     }
 
     audio.addEventListener('timeupdate', () => {
