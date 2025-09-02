@@ -1,12 +1,14 @@
 // article.js
-import { BackgroundMusicPlayer } from './background-music.js'; // ✅ 新增
+import { BackgroundMusicPlayer } from './background-music.js';
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
 
-let currentBgMusicPlayer = null; // ✅ 用于保存当前播放器实例
+let currentBgMusicPlayer = null;
 
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
+    console.log('当前信件 ID:', letterId); // 调试日志
+
     if (!letterId) {
         console.warn('未找到信件 ID，跳回首页');
         window.location.href = 'index.html';
@@ -14,6 +16,8 @@ export function displayArticle() {
     }
 
     const letter = lettersData.find(l => l.id == letterId);
+    console.log('找到的信件:', letter); // 调试日志
+
     if (!letter) {
         console.warn('未找到 ID 为', letterId, '的信件');
         window.location.href = 'index.html';
@@ -44,24 +48,18 @@ export function displayArticle() {
         document.getElementById('articlePhotos').style.display = 'none';
     }
 
-    // ✅ 处理音乐（使用 BackgroundMusicPlayer）
+    // 处理音乐
     const musicContainer = document.getElementById('musicContainer');
-    musicContainer.innerHTML = ''; // 清空容器
-
+    musicContainer.innerHTML = '';
     if (letter.musicUrl) {
-        // 关闭之前的播放器
-        if (currentBgMusicPlayer) {
-            currentBgMusicPlayer.close();
+        try {
+            if (currentBgMusicPlayer) currentBgMusicPlayer.close();
+            currentBgMusicPlayer = new BackgroundMusicPlayer();
+            currentBgMusicPlayer.setMusic(letter.songTitle || '未知歌曲', letter.musicUrl, letter.lrcUrl || '');
+            currentBgMusicPlayer.play();
+        } catch (error) {
+            console.error('音乐播放器初始化失败:', error);
         }
-
-        // 创建新播放器并播放
-        currentBgMusicPlayer = new BackgroundMusicPlayer();
-        currentBgMusicPlayer.setMusic(
-            letter.songTitle || '未知歌曲',
-            letter.musicUrl,
-            letter.lrcUrl || ''
-        );
-        currentBgMusicPlayer.play();
     } else {
         musicContainer.style.display = 'none';
     }
@@ -87,3 +85,7 @@ export function displayArticle() {
         videoContainer.style.display = 'none';
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    displayArticle();
+});
