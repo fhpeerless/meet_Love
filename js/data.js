@@ -31,7 +31,7 @@ export const lettersData = [
         id: 3,
         title: "3.☆=0.用心准备的发光礼盒",
         date: "2025-08-21",
-        text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想你了😂",
+        text: "爱人需要用心，我用心了，那我的爱人，你在那呢，我们会相遇在地铁吗,会相遇在正午的阳光下吗，你过得还好吗，你吃饭了吗！我想我的伴侣，你在哪里啊😂",
         photos: [ ],
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: "http://note.youdao.com/yws/api/personal/file/99e2a3bf2df913cd8e09dac1c510cc5f?method=download&inline=true&shareKey=26b960b4014fb9007c696ca53d53b1b1"  // 如果没有视频，留空
