@@ -21,6 +21,7 @@ body {
     height: 100vh;
     display: flex;
     overflow: hidden;
+    width: 100vw;
 }
 
 /* ========== 侧边栏 ========== */
@@ -128,7 +129,6 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    /* 移除 align-items: center */
 }
 
 /* 返回按钮 */
@@ -143,7 +143,7 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
-    align-self: flex-start; /* 左对齐 */
+    align-self: flex-start;
 }
 
 .back-btn:hover {
@@ -158,7 +158,7 @@ body {
 .article-date {
     width: 100%;
     max-width: 800px;
-    margin: 0;
+    margin: 0 auto;
     padding: 0 10px;
     text-align: left;
 }
@@ -176,7 +176,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* 文章内容 */
+/* 文章内容（信件内容） */
 .article-content {
     line-height: 1.8;
     color: #444;
@@ -188,6 +188,50 @@ body {
     margin: 0 auto;
     padding: 0 10px;
     text-align: left;
+}
+
+/* 音频/视频播放器容器 */
+.media-container {
+    margin: 20px auto;
+    max-width: 800px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.media-container h3 {
+    color: #333;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* 音频播放器 */
+audio {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+audio::-webkit-media-controls {
+    width: 100%;
+}
+
+audio::-webkit-media-controls-time {
+    font-size: 0.9em;
+}
+
+/* 视频播放器 */
+video {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
 }
 
 /* 照片展示 */
@@ -228,47 +272,6 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* 媒体容器（音频/视频） */
-.media-container {
-    margin: 20px 0;
-    max-width: 800px;
-    width: 100%;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    text-align: left;
-    align-self: flex-start;
-}
-
-.media-container h3 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-audio,
-video {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 8px;
-    display: block;
-    margin-top: 10px;
-}
-
-audio::-webkit-media-controls {
-    width: 100%;
-}
-
-audio::-webkit-media-controls-time {
-    font-size: 0.9em;
-}
-
-.audio-player h3 {
-    margin-bottom: 8px;
-    font-size: 1em;
-    color: #d46b9c;
-}
-
 /* 歌词容器 */
 .lyrics-container {
     margin-top: 20px;
@@ -304,13 +307,26 @@ audio::-webkit-media-controls-time {
     font-weight: bold;
 }
 
-/* 爱心动画 */
+/* 爱心动画（移动端隐藏） */
 .heart {
     position: absolute;
     font-size: 18px;
     opacity: 0.7;
     z-index: 1;
     pointer-events: none;
+    animation: heartBeat 1s ease-out;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+/* 移动端隐藏爱心动画 */
+@media (max-width: 768px) {
+    .heart {
+        display: none;
+    }
 }
 
 /* ========== 响应式设计 ========== */
@@ -341,9 +357,30 @@ audio::-webkit-media-controls-time {
     .photo-item img {
         height: 150px;
     }
+
+    .media-container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .article-content {
+        font-size: 1em;
+        padding: 0 5px;
+    }
 }
 
 @media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
     .photo-grid {
         grid-template-columns: 1fr;
     }
