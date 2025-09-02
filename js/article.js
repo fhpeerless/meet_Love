@@ -158,21 +158,21 @@ function renderLyrics(lyrics, audio) {
     let currentLine = -1;
 
     // 计算并滚动到当前歌词行
-    function scrollToCurrentLine(index) {
-        if (index < 0 || index >= lyrics.length) return;
+function scrollToCurrentLine(index) {
+    if (index < 0 || index >= lyrics.length) return;
 
-        const line = lyricsEl.children[index];
-        const lineRect = line.getBoundingClientRect();
-        const containerRect = lyricsEl.getBoundingClientRect();
+    const line = lyricsEl.children[index];
+    const lineRect = line.getBoundingClientRect();
+    const containerRect = lyricsEl.getBoundingClientRect();
 
-        // 计算需要滚动的距离（使当前行垂直居中）
-        const scrollTop = lineRect.top - containerRect.top + lyricsEl.scrollTop -
-                         (containerRect.height / 2 - lineRect.height / 2);
+    // ✅ 使用固定容器高度，避免动态计算错误
+    const scrollTop = lineRect.top - containerRect.top + lyricsEl.scrollTop -
+                     (60 / 2 - lineRect.height / 2); // 60px 是 .lyrics-container 的 max-height
 
-        // 平滑滚动到目标位置
-        lyricsEl.style.transition = 'transform 0.3s ease';
-        lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
-    }
+    // ✅ 确保 transform 不被重复设置
+    lyricsEl.style.transition = 'transform 0.3s ease';
+    lyricsEl.style.transform = `translateY(-${scrollTop}px)`;
+}
 
 audio.addEventListener('timeupdate', () => {
     const currentTime = audio.currentTime;
