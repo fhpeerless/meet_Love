@@ -1,34 +1,28 @@
-// article.js
-import { BackgroundMusicPlayer } from './background-music.js';
+// js/article.js
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
 
-let currentBgMusicPlayer = null;
+let currentAudio = null; // 用于跟踪当前播放的音频
 
 export function displayArticle() {
     const letterId = localStorage.getItem('currentLetterId');
-    console.log('当前信件 ID:', letterId); // 调试日志
-
     if (!letterId) {
         console.warn('未找到信件 ID，跳回首页');
         window.location.href = 'index.html';
         return;
     }
-
+    
     const letter = lettersData.find(l => l.id == letterId);
-    console.log('找到的信件:', letter); // 调试日志
-
     if (!letter) {
         console.warn('未找到 ID 为', letterId, '的信件');
         window.location.href = 'index.html';
         return;
     }
-
     // 更新标题、日期、正文
     document.getElementById('articleTitle').textContent = letter.title;
     document.getElementById('articleDate').textContent = formatDate(letter.date);
     document.getElementById('articleContent').textContent = letter.text;
-
+    
     // 处理照片
     const photoGrid = document.getElementById('photoGrid');
     photoGrid.innerHTML = '';
@@ -52,14 +46,25 @@ export function displayArticle() {
     const musicContainer = document.getElementById('musicContainer');
     musicContainer.innerHTML = '';
     if (letter.musicUrl) {
-        try {
-            if (currentBgMusicPlayer) currentBgMusicPlayer.close();
-            currentBgMusicPlayer = new BackgroundMusicPlayer();
-            currentBgMusicPlayer.setMusic(letter.songTitle || '未知歌曲', letter.musicUrl, letter.lrcUrl || '');
-            currentBgMusicPlayer.play();
-        } catch (error) {
-            console.error('音乐播放器初始化失败:', error);
+        const audio = document.createElement('audio');
+        audio.src = letter.musicUrl;
+        audio.controls = true;
+        audio.autoplay = true; // 自动播放
+        audio.loop = true; // 循环播放
+        audio.volume = 0.5; // 设置音量
+        
+        // 停止之前播放的音乐
+        if (currentAudio && !currentAudio.paused) {
+            currentAudio.pause();
         }
+        currentAudio = audio;
+        
+        const audioWrapper = document.createElement('div');
+        audioWrapper.className = 'audio-player';
+        audioWrapper.innerHTML = '<h3>背景音乐</h3>';
+        audioWrapper.appendChild(audio);
+        musicContainer.appendChild(audioWrapper);
+        musicContainer.style.display = 'block';
     } else {
         musicContainer.style.display = 'none';
     }
@@ -71,10 +76,11 @@ export function displayArticle() {
         const video = document.createElement('video');
         video.src = letter.videoUrl;
         video.controls = true;
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = false;
-        video.playsInline = true;
+        video.autoplay = true; // 自动播放
+        video.loop = true; // 循环播放
+        video.muted = false; // 不静音
+        video.playsInline = true; // 在iOS上内联播放
+        
         const videoWrapper = document.createElement('div');
         videoWrapper.className = 'video-player';
         videoWrapper.innerHTML = '<h3>视频</h3>';
@@ -85,7 +91,3 @@ export function displayArticle() {
         videoContainer.style.display = 'none';
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    displayArticle();
-});
