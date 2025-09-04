@@ -150,7 +150,16 @@ export const lettersData = [
         musicUrl: "", // 替换为实际的音乐直链
         videoUrl: "http://note.youdao.com/yws/api/personal/file/b2ad46ec4679729385c1e1a8d372643c?method=download&inline=true&shareKey=1f8d43142654541ee47f72c5c1cfd986"  // 如果没有视频，留空
     }
-    
+    ,
+            {
+        id: 15,
+        title: "15.☆=75.跑外卖？",
+        date: "2025-09-03",
+        text: "我把时间用来学习，我想我应该考一个稳定的工作了，所以以后的大部分时间，用来准备考试，以后可能更新的越来越来越慢吧，",
+        photos: [],
+        musicUrl: "", // 替换为实际的音乐直链
+        videoUrl: ""  // 如果没有视频，留空
+    }
     // ... 其他信件
 ];
 
