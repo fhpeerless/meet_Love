@@ -2,7 +2,9 @@
 import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
 
-export function generateLetters() {
+// letter.js
+
+function generateLetters() {
     const letterList = document.getElementById('letterList');
     if (!letterList) return;
 
@@ -16,10 +18,9 @@ export function generateLetters() {
             window.location.href = 'article.html';
         };
 
-        // 构建标题部分
         let titleHTML = `<div class="letter-title">${letter.title}</div>`;
 
-        // 根据媒体内容添加图标
+        // 动态添加 SVG 图标
         if (letter.photos && letter.photos.length > 0) {
             titleHTML = `<span class="media-icon photo-icon"></span>${titleHTML}`;
         }
