@@ -3,7 +3,6 @@ import { lettersData } from './data.js';
 import { formatDate } from './utils.js';
 
 // letter.js
-
 // letter.js
 
 function generateLetters() {
@@ -22,26 +21,20 @@ function generateLetters() {
 
         let titleHTML = `<div class="letter-title">${letter.title}</div>`;
 
-        // 动态添加 SVG 图标
+        // 使用 <img> 加载本地 SVG
         if (letter.photos && letter.photos.length > 0) {
             titleHTML = `
-                <svg class="media-icon photo-icon" viewBox="0 0 24 24">
-                    <use href="#icon-photo" />
-                </svg>
+                <img src="img/icons/photo-icon.svg" class="media-icon photo-icon" alt="照片" />
             ` + titleHTML;
         }
         if (letter.musicUrl) {
             titleHTML = `
-                <svg class="media-icon music-icon" viewBox="0 0 24 24">
-                    <use href="#icon-music" />
-                </svg>
+                <img src="img/icons/music-icon.svg" class="media-icon music-icon" alt="音乐" />
             ` + titleHTML;
         }
         if (letter.videoUrl) {
             titleHTML = `
-                <svg class="media-icon video-icon" viewBox="0 0 24 24">
-                    <use href="#icon-video" />
-                </svg>
+                <img src="img/icons/video-icon.svg" class="media-icon video-icon" alt="视频" />
             ` + titleHTML;
         }
 
