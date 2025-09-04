@@ -4,7 +4,12 @@ import { formatDate } from './utils.js'; // ✅ 正确导入
 
 export function generateLetters() {
     
-    // 在生成标题前，先判断是否有图片、音乐或视频
+
+    
+    const letterList = document.getElementById('letterList');
+    if (!letterList) return; // ✅ 防御性编程
+    letterList.innerHTML = '';
+        // 在生成标题前，先判断是否有图片、音乐或视频
 let titleHTML = `<div class="letter-title">${letter.title}</div>`;
 
 if (letter.photos && letter.photos.length > 0) {
@@ -22,11 +27,6 @@ li.innerHTML = `
     <div class="letter-date">${formatDate(letter.date)}</div>
     <div class="letter-preview">${letter.text.substring(0, 80)}...</div>
 `;
-    
-    
-    const letterList = document.getElementById('letterList');
-    if (!letterList) return; // ✅ 防御性编程
-    letterList.innerHTML = '';
     
     lettersData.forEach(letter => {
         const li = document.createElement('li');
