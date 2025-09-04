@@ -187,6 +187,7 @@
 
 /* 媒体图标基础样式 */
 /* 媒体图标基础样式 */
+/* 图标基础样式 */
 .media-icon {
     display: inline-block;
     width: 20px;
@@ -194,13 +195,12 @@
     vertical-align: middle;
     margin-right: 8px;
     transition: transform 0.2s ease, filter 0.2s ease;
+    user-select: none;
+    pointer-events: none; /* 避免点击干扰 */
 }
 
 /* 照片图标 */
 .photo-icon {
-    fill: #ff6f61; /* 红色 */
-    stroke: #fff;
-    stroke-width: 1.5;
     filter: drop-shadow(0 0 2px rgba(255, 111, 97, 0.5));
 }
 
@@ -211,9 +211,6 @@
 
 /* 音乐图标 */
 .music-icon {
-    fill: #6a11cb; /* 紫色 */
-    stroke: #fff;
-    stroke-width: 1.5;
     filter: drop-shadow(0 0 2px rgba(106, 17, 203, 0.5));
 }
 
@@ -224,9 +221,6 @@
 
 /* 视频图标 */
 .video-icon {
-    fill: #00c9a7; /* 青绿色 */
-    stroke: #fff;
-    stroke-width: 1.5;
     filter: drop-shadow(0 0 2px rgba(0, 201, 167, 0.5));
 }
 
