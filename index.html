@@ -186,32 +186,54 @@
 
 
 /* 媒体图标基础样式 */
+/* 媒体图标基础样式 */
 .media-icon {
     display: inline-block;
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
+    width: 20px;
+    height: 20px;
     vertical-align: middle;
+    margin-right: 8px;
+    transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 /* 照片图标 */
 .photo-icon {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5h18v14H3V5zm16 12H5V7h14v10z"/></svg>') no-repeat center center;
-    background-size: contain;
+    fill: #ff6f61; /* 红色 */
+    stroke: #fff;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 2px rgba(255, 111, 97, 0.5));
+}
+
+.photo-icon:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 4px rgba(255, 111, 97, 0.8));
 }
 
 /* 音乐图标 */
 .music-icon {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>') no-repeat center center;
-    background-size: contain;
+    fill: #6a11cb; /* 紫色 */
+    stroke: #fff;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 2px rgba(106, 17, 203, 0.5));
+}
+
+.music-icon:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 4px rgba(106, 17, 203, 0.8));
 }
 
 /* 视频图标 */
 .video-icon {
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5z"/></svg>') no-repeat center center;
-    background-size: contain;
+    fill: #00c9a7; /* 青绿色 */
+    stroke: #fff;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 2px rgba(0, 201, 167, 0.5));
 }
-        
+
+.video-icon:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 4px rgba(0, 201, 167, 0.8));
+}
 /* 当前显示的图片 */
 .photo-item.active {
     opacity: 1;
