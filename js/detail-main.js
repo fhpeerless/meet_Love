@@ -3,6 +3,7 @@ import { startTimer } from './timer.js';
 import { displayArticle } from './article.js'; // ✅ 导入 displayArticle
 import { toggleProfile, toggleContact } from './sidebar.js';
 import { startHeartAnimation } from './heart.js';
+import { generateLetters } from './letter.js';
 
 // js/detail-main.js
 import { lettersData } from './data.js'; // ✅ 导入信件数据
