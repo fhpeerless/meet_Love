@@ -4,6 +4,8 @@ import { formatDate } from './utils.js';
 
 // letter.js
 
+// letter.js
+
 function generateLetters() {
     const letterList = document.getElementById('letterList');
     if (!letterList) return;
@@ -22,13 +24,25 @@ function generateLetters() {
 
         // 动态添加 SVG 图标
         if (letter.photos && letter.photos.length > 0) {
-            titleHTML = `<span class="media-icon photo-icon"></span>${titleHTML}`;
+            titleHTML = `
+                <svg class="media-icon photo-icon" viewBox="0 0 24 24">
+                    <use href="#icon-photo" />
+                </svg>
+            ` + titleHTML;
         }
         if (letter.musicUrl) {
-            titleHTML = `<span class="media-icon music-icon"></span>${titleHTML}`;
+            titleHTML = `
+                <svg class="media-icon music-icon" viewBox="0 0 24 24">
+                    <use href="#icon-music" />
+                </svg>
+            ` + titleHTML;
         }
         if (letter.videoUrl) {
-            titleHTML = `<span class="media-icon video-icon"></span>${titleHTML}`;
+            titleHTML = `
+                <svg class="media-icon video-icon" viewBox="0 0 24 24">
+                    <use href="#icon-video" />
+                </svg>
+            ` + titleHTML;
         }
 
         li.innerHTML = `
