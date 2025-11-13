@@ -31,6 +31,11 @@ export class BackgroundMusicPlayer {
     }
     
 createPlayer() {
+    // 创建外层容器
+    this.playerWrapper = document.createElement('div');
+    this.playerWrapper.className = 'music-player-wrapper';
+    
+    // 创建播放器容器
     this.playerContainer = document.createElement('div');
     this.playerContainer.className = 'bg-music-player';
     this.playerContainer.innerHTML = `
@@ -58,20 +63,27 @@ createPlayer() {
                 <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
-        <!-- 🔻 修改：移除 'show' 类，让默认不显示，但我们会在 JS 中控制 -->
-        <div class="lyrics-container" id="lyricsContainer">
-            <div class="lyrics-content" id="lyricsContent">
-                <div class="lyrics-line current">加载歌词中...</div>
-            </div>
+    `;
+    
+    // 创建歌词容器
+    this.lyricsContainer = document.createElement('div');
+    this.lyricsContainer.className = 'lyrics-container';
+    this.lyricsContainer.id = 'lyricsContainer';
+    this.lyricsContainer.innerHTML = `
+        <div class="lyrics-content" id="lyricsContent">
+            <div class="lyrics-line current">加载歌词中...</div>
         </div>
     `;
     
-    document.body.appendChild(this.playerContainer);
-
-    this.lyricsContainer = document.getElementById('lyricsContainer');
+    // 将播放器和歌词容器添加到外层容器中
+    this.playerWrapper.appendChild(this.playerContainer);
+    this.playerWrapper.appendChild(this.lyricsContainer);
+    
+    // 将外层容器添加到页面中
+    document.body.appendChild(this.playerWrapper);
     
     // 🔥 新增：设置默认显示
-    this.lyricsContainer.style.display = 'block'; // 或 'flex'，根据布局
+    this.lyricsContainer.style.display = 'block';
     
     this.bindEvents();
 }
@@ -303,9 +315,11 @@ toggleLyrics() {
     
     close() {
         this.pause();
-        if (this.playerContainer) {
-            this.playerContainer.remove();
+        if (this.playerWrapper) {
+            this.playerWrapper.remove();
+            this.playerWrapper = null;
             this.playerContainer = null;
+            this.lyricsContainer = null;
         }
     }
     
