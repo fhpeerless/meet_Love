@@ -233,11 +233,9 @@ body, html {
     text-align: center;
 }
 
-/* 侧边栏显示时，主内容区域样式调整 */
+/* 侧边栏显示时，主内容区域样式调整 - 保持100%宽度 */
 .sidebar.show + .main-content {
-    margin-left: 200px;
-    width: calc(100% - 200px);
-    /* 侧边栏显示时，继续居中显示 */
+    /* 移除margin-left和width限制，让主内容保持100%宽度 */
     align-items: center;
     text-align: center;
 }
