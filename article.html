@@ -168,8 +168,8 @@ body {
     
     width: 100%;
 
-    margin: 0 auto;
-    padding: 0 3px;
+    margin: 0;
+    padding: 0;
     text-align: left;
     align-self: flex-start; /* 与返回按钮垂直对齐 */
 }
@@ -179,6 +179,7 @@ body {
     font-size: 1.8em;
     margin-bottom: 10px;
     font-weight: bold;
+    text-align: left !important;
 }
 
 .article-date {
@@ -230,12 +231,14 @@ video {
     border-radius: 8px;
     display: block;
     margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
 }
 
 /* 照片展示 */
 .article-photos {
-    margin: 20px auto;
-    max-width: 800px;
+    margin: 20px 0;
+    width: 100%;
 }
 
 .article-photos-title {
@@ -243,12 +246,14 @@ video {
     font-weight: bold;
     margin-bottom: 15px;
     font-size: 1.2em;
+    text-align: left;
 }
 
 .photo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    width: 100%;
 }
 
 .photo-item {
@@ -256,6 +261,7 @@ video {
     overflow: hidden;
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
+    aspect-ratio: 1;
 }
 
 .photo-item:hover {
@@ -264,10 +270,11 @@ video {
 
 .photo-item img {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
     border-radius: 8px;
     transition: transform 0.3s ease;
+    display: block;
 }
 
 /* 歌词容器 */
@@ -337,6 +344,7 @@ video {
     .main-content {
         margin-left: 0;
         width: 100%;
+        padding: 10px;
     }
 
     /* 移除所有针对移动端侧边栏的特殊样式 */
@@ -346,6 +354,35 @@ video {
     .contact,
     .timer {
         display: none;
+    }
+    
+    /* 移动端标题样式 */
+    .article-title {
+        font-size: 1.5em;
+        text-align: left;
+    }
+    
+    /* 移动端照片网格优化 */
+    .photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
+    
+    /* 移动端媒体容器优化 */
+    .media-container {
+        padding: 10px;
+        margin: 15px 0;
+    }
+    
+    /* 移动端照片项优化 */
+    .photo-item {
+        aspect-ratio: 1;
+    }
+    
+    /* 移动端字体优化 */
+    .article-content {
+        font-size: 1em;
+        line-height: 1.6;
     }
 }
 </style>

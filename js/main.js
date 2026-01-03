@@ -4,7 +4,7 @@ import { createHeart } from './heart.js';
 import { startTimer } from './timer.js';
 import { createPhotoGrid } from './photo.js';
 import { generateLetters } from './letter.js';
-import { toggleProfile, toggleContact } from './sidebar.js';
+import { toggleProfile, toggleContact, toggleDeclaration } from './sidebar.js';
 // js/main.js
 import { lettersData } from './data.js'; // ✅ 导入信件数据
 
@@ -34,12 +34,44 @@ function initBackgroundMusic() {
     // 创建背景音乐播放器实例
     bgMusicPlayer = new BackgroundMusicPlayer();
     
-    // 设置背景音乐（替换为您的实际音乐链接）
-    bgMusicPlayer.setMusic(
-       '孙燕姿-遇见', 
-        'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
-        './lrc/yujian.lrc' // 您的LRC歌词文件URL
+    // 从信件数据中提取音乐列表
+    const musicList = [];
+    
+    // 添加上下文提供的歌曲
+    musicList.push({
+        title: '孙燕姿-遇见', 
+        url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
+        lrcUrl: './lrc/yujian.lrc'
+    });
+    
+    // 从信件数据中提取所有音乐
+    lettersData.forEach(letter => {
+        if (letter.musicUrl && letter.musicTitle) {
+            musicList.push({
+                title: letter.musicTitle,
+                url: letter.musicUrl,
+                lrcUrl: letter.lyricsUrl || ''
+            });
+        }
+    });
+    
+    // 移除重复的歌曲
+    const uniqueMusicList = musicList.filter((song, index, self) => 
+        index === self.findIndex((s) => s.url === song.url)
     );
+    
+    // 设置音乐列表
+    bgMusicPlayer.setMusicList(uniqueMusicList);
+    
+    // 设置并播放第一首歌曲
+    if (uniqueMusicList.length > 0) {
+        bgMusicPlayer.setMusic(
+            uniqueMusicList[0].title,
+            uniqueMusicList[0].url,
+            uniqueMusicList[0].lrcUrl
+        );
+        bgMusicPlayer.play();
+    }
 }
 
 // 定义更新信件统计的函数
@@ -50,44 +82,78 @@ function updateLetterCount() {
 
 // ✅ 页面加载完成后执行初始化
 document.addEventListener('DOMContentLoaded', function() {
-      // 判断是否为移动端（屏幕宽度 ≤ 768px）
-    if (window.innerWidth <= 768) {
-        // 选择整个 .photo-container 元素
-        const photoContainer = document.querySelector('.photo-container');
-        if (photoContainer) {
-            // 直接移除整个容器
-            photoContainer.remove();
-        }
-    }
     init();
     
     // 将函数暴露到全局（必须在 init() 之后）
     window.toggleProfile = toggleProfile;
     window.toggleContact = toggleContact;
+    window.toggleDeclaration = toggleDeclaration;
     window.bgMusicPlayer = bgMusicPlayer;
+    
+    // 添加事件监听器
+    // 点击头像按钮显示/隐藏侧边栏
+    const avatarBtn = document.getElementById('avatarBtn');
+    if (avatarBtn) {
+        avatarBtn.addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        });
+    }
+    
+    // 点击汉堡菜单显示/隐藏侧边栏
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    if (hamburgerMenu) {
+        hamburgerMenu.addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        });
+    }
+    
+    // 添加元素存在检查，确保事件监听器能够正确绑定
+    const declarationBtn = document.getElementById('declarationBtn');
+    if (declarationBtn) {
+        declarationBtn.addEventListener('click', toggleDeclaration);
+    }
+    
+    const profileBtn = document.getElementById('profileBtn');
+    if (profileBtn) {
+        profileBtn.addEventListener('click', toggleProfile);
+    }
+    
+    const contactBtn = document.getElementById('contactBtn');
+    if (contactBtn) {
+        contactBtn.addEventListener('click', toggleContact);
+    }
 });
 
-// 点击页面空白处关闭侧边栏
+// 点击页面空白处关闭侧边栏和侧边栏内容
 document.addEventListener('click', function(e) {
+    const sidebar = document.querySelector('.sidebar');
     const profile = document.getElementById('profile');
     const contact = document.getElementById('contact');
-    const avatar = document.querySelector('.avatar');
-    const profileBtn = document.getElementById('profileBtn');
-    const contactBtn = document.getElementById('contactBtn');
+    const declaration = document.getElementById('xuanshi');
+    const sidebarAvatar = document.getElementById('sidebarAvatar');
+    const avatarBtn = document.getElementById('avatarBtn');
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
     
-    // 检查点击是否在相关元素之外
-    const isOutsideProfile = !avatar.contains(e.target) && 
-                           !profileBtn.contains(e.target) && 
-                           !profile.contains(e.target);
+    // 检查点击是否在侧边栏、头像或汉堡菜单上
+    const isClickOnSidebar = sidebar && sidebar.contains(e.target);
+    const isClickOnSidebarAvatar = sidebarAvatar && sidebarAvatar.contains(e.target);
+    const isClickOnAvatarBtn = avatarBtn && avatarBtn.contains(e.target);
+    const isClickOnHamburger = hamburgerMenu && hamburgerMenu.contains(e.target);
     
-    const isOutsideContact = !contactBtn.contains(e.target) && 
-                           !contact.contains(e.target);
-    
-    if (isOutsideProfile) {
-        profile.classList.remove('show');
+    // 如果点击在任何相关元素上，不关闭
+    if (isClickOnSidebar || isClickOnSidebarAvatar || isClickOnAvatarBtn || isClickOnHamburger) {
+        return;
     }
     
-    if (isOutsideContact) {
-        contact.classList.remove('show');
-    }
+    // 否则关闭侧边栏和所有内容
+    sidebar?.classList.remove('show');
+    profile?.classList.remove('show');
+    contact?.classList.remove('show');
+    declaration?.classList.remove('show');
 });

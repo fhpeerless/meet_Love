@@ -24,9 +24,9 @@ body, html {
     height: 100%;
     background: rgba(255, 255, 255, 0.3);
     position: fixed;
-    left: 0;
+    left: -200px;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
     padding: 20px 0;
     display: flex;
     flex-direction: column;
@@ -34,23 +34,120 @@ body, html {
     backdrop-filter: blur(5px);
     border-right: 1px solid rgba(255, 255, 255, 0.5);
     overflow-y: auto;
+    transition: left 0.3s ease;
 }
 
-/* 头像样式 - 去重整合 */
+/* 显示侧边栏的类 - 增加优先级 */
+.sidebar.show {
+    left: 0 !important;
+    z-index: 1000 !important;
+}
+
+/* 头像样式 - 整合所有头像样式 */
 .avatar {
-    width: 90px;
-    height: 90px;
+    /* 移除固定定位，让头像回到文档流 */
+    position: relative;
+    left: auto;
+    top: auto;
+    z-index: 100;
+    cursor: pointer;
+    transition: transform 0.3s;
+    /* 确保头像始终可见 */
+    display: block !important;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     object-fit: cover;
-    cursor: pointer;
+    /* 优化透明图像支持：添加白色背景和边框 */
+    background-color: white;
     border: 3px solid white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
     margin-bottom: 15px;
+    /* 确保头像在侧边栏内部居中显示 */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .avatar:hover {
     transform: scale(1.1);
+}
+
+/* 固定定位的头像按钮样式 - 默认隐藏，只在侧边栏显示时可见 */
+.avatar-btn {
+    position: fixed;
+    left: 60px;
+    top: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    transition: left 0.3s ease, transform 0.3s, opacity 0.3s ease;
+    /* 默认隐藏头像按钮，只显示汉堡菜单 */
+    display: none !important;
+    opacity: 0;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    /* 优化透明图像支持：添加白色背景和边框 */
+    background-color: white;
+    border: 3px solid white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-btn:hover {
+    transform: scale(1.1);
+}
+
+/* 侧边栏显示时，显示头像按钮并调整位置 */
+.sidebar.show ~ .avatar-btn {
+    display: block !important;
+    opacity: 1;
+    left: 210px;
+    top: 10px;
+}
+
+/* 汉堡菜单样式 */
+.hamburger-menu {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    width: 40px;
+    height: 40px;
+    z-index: 1001;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background-color: #d46b9c;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+}
+
+/* 侧边栏显示时，汉堡菜单位置调整 */
+.sidebar.show ~ .hamburger-menu {
+    left: 210px;
+}
+
+/* 侧边栏显示时，汉堡菜单样式变化 */
+.sidebar.show ~ .hamburger-menu .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.sidebar.show ~ .hamburger-menu .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.sidebar.show ~ .hamburger-menu .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* 侧边栏按钮 - 合并重复样式 */
@@ -121,25 +218,40 @@ body, html {
 
 /* 主内容区域 - 整合首页和文章页样式 */
 .main-content {
-    margin-left: 200px;
-    width: calc(100% - 200px);
+    width: 100%;
     height: 100vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     padding: 20px;
     padding-bottom: 20px;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    box-sizing: border-box;
+    /* 宽窗口下居中显示，但允许内容填满 */
+    margin: 0 auto;
+    align-items: center;
+    text-align: center;
+}
+
+/* 侧边栏显示时，主内容区域样式调整 */
+.sidebar.show + .main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    /* 侧边栏显示时，继续居中显示 */
+    align-items: center;
+    text-align: center;
 }
 
 /* 照片轮播容器 */
 .photo-container {
     width: 90%;
-    max-width: 800px;
+    max-width: 100%;
     margin: 15px auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
+    box-sizing: border-box;
 }
 
 .photo-carousel {
@@ -209,15 +321,15 @@ body, html {
 }
 
 .photo-icon {
-    background-image: url('./images/photo.svg');
+    background-image: url('../images/photo.svg');
 }
 
 .music-icon {
-    background-image: url('./images/music.svg');
+    background-image: url('../images/music.svg');
 }
 
 .video-icon {
-    background-image: url('./images/video.svg');
+    background-image: url('../images/video.svg');
 }
 
 /* 照片墙文案 */
@@ -241,23 +353,42 @@ body, html {
 /* 信件列表样式 */
 .letter-container {
     flex: 1;
-    padding: 0 15px 15px;
+    /* 使用相对单位的内边距 */
+    padding: 0 0 2%;
     overflow-y: auto;
+    /* 相对窗口宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
 }
 
 .letter-list {
     list-style: none;
+    /* 相对窗口宽度 */
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .letter-item {
     background: white;
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 15px;
+    /* 使用相对单位的圆角 */
+    border-radius: 2vw;
+    /* 使用相对单位的内边距 */
+    padding: 2%;
+    /* 使用相对单位的外边距 */
+    margin: 0 auto 2% auto;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: all 0.3s;
-    border-left: 5px solid #ff6b9d;
+    /* 移除左侧边框，确保左侧没有任何元素 */
+    border-left: none;
+    /* 相对窗口宽度 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: left;
 }
 
 .letter-item:hover {
@@ -321,14 +452,46 @@ h1.page-title {
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
+    width: auto;
     box-sizing: border-box;
+    padding: 10px;
+}
+
+/* 迷你播放器按钮样式 - 放在汉堡按钮下方 */
+.mini-player-btn {
+    position: fixed;
+    left: 10px;
+    top: 60px; /* 汉堡按钮高度为40px，加上10px间距，定位到汉堡按钮下方 */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* 与汉堡菜单保持一致的背景色 */
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    color: #d46b9c;
+    font-size: 18px;
+    cursor: pointer;
+    /* 与汉堡菜单保持一致的阴影 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-player-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 侧边栏显示时，音乐按钮位置调整 */
+.sidebar.show ~ .music-player-wrapper .mini-player-btn {
+    left: 210px;
+    top: 10px;
 }
 
 /* 音乐播放器容器 */
@@ -336,12 +499,23 @@ h1.page-title {
     background: linear-gradient(145deg, #1a1a2e, #16213e);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 2px -2px 10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    width: 100%;
+    width: 300px;
+    height: 50vh;
     box-sizing: border-box;
     border-radius: 12px 12px 0 0;
+    /* 默认隐藏完整播放器 */
+    display: none;
+    /* 确保播放器在迷你按钮上方 */
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
 }
 
 .bg-music-player:hover {
@@ -355,24 +529,34 @@ h1.page-title {
 
 .player-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding: 8px 15px;
+    padding: 15px;
     color: #e9e9e9;
+    text-align: center;
 }
 
 .song-info {
-    flex: 1;
+    margin-bottom: 15px;
+    width: 100%;
 }
 
 .song-title {
     font-size: 0.9em;
     font-weight: 500;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3em;
+    line-height: 1.5;
 }
 
 .player-controls {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 15px;
 }
 
 .control-btn {
@@ -440,28 +624,29 @@ h1.page-title {
 
 /* 歌词样式 */
 .lyrics-container {
-    max-height: 120px;
+    max-height: auto;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    transition: all 0.3s ease;
     padding: 10px 0;
     display: block;
     width: 100%;
-    background: linear-gradient(145deg, #1a1a2e, #16213e);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    border: none;
     box-sizing: border-box;
-}
-
-.lyrics-container.hidden {
-    max-height: 0;
-    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
 }
 
 .lyrics-content {
     text-align: center;
-    color: #e9e9e9;
+    color: #fff;
     font-size: 0.9em;
     line-height: 1.6;
     transition: opacity 0.2s ease;
+    width: 100%;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .lyrics-line {
@@ -470,16 +655,17 @@ h1.page-title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 80%;
+    max-width: 100%;
     margin: 0 auto;
+    background: transparent;
 }
 
 .lyrics-line.current {
     opacity: 1;
     font-weight: 500;
     font-size: 1.1em;
-    color: #ff6b6b;
-    text-shadow: 0 0 5px rgba(255, 107, 107, 0.3);
+    color: #800020;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 /* 文章页样式 */
@@ -575,56 +761,70 @@ video, audio {
     to { opacity: 1; }
 }
 
-/* 响应式设计 - 整合断点样式 */
+/* 响应式设计 - 重写移动端布局 */
 @media (max-width: 768px) {
     .sidebar {
-        width: 150px;
+        width: 110px;
+        left: -110px; /* 保持侧边栏默认隐藏 */
     }
 
     .avatar {
-        width: 70px;
-        height: 70px;
+        width: 55px;
+        height: 55px;
     }
 
     .sidebar-btn {
-        width: 120px;
-        padding: 10px;
-        font-size: 0.8em;
+        width: 90px;
+        padding: 7px;
+        font-size: 0.7em;
+        margin: 7px 0;
     }
 
     .main-content {
-        margin-left: 150px;
-        width: calc(100% - 150px);
-        padding: 15px;
+        margin-left: 0;
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* 侧边栏显示时，主内容区域样式调整 */
+    .sidebar.show + .main-content {
+        margin-left: 110px;
+        width: calc(100% - 110px);
     }
 
     .photo-container {
-        max-height: 35vh;
+        width: 100%;
+        max-height: 220px;
+        margin: 10px auto;
     }
 
-    .photo-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    .photo-carousel {
+        height: 160px;
     }
 
-    .photo-item {
-        height: 120px;
+    .photo-wall-caption {
+        font-size: 0.8em;
+        margin: 8px 0 0;
+        padding: 6px 12px;
+    }
+
+    h1.page-title {
+        font-size: 1.4rem;
+        margin: 18px 0 12px;
+        letter-spacing: 3px;
     }
 
     .letter-container {
-        padding: 0 10px 10px;
+        padding: 0 5px 5px;
     }
 
     .letter-item {
-        padding: 12px;
-        margin-bottom: 12px;
+        padding: 10px;
+        margin-bottom: 10px;
     }
 
     .article-title {
-        font-size: 1.5em;
-    }
-
-    .photo-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        font-size: 1.3em;
     }
 
     /* 背景音乐响应式 */
@@ -643,44 +843,356 @@ video, audio {
     }
 
     /* 歌词响应式 */
+    .lyrics-container {
+        padding: 15px 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+    
     .lyrics-content {
-        font-size: 0.8em;
+        font-size: 0.9em;
+        line-height: 1.8;
     }
 
     .lyrics-line {
-        max-width: 90%;
+        max-width: 95%;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+    
+    .lyrics-line.current {
+        font-size: 1.2em;
+        color: #800020;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .sidebar {
-        width: 100%;
-        position: relative;
-        height: auto;
+        width: 100px;
+        left: -100px; /* 保持侧边栏默认隐藏 */
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .sidebar-btn {
+        width: 80px;
+        padding: 6px;
+        font-size: 0.65em;
+        margin: 6px 0;
     }
 
     .main-content {
         margin-left: 0;
         width: 100%;
+        padding: 8px;
+    }
+
+    /* 侧边栏显示时，主内容区域样式调整 */
+    .sidebar.show + .main-content {
+        margin-left: 100px;
+        width: calc(100% - 100px);
     }
 
     .photo-container {
-        max-height: 30vh;
+        max-height: 200px;
     }
 
-    .photo-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) || 1fr;
+    .photo-carousel {
+        height: 140px;
     }
 
-    .photo-item {
+    h1.page-title {
+        font-size: 1.3rem;
+        margin: 15px 0 10px;
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 90px;
+        left: -90px; /* 保持侧边栏默认隐藏 */
+    }
+
+    .avatar {
+        width: 45px;
+        height: 45px;
+    }
+
+    .sidebar-btn {
+        width: 75px;
+        padding: 5px;
+        font-size: 0.6em;
+        margin: 5px 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 6px;
+    }
+
+    /* 侧边栏显示时，主内容区域样式调整 */
+    .sidebar.show + .main-content {
+        margin-left: 90px;
+        width: calc(100% - 90px);
+    }
+
+    .photo-container {
+        max-height: 180px;
+    }
+
+    .photo-carousel {
+        height: 120px;
+    }
+
+    h1.page-title {
+        font-size: 1.2rem;
+        margin: 12px 0 8px;
+        letter-spacing: 2px;
+    }
+
+    .profile, .contact, .declaration {
+        max-width: 250px;
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 80px;
+        left: -80px; /* 保持侧边栏默认隐藏 */
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .sidebar-btn {
+        width: 70px;
+        padding: 5px;
+        font-size: 0.55em;
+        margin: 4px 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 6px;
+    }
+
+    /* 侧边栏显示时，主内容区域样式调整 */
+    .sidebar.show + .main-content {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+
+    .photo-container {
+        max-height: 160px;
+    }
+
+    .photo-carousel {
         height: 100px;
     }
 
-    .photo-item img {
-        height: 200px;
+    .photo-wall-caption {
+        font-size: 0.75em;
+        margin: 6px 0 0;
+        padding: 4px 8px;
+    }
+
+    h1.page-title {
+        font-size: 1.1rem;
+        margin: 10px 0 6px;
+        letter-spacing: 1px;
+    }
+
+    .letter-item {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+
+    .letter-date {
+        font-size: 0.8em;
+        margin-bottom: 4px;
+    }
+
+    .letter-preview {
+        font-size: 0.8em;
+        line-height: 1.3;
+    }
+
+    /* 音乐列表响应式 */
+    .music-list {
+        height: 180px;
+    }
+
+    .music-list-item {
+        padding: 8px 10px;
+        font-size: 0.8em;
     }
 
     video {
         width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .sidebar {
+        width: 70px;
+        left: -70px; /* 保持侧边栏默认隐藏 */
+    }
+
+    .avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    .sidebar-btn {
+        width: 60px;
+        padding: 4px;
+        font-size: 0.5em;
+        margin: 3px 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 4px;
+    }
+
+    /* 侧边栏显示时，主内容区域样式调整 */
+    .sidebar.show + .main-content {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+
+    .photo-carousel {
+        height: 90px;
+    }
+
+    h1.page-title {
+        font-size: 1rem;
+        margin: 8px 0 6px;
+        letter-spacing: 1px;
+    }
+
+    .profile, .contact, .declaration {
+        max-width: 200px;
+        font-size: 0.8em;
+    }
+}
+
+/* 添加音乐列表样式 */
+.music-list-container {
+    background: transparent;
+    max-height: calc(50vh - 100px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.music-list {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.music-list-item {
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #e9e9e9;
+    font-size: 0.9em;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.music-list-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.music-list-item.active {
+    background: rgba(255, 107, 107, 0.2);
+    border-left: 3px solid #ff6b6b;
+}
+
+.music-list-item .song-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+}
+
+.music-list-item .play-indicator {
+    color: #ff6b6b;
+    font-size: 0.8em;
+}
+
+/* 移动端优化：确保内容占满屏幕宽度 */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 10px 5px;
+    }
+    
+    .photo-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 10px auto;
+    }
+    
+    .letter-container {
+        padding: 0 5px 10px;
+    }
+    
+    .letter-item {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* 确保信件列表占满宽度 */
+    .letter-list {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* 确保页面标题占满宽度并居中显示 */
+    h1.page-title {
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 5px;
+        padding-right: 5px;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    
+    /* 确保照片墙文案占满宽度 */
+    .photo-wall-caption {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* 确保所有元素都使用border-box */
+    * {
+        box-sizing: border-box;
     }
 }

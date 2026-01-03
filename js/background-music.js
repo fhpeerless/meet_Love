@@ -14,11 +14,11 @@ export class BackgroundMusicPlayer {
         this.lyrics = []; // 存储解析后的歌词
         this.currentLyricIndex = -1;
         
-        this.defaultMusic = {
-            title: '温馨时光',
-            url: 'https://example.com/music/background.mp3',
-            lrcUrl: 'https://example.com/lyrics/song.lrc' // 默认歌词URL
-        };
+        // 音乐列表数据结构
+        this.musicList = [];
+        this.currentIndex = 0;
+        this.isLoop = false;
+        this.isShuffle = false;
         
         this.init();
     }
@@ -26,71 +26,79 @@ export class BackgroundMusicPlayer {
     init() {
         this.createPlayer();
         this.createAudio();
-        this.setMusic(this.defaultMusic.title, this.defaultMusic.url, this.defaultMusic.lrcUrl);
-        this.play();
+        // 移除对this.defaultMusic的引用，因为它没有被定义
+        // this.setMusic(this.defaultMusic.title, this.defaultMusic.url, this.defaultMusic.lrcUrl);
+        // this.play();
     }
     
 createPlayer() {
-    // 创建外层容器
-    this.playerWrapper = document.createElement('div');
-    this.playerWrapper.className = 'music-player-wrapper';
-    
-    // 创建播放器容器
-    this.playerContainer = document.createElement('div');
-    this.playerContainer.className = 'bg-music-player';
-    this.playerContainer.innerHTML = `
-        <div class="player-content">
-            <div class="song-info">
-                <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
+        // 创建外层容器
+        this.playerWrapper = document.createElement('div');
+        this.playerWrapper.className = 'music-player-wrapper';
+        
+        // 创建迷你播放按钮（默认显示，用于切换播放器显示/隐藏）
+        this.miniPlayerBtn = document.createElement('button');
+        this.miniPlayerBtn.className = 'mini-player-btn';
+        this.miniPlayerBtn.innerHTML = '<i class="icon">🎵</i>';
+        this.miniPlayerBtn.title = '音乐播放器';
+        
+        // 创建播放器容器
+        this.playerContainer = document.createElement('div');
+        this.playerContainer.className = 'bg-music-player';
+        this.playerContainer.innerHTML = `
+            <div class="player-content">
+                <div class="song-info">
+                    <span class="song-title">正在播放: <span id="currentSongTitle">${this.currentSong.title}</span></span>
+                </div>
+                <div class="player-controls">
+                    <button id="prevBtn" class="control-btn">
+                        <i class="icon">⏮</i>
+                    </button>
+                    <button id="playPauseBtn" class="control-btn">
+                        <i class="icon">▶</i>
+                    </button>
+                    <button id="nextBtn" class="control-btn">
+                        <i class="icon">⏭</i>
+                    </button>
+                </div>
             </div>
-            <div class="player-controls">
-                <button id="playPauseBtn" class="control-btn">
-                    <i class="icon">▶</i>
-                </button>
-                <button id="lyricsBtn" class="control-btn">
-                    <i class="icon">📝</i>
-                </button>
-                <button id="muteBtn" class="control-btn">
-                    <i class="icon">🔊</i>
-                </button>
-                <button id="closeBtn" class="control-btn close">
-                    <i class="icon">×</i>
-                </button>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
             </div>
-        </div>
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+            <div class="music-list-container">
+                <ul class="music-list" id="musicList"></ul>
             </div>
-        </div>
-    `;
-    
-    // 创建歌词容器
-    this.lyricsContainer = document.createElement('div');
-    this.lyricsContainer.className = 'lyrics-container';
-    this.lyricsContainer.id = 'lyricsContainer';
-    this.lyricsContainer.innerHTML = `
-        <div class="lyrics-content" id="lyricsContent">
-            <div class="lyrics-line current">加载歌词中...</div>
-        </div>
-    `;
-    
-    // 将播放器和歌词容器添加到外层容器中
-    this.playerWrapper.appendChild(this.playerContainer);
-    this.playerWrapper.appendChild(this.lyricsContainer);
-    
-    // 将外层容器添加到页面中
-    document.body.appendChild(this.playerWrapper);
-    
-    // 🔥 新增：设置默认显示
-    this.lyricsContainer.style.display = 'block';
-    
-    this.bindEvents();
-}
+        `;
+        
+        // 创建歌词容器
+        this.lyricsContainer = document.createElement('div');
+        this.lyricsContainer.className = 'lyrics-container';
+        this.lyricsContainer.id = 'lyricsContainer';
+        this.lyricsContainer.innerHTML = `
+            <div class="lyrics-content" id="lyricsContent">
+                <div class="lyrics-line current">加载歌词中...</div>
+            </div>
+        `;
+        
+        // 将迷你按钮、播放器和歌词容器添加到外层容器中
+        this.playerWrapper.appendChild(this.miniPlayerBtn);
+        this.playerWrapper.appendChild(this.playerContainer);
+        this.playerWrapper.appendChild(this.lyricsContainer);
+        
+        // 将外层容器添加到页面中
+        document.body.appendChild(this.playerWrapper);
+        
+        // 默认隐藏完整播放器，只显示迷你按钮和歌词
+        this.playerContainer.style.display = 'none';
+        this.lyricsContainer.style.display = 'block';
+        
+        this.bindEvents();
+    }
     
     createAudio() {
         this.audio = new Audio();
-        this.audio.loop = true;
         this.audio.volume = 0.3;
         
         // 更新进度条
@@ -113,23 +121,31 @@ createPlayer() {
             this.isPlaying = false;
             this.updatePlayButton();
         });
+        
+        // 添加歌曲结束事件，实现自动切换
+        this.audio.addEventListener('ended', () => {
+            this.nextSong();
+        });
     }
     
     bindEvents() {
+        // 迷你播放器按钮点击事件：切换播放器显示/隐藏
+        this.miniPlayerBtn.addEventListener('click', () => {
+            this.togglePlayer();
+        });
+        
         document.getElementById('playPauseBtn').addEventListener('click', () => {
             this.togglePlay();
         });
         
-        document.getElementById('lyricsBtn').addEventListener('click', () => {
-            this.toggleLyrics();
+        // 上一曲按钮事件
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            this.prevSong();
         });
         
-        document.getElementById('muteBtn').addEventListener('click', () => {
-            this.toggleMute();
-        });
-        
-        document.getElementById('closeBtn').addEventListener('click', () => {
-            this.close();
+        // 下一曲按钮事件
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            this.nextSong();
         });
         
         this.playerContainer.querySelector('.progress-bar').addEventListener('click', (e) => {
@@ -139,6 +155,26 @@ createPlayer() {
         });
     }
     
+    // 切换播放器显示/隐藏
+    togglePlayer() {
+        if (this.playerContainer.style.display === 'none') {
+            // 显示完整播放器
+            this.playerContainer.style.display = 'block';
+        } else {
+            // 隐藏完整播放器，只显示迷你按钮和歌词
+            this.playerContainer.style.display = 'none';
+            // 保持歌词显示
+            this.lyricsContainer.style.display = 'block';
+        }
+    }
+    
+    // 设置音乐列表
+    setMusicList(musicList) {
+        this.musicList = musicList;
+        this.updateMusicListUI();
+    }
+    
+    // 设置当前播放的音乐
     setMusic(title, url, lrcUrl = '') {
         this.currentSong.title = title || '未知歌曲';
         this.currentSong.url = url;
@@ -157,6 +193,72 @@ createPlayer() {
         } else {
             this.clearLyrics();
         }
+        
+        // 更新音乐列表UI，高亮当前歌曲
+        this.updateMusicListUI();
+    }
+    
+    // 从列表中播放歌曲
+    playFromList(index) {
+        if (index >= 0 && index < this.musicList.length) {
+            this.currentIndex = index;
+            const song = this.musicList[index];
+            this.setMusic(song.title, song.url, song.lrcUrl);
+            this.play();
+        }
+    }
+    
+    // 上一曲
+    prevSong() {
+        if (this.musicList.length === 0) return;
+        
+        this.currentIndex = (this.currentIndex - 1 + this.musicList.length) % this.musicList.length;
+        this.playFromList(this.currentIndex);
+    }
+    
+    // 下一曲
+    nextSong() {
+        if (this.musicList.length === 0) return;
+        
+        this.currentIndex = (this.currentIndex + 1) % this.musicList.length;
+        this.playFromList(this.currentIndex);
+    }
+    
+    // 切换音乐列表显示
+    toggleMusicList() {
+        if (this.musicListContainer) {
+            this.musicListContainer.classList.toggle('show');
+        }
+    }
+    
+    // 切换循环模式
+    toggleLoop() {
+        this.isLoop = !this.isLoop;
+        const loopBtn = document.getElementById('loopBtn');
+        loopBtn.style.color = this.isLoop ? '#ff6b6b' : '#fff';
+    }
+    
+    // 更新音乐列表UI
+    updateMusicListUI() {
+        const musicListElement = document.getElementById('musicList');
+        if (!musicListElement) return;
+        
+        musicListElement.innerHTML = '';
+        
+        this.musicList.forEach((song, index) => {
+            const listItem = document.createElement('li');
+            listItem.className = `music-list-item ${index === this.currentIndex ? 'active' : ''}`;
+            listItem.innerHTML = `
+                <span class="song-name">${song.title}</span>
+                ${index === this.currentIndex ? '<span class="play-indicator">▶</span>' : ''}
+            `;
+            
+            listItem.addEventListener('click', () => {
+                this.playFromList(index);
+            });
+            
+            musicListElement.appendChild(listItem);
+        });
     }
     
     async loadLyrics(lrcUrl) {

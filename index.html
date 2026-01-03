@@ -12,13 +12,23 @@
 </head>
 <body>
     <!-- 侧边栏 -->
+    <!-- 汉堡菜单按钮 -->
+    <div class="hamburger-menu" id="hamburgerMenu">
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+    </div>
+    
+    <!-- 固定定位的头像按钮，用于触发侧边栏 -->
+    <img src="./images/tx.jpg" alt="头像按钮" class="avatar-btn" id="avatarBtn">
+    
     <div class="sidebar">
-        <img src="./images/tx.jpg" alt="头像" class="avatar" onclick="toggleProfile()">
+        <img src="./images/tx.jpg" alt="头像" class="avatar" id="sidebarAvatar">
         
         <!-- 修改后 -->
-<button class="sidebar-btn" onclick="toggleDeclaration()">爱情宣言</button>
-        <button class="sidebar-btn" onclick="toggleProfile()">个人介绍</button>
-        <button class="sidebar-btn" onclick="toggleContact()">我的联系方式</button>
+<button class="sidebar-btn" id="declarationBtn">爱情宣言</button>
+        <button class="sidebar-btn" id="profileBtn">个人介绍</button>
+        <button class="sidebar-btn" id="contactBtn">我的联系方式</button>
         
         <div class="profile" id="profile">
             <h3>宣言~~</h3>
