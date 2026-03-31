@@ -7,6 +7,11 @@ var MusicPlayer = (function() {
         this.currentLyricIndex = -1;
         
         this.musicList = [
+                        {
+                title: '群星 - 失控',
+                url: 'http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c',
+                lrcUrl: './lrc/shikong.lrc'
+            },
             {
                 title: '孙燕姿 - 遇见',
                 url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
@@ -22,11 +27,7 @@ var MusicPlayer = (function() {
                 url: 'http://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768',
                 lrcUrl: './lrc/china_say.lrc'
             },
-            {
-                title: '群星 - 失控',
-                url: 'http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c',
-                lrcUrl: './lrc/shikong.lrc'
-            }
+
         ];
         
         this.init();
