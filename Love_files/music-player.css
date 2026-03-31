@@ -6,8 +6,9 @@
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 1200px;
-    height: 98vh;
-    max-height: 850px;
+    height: calc(100% - 15%);
+    max-height: 95%;
+    margin-top: 4vh;
     overflow: hidden;
     flex-direction: column;
     background: #ffc0cb;
@@ -17,6 +18,7 @@
 
 #music-section.show {
     display: flex;
+
 }
 
 .music-header {
@@ -38,18 +40,19 @@
     display: flex;
     gap: 25px;
     min-height: 0;
+    height: calc(100% - 8%);
+    max-height: calc(100% - 10%);
     overflow: hidden;
     position: relative;
 }
 
 .music-list-section {
     position: absolute;
-    left: 25px;
-    top: 15px;
-    width: 280px;
-    height: calc(100% - 8vh);
-    min-height: calc(100% - 120px);
-    max-height: calc(100% - 40px);
+    margin-left: 1vh;
+    margin-top: 1vh;
+    width: calc(100% - 70%);
+    height: calc(100% - 10%);
+    max-height: 100%;
     background: rgba(255, 255, 255, 0.97);
     border-radius: 12px;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(190, 26, 37, 0.15);
@@ -157,7 +160,8 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    height: 650px;
+    min-height: 0;
+    height: calc(100% - 5%);
     max-height: 100%;
     overflow: hidden;
     box-sizing: border-box;
@@ -385,6 +389,7 @@
 @media (max-width: 900px) {
     .music-layout {
         flex-direction: column;
+        height: calc(100% - 50px);
     }
     
     .music-list-section {
@@ -392,21 +397,17 @@
         left: 0;
         top: 0;
         width: 100%;
-        height: 30vh;
+        height: calc(100% - 5%);
         min-height: 200px;
-        max-height: 40vh;
-        margin-bottom: 20px;
+        max-height: 100%;
+        margin-bottom: 0px;
     }
     
     .music-player-container {
-.music-player-container {
-    height: 650px;        /* 固定高度 */
-    max-height: 100%;     /* 确保不超过父容器 */
-}.music-player-container {
-    height: 650px;        /* 固定高度 */
-    max-height: 100%;     /* 确保不超过父容器 */
-}        width: 100%;
-        height: 500px;
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        height: calc(100% - 100px);
         max-height: 100%;
     }
 }
@@ -414,7 +415,7 @@
 @media (max-width: 768px) {
     #music-section {
         width: 95%;
-        height: 95vh;
+        height: calc(100% - 15px);
         max-height: 750px;
     }
 
@@ -428,12 +429,15 @@
 
     .music-layout {
         padding: 0 15px 15px;
+        height: calc(100% - 50px);
     }
 
     .music-player-container {
         padding: 12px;
-        height: 500px;
-        max-height: 85%;
+        flex: 1;
+        min-height: 0;
+        height: calc(100% - 100px);
+        max-height: 100%;
     }
 
     .song-cover {
@@ -485,7 +489,7 @@
 @media (max-width: 480px) {
     #music-section {
         width: 98%;
-        height: 90vh;
+        height: calc(100% - 15px);
         max-height: 600px;
     }
     
@@ -533,8 +537,10 @@
     }
 
     .music-player-container {
-        height: 450px;
-        max-height: 90%;
+        flex: 1;
+        min-height: 0;
+        height: calc(100% - 100px);
+        max-height: 100%;
     }
 }
 
