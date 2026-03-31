@@ -1,87 +1,117 @@
 <!DOCTYPE html>
-
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <!-- 替换原有 viewport 为以下代码 -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>meet_love_eternity</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>王某某的求爱日志</title>
+    <link rel="icon" type="image/x-icon" href="https://i.loli.net/2021/06/03/lFg2V4WUcmkB98G.png">
+    <meta name="language" content="zh-CN">
+    <meta name="title" content="王小达">
+    <meta name="github" content="https://github.com/sun0225SUN/Awesome-Love-Code">
+    <meta name="describe" content="爱情面前是是一张白纸! ">
+    <link type="text/css" rel="stylesheet" href="./Love_files/default.css">
+    <link type="text/css" rel="stylesheet" href="./Love_files/music-player.css">
+    <script type="text/javascript" src="./Love_files/jquery.min.js"></script>
+    <script type="text/javascript" src="./Love_files/jscex.min.js"></script>
+    <script type="text/javascript" src="./Love_files/jscex-parser.js"></script>
+    <script type="text/javascript" src="./Love_files/jscex-jit.js"></script>
+    <script type="text/javascript" src="./Love_files/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="./Love_files/jscex-async.min.js"></script>
+    <script type="text/javascript" src="./Love_files/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="./Love_files/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./Love_files/love.js" charset="utf-8"></script>
 
-<link rel="stylesheet" href="./css/article.css">
-    
 </head>
+
 <body>
-    <!-- 侧边栏 -->
-    <!-- 汉堡菜单按钮 -->
-    <div class="hamburger-menu" id="hamburgerMenu">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
+    <div id="navbar">
+        <button id="animation-btn" class="nav-btn active">动画</button>
+        <button id="diary-btn" class="nav-btn">日记</button>
+        <button id="music-btn" class="nav-btn music-btn">🎵 播放音乐</button>
     </div>
-    
-    <!-- 固定定位的头像按钮，用于触发侧边栏 -->
-    <img src="./images/tx.jpg" alt="头像按钮" class="avatar-btn" id="avatarBtn">
-    
-    <div class="sidebar">
-        <img src="./images/tx.jpg" alt="头像" class="avatar" id="sidebarAvatar">
-        
-        <!-- 修改后 -->
-<button class="sidebar-btn" id="declarationBtn">爱情宣言</button>
-        <button class="sidebar-btn" id="profileBtn">个人介绍</button>
-        <button class="sidebar-btn" id="contactBtn">我的联系方式</button>
-        
-        <div class="profile" id="profile">
-            <h3>宣言~~</h3>
-            <p>一届外卖员，希望有一个人能接受我的平凡，接受我的普通，我没有开玩笑，不要自己脑补，我有佛系的上进心，97年的大叔！。</p>
+    <div id="diary-section">
+        <div id="diary-content">
+            <h2>我们的日记</h2>
+            <div id="diary-entries"></div>
+        </div>
+    </div>
+    <div id="music-section">
+        <div class="music-header">
+            <h2>🎵 音乐播放器</h2>
+            <button id="togglePlaylistBtn" class="toggle-playlist-btn">显示播放列表</button>
         </div>
         
-       <div class="declaration" id="xuanshi">
+        <div class="music-layout">
+            <div class="music-list-section hidden">
+                <div class="music-list-title">播放列表</div>
+                <ul class="music-list">
+                </ul>
+            </div>
             
-            <p>🌟 我的爱并不是说说而已，我做了一个发光礼盒，礼盒中有星星1314颗（亲手折制而成，正在叠），并创作了这个网站来记录叠每个星星时的感受，来表达我对爱情的守候与诚意！这份礼物代表着相守一生，可以尝试着交往，过程中在某一刻觉得不可能了，就不要耽误彼此，但可以成为好朋友！(星星时光是自从我开始搭建网站并且计划叠星星的时间！)！。</p>
+            <div class="music-player-container">
+                <div class="current-song-info">
+                    <div class="song-cover">
+                        <span class="song-cover-icon">🎵</span>
+                    </div>
+                    <div class="song-title-display">正在加载...</div>
+                    <div class="song-artist">点击左侧歌曲开始播放</div>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="time-display">
+                        <span class="current-time">00:00</span>
+                        <span class="duration-time">00:00</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="player-controls">
+                    <button id="prevBtn" class="control-btn">⏮</button>
+                    <button id="playPauseBtn" class="control-btn play-btn">▶</button>
+                    <button id="nextBtn" class="control-btn">⏭</button>
+                </div>
+                
+                <div class="volume-control">
+                    <span class="volume-icon">🔊</span>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0.5">
+                </div>
+                
+                <div class="lyrics-display">
+                    <div class="lyrics-line">选择歌曲开始播放</div>
+                </div>
+            </div>
         </div>
-                <div class="contact" id="contact">
-            <h3>联系方式</h3>
-            <p>📧 68208932@qq.com</p>
-            <p>📱 15561892155</p>
-            <p>📍 城市：哈尔滨</p>
+    </div>
+    <div id="main">
+        <div id="error">亲，您使用的浏览器无法支持即将显示的内容，请换成谷歌(<a
+                href="http://www.google.cn/chrome/intl/zh-CN/landing_chrome.html?hl=zh-CN&brand=CHMI">Chrome</a>)或者火狐(<a
+                href="http://firefox.com.cn/download/">Firefox</a>)浏览器哟~</div>
+        <div id="wrap">
+            <div id="text">
+                <div id="code">
+                    <div id="slideshow">
+                        <img id="current-photo" src="" style="max-width: 100%; max-height: 100%; display: none;">
+                    </div>
+                </div>
+            </div>
+            <div id="clock-box">
+                <a href="https://xtwa.org" target="_blank">老己</a> 和 <a href="https://xtwa.org"
+                    target="_blank">老己</a> 在一起的
+                <div id="clock"></div>
+            </div>
+            <canvas id="canvas" width="1100" height="680"></canvas>
         </div>
 
-        
-<!-- 在侧边栏的 <div class="timer" id="timer"> 之前添加 -->
-<button class="sidebar-btn" id="letterCount" disabled>💌💌总计：0封</button>
-        <!-- 计时器放在联系方式下方 -->
-        <div class="timer" id="timer">星星时光：00天 00:00:00</div>
     </div>
 
-
+    <audio preload="auto" id="media" src="love.mp3" loop="loop"></audio>
     
+    <script type="text/javascript" src="./Love_files/music-player.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/main.js" charset="utf-8"></script>
 
-    <!-- 主内容 -->
-    <div class="main-content">
-        <!-- 照片墙 - 放在信件上方 -->
-        <div class="photo-container">
-            <div class="photo-carousel" id="photoGrid"></div>
-        </div>
-  <div class="photo-wall-caption">
-        我不能确定的是，人潮人海中真的会有人喜欢我，哪怕是片刻的停留，最后，愿人间万家灯火，有一盏在等我！
-    </div>
-        
- <h1 class="page-title">星星日记</h1>
-      
-        <!-- 信件列表容器 -->
-      
-        <div class="letter-container">
-            
-            <ul class="letter-list" id="letterList">
-                <!-- 信件将通过JavaScript动态生成 -->
-            </ul>
-        </div>
-    </div>
 
- <script type="module" src="./js/main.js"></script>
-     <!-- 51la统计 -->
-<script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-<script>LA.init({id:"3NKsZSnJkGHAJ16y",ck:"3NKsZSnJkGHAJ16y"})</script>
 
 </body>
+
 </html>
