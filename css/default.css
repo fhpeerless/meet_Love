@@ -211,3 +211,27 @@ body {
 .space {
 	margin-right: 150px;
 }
+
+#falling-texts-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 500;
+	overflow: hidden;
+}
+
+.falling-text {
+	position: absolute;
+	font-size: 50px;
+	font-weight: bold;
+	font-family: '微软雅黑', '黑体', sans-serif;
+	text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+	background: linear-gradient(90deg, #FFECD2 0%, #FCB69F 50%, #FFECD2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	white-space: nowrap;
+}

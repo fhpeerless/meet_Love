@@ -231,6 +231,36 @@
         this.initBloom();
     }
     Tree.prototype = {
+        drawText: function() {
+        },
+        drawSun: function() {
+            var ctx = this.ctx;
+            var sunX = this.width - 100;
+            var sunY = 80;
+            var sunRadius = 50;
+            
+            ctx.save();
+            
+            var gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 3);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+            gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.4)');
+            gradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.2)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunRadius * 3, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = 30;
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.restore();
+        },
         initSeed: function() {
             var seed = this.opt.seed || {};
             var x = seed.x || this.width / 2;
@@ -519,13 +549,10 @@
             var ctx = s.tree.ctx;
             ctx.save();
         	ctx.beginPath();
-            //深黑色 rgb(35, 31, 32);
-            //RGB(0,139,139)
-            // RGB(102,205,170)
-            // RGB(34,139,34)
-        	ctx.fillStyle = 'RGB(0,128,128)';
-            ctx.shadowColor = '#22b822';
-            ctx.shadowBlur = 2;
+            ctx.globalAlpha = 0.7;
+        	ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = 8;
         	ctx.moveTo(p.x, p.y);
         	ctx.arc(p.x, p.y, s.radius, 0, 2 * Math.PI);
         	ctx.closePath();
@@ -567,6 +594,7 @@
             ctx.translate(s.point.x, s.point.y);
             ctx.scale(s.scale, s.scale);
             ctx.rotate(s.angle);
+            
             ctx.beginPath();
             ctx.moveTo(0, 0);
             for (var i = 0; i < figure.length; i++) {
@@ -575,12 +603,19 @@
             }
             ctx.closePath();
             
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+            
             if (s.image) {
                 ctx.clip();
                 var imgSize = 60;
                 ctx.drawImage(s.image, -imgSize/2, -imgSize/2, imgSize, imgSize);
             } else {
                 ctx.fillStyle = s.color;
+                ctx.shadowBlur = 0;
                 ctx.fill();
             }
             ctx.restore();
