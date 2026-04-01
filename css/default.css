@@ -84,8 +84,16 @@ body {
 #diary-content h2 {
 	text-align: center;
 	color: rgb(190, 26, 37);
-	margin-bottom: 40px;
+	margin-bottom: 10px;
 	font-size: 32px;
+}
+
+.diary-intro {
+	text-align: center;
+	color: #888;
+	font-size: 16px;
+	margin-bottom: 30px;
+	font-style: italic;
 }
 
 .diary-entry {
@@ -263,4 +271,33 @@ body {
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
 	white-space: nowrap;
+}
+
+.diary-subtitle {
+	color: #888 !important;
+	font-size: 14px !important;
+	margin-bottom: 10px !important;
+	font-style: italic;
+}
+
+.diary-images {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	margin-top: 15px;
+}
+
+.diary-image {
+	max-width: 100%;
+	width: 300px;
+	height: auto;
+	border-radius: 10px;
+	box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+	object-fit: cover;
+	cursor: pointer;
+	transition: transform 0.3s ease;
+}
+
+.diary-image:hover {
+	transform: scale(1.02);
 }
