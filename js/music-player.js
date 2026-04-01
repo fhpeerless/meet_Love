@@ -148,51 +148,30 @@ var MusicPlayer = (function() {
         this.lyrics = [];
         var lines = lrcText.split('\n');
         
-        var isSrt = false;
-        var srtTimeRegex = /^(\d{2}):(\d{2}):(\d{2}),(\d{3})/;
-        for (var i = 0; i < lines.length; i++) {
-            if (srtTimeRegex.test(lines[i].trim())) {
-                isSrt = true;
-                break;
-            }
-        }
+        var charTimeRegex = /\[(\d{2}):(\d{2})\.(\d{3})\]([^\[]*)/g;
         
-        if (isSrt) {
-            var i = 0;
-            while (i < lines.length) {
-                var line = lines[i].trim();
-                i++;
-                
-                if (line === '') continue;
-                
-                if (!isNaN(parseInt(line))) continue;
-                
-                var timeMatch = line.match(/^(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/);
-                if (timeMatch) {
-                    var minutes = parseInt(timeMatch[2]);
-                    var seconds = parseInt(timeMatch[3]);
-                    var milliseconds = parseInt(timeMatch[4]);
-                    var time = minutes * 60 + seconds + milliseconds / 1000;
-                    
-                    var text = '';
-                    while (i < lines.length) {
-                        var nextLine = lines[i].trim();
-                        i++;
-                        if (nextLine === '') break;
-                        if (text) text += ' ';
-                        text += nextLine;
-                    }
-                    
-                    if (text) {
-                        this.lyrics.push({ time: time, text: text });
-                    }
-                }
-            }
-        } else {
-            var timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            var fullText = '';
+            var lastTime = null;
+            var match;
             
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i];
+            charTimeRegex.lastIndex = 0;
+            while ((match = charTimeRegex.exec(line)) !== null) {
+                var minutes = parseInt(match[1]);
+                var seconds = parseInt(match[2]);
+                var milliseconds = parseInt(match[3]);
+                var time = minutes * 60 + seconds + milliseconds / 1000;
+                var char = match[4] || '';
+                
+                fullText += char;
+                lastTime = time;
+            }
+            
+            if (fullText.trim() && lastTime !== null) {
+                this.lyrics.push({ time: lastTime, text: fullText });
+            } else {
+                var timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
                 var matches = line.match(timeRegex);
                 
                 if (matches && matches.length > 0) {
