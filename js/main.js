@@ -106,8 +106,8 @@ $(function() {
     canvas.attr("height", height);
 
     var fallingPhotos = [
-        "falling-photos/1.jpg",
-        "falling-photos/2.jpg",
+        "https://note.youdao.com/yws/api/personal/file/WEB590105f1a9d07ac686e941d38cdad971?method=download&inline=true&shareKey=60cbe361e727d561d2425f3fd26b3cf1",
+        "https://note.youdao.com/yws/api/personal/file/WEB726ae6fa64eed5a096d10745a5fc99ac?method=download&inline=true&shareKey=0db2aab9fa92b3d2066a676f7ba3ca31",
         "falling-photos/3.jpg",
         "falling-photos/4.jpg",
         "falling-photos/5.jpg"
@@ -304,8 +304,8 @@ $(function() {
         together.setMilliseconds(0);
 
         var photos = [
-            "photos/1.jpg",
-            "photos/2.jpg",
+        "https://note.youdao.com/yws/api/personal/file/WEB590105f1a9d07ac686e941d38cdad971?method=download&inline=true&shareKey=60cbe361e727d561d2425f3fd26b3cf1",
+        "https://note.youdao.com/yws/api/personal/file/WEB726ae6fa64eed5a096d10745a5fc99ac?method=download&inline=true&shareKey=0db2aab9fa92b3d2066a676f7ba3ca31",
             "photos/3.jpg",
             "photos/4.jpg",
             "photos/5.jpg"
