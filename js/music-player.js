@@ -148,45 +148,49 @@ var MusicPlayer = (function() {
         this.lyrics = [];
         var lines = lrcText.split('\n');
         
-        var charTimeRegex = /\[(\d{2}):(\d{2})\.(\d{3})\]([^\[]*)/g;
+        var standardTimeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
         
         for (var i = 0; i < lines.length; i++) {
-            var line = lines[i];
-            var fullText = '';
-            var lastTime = null;
-            var match;
+            var line = lines[i].trim();
+            if (!line) continue;
             
-            charTimeRegex.lastIndex = 0;
-            while ((match = charTimeRegex.exec(line)) !== null) {
+            var match = line.match(standardTimeRegex);
+            if (match) {
                 var minutes = parseInt(match[1]);
                 var seconds = parseInt(match[2]);
                 var milliseconds = parseInt(match[3]);
                 var time = minutes * 60 + seconds + milliseconds / 1000;
-                var char = match[4] || '';
+                var text = match[4] ? match[4].trim() : '';
                 
-                fullText += char;
-                lastTime = time;
+                if (text) {
+                    this.lyrics.push({ time: time, text: text });
+                }
             }
+        }
+        
+        if (this.lyrics.length === 0) {
+            var charTimeRegex = /\[(\d{2}):(\d{2})\.(\d{3})\]([^\[]*)/g;
             
-            if (fullText.trim() && lastTime !== null) {
-                this.lyrics.push({ time: lastTime, text: fullText });
-            } else {
-                var timeRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/g;
-                var matches = line.match(timeRegex);
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                var fullText = '';
+                var lastTime = null;
+                var match;
                 
-                if (matches && matches.length > 0) {
-                    var timeMatch = matches[0].match(/\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/);
-                    if (timeMatch) {
-                        var minutes = parseInt(timeMatch[1]);
-                        var seconds = parseInt(timeMatch[2]);
-                        var centiseconds = parseInt(timeMatch[3] || '0');
-                        var time = minutes * 60 + seconds + centiseconds / 100;
-                        
-                        var text = line.replace(timeRegex, '').trim();
-                        if (text) {
-                            this.lyrics.push({ time: time, text: text });
-                        }
-                    }
+                charTimeRegex.lastIndex = 0;
+                while ((match = charTimeRegex.exec(line)) !== null) {
+                    var minutes = parseInt(match[1]);
+                    var seconds = parseInt(match[2]);
+                    var milliseconds = parseInt(match[3]);
+                    var time = minutes * 60 + seconds + milliseconds / 1000;
+                    var char = match[4] || '';
+                    
+                    fullText += char;
+                    lastTime = time;
+                }
+                
+                if (fullText.trim() && lastTime !== null) {
+                    this.lyrics.push({ time: lastTime, text: fullText });
                 }
             }
         }
