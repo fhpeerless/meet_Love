@@ -9,8 +9,8 @@ var MusicPlayer = (function() {
         this.musicList = [
                                     {
                 title: '群星 - 风吹透',
-                url: 'http://note.youdao.com/yws/api/personal/file/WEB42fef8283e691254a8993032d6216ebe?method=download&inline=true&shareKey=8e55342d374d568b9657128ba9f16212',
-                lrcUrl: 'http://note.youdao.com/yws/api/personal/file/WEBf1249e09872b903166d9713809e2ac3d?method=download&inline=true&shareKey=d7044f9bd9ef13aedfbb42c3e3122ffa'
+                url: 'https://note.youdao.com/yws/api/personal/file/WEB42fef8283e691254a8993032d6216ebe?method=download&inline=true&shareKey=8e55342d374d568b9657128ba9f16212',
+                lrcUrl: 'https://note.youdao.com/yws/api/personal/file/WEBf1249e09872b903166d9713809e2ac3d?method=download&inline=true&shareKey=d7044f9bd9ef13aedfbb42c3e3122ffa'
             },
                         {
                 title: '群星 - 失控',
