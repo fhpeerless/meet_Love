@@ -61,8 +61,18 @@ $(function() {
             $.each(data, function(index, entry) {
                 var entryHtml = '<div class="diary-entry">' +
                     '<h3>' + entry.date + '</h3>' +
-                    '<p>' + entry.content + '</p>' +
-                    '</div>';
+                    '<p class="diary-subtitle">' + (entry.subtitle || '') + '</p>' +
+                    '<p>' + entry.content + '</p>';
+                
+                if (entry.images && entry.images.length > 0) {
+                    entryHtml += '<div class="diary-images">';
+                    for (var i = 0; i < entry.images.length; i++) {
+                        entryHtml += '<img src="' + entry.images[i] + '" class="diary-image" alt="日记图片">';
+                    }
+                    entryHtml += '</div>';
+                }
+                
+                entryHtml += '</div>';
                 $diaryEntries.append(entryHtml);
             });
         }).fail(function() {
