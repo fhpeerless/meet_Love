@@ -115,6 +115,35 @@ body {
 	flex-direction: column;
 	justify-content: flex-end;
 	padding-top: 80px;
+	align-items: center;
+}
+
+#main-title {
+	text-align: center;
+	font-size: 36px;
+	font-weight: bold;
+	font-family: '微软雅黑', '黑体', sans-serif;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	position: relative;
+	z-index: 10;
+	white-space: nowrap;
+	display: flex;
+	justify-content: center;
+	gap: 0;
+}
+
+.title-char {
+	background: linear-gradient(90deg, #FFECD2 0%, #FCB69F 50%, #FFECD2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.5),
+				 0 0 8px rgba(255, 255, 255, 0.3);
+	opacity: 0;
+	filter: blur(15px);
+	display: inline-block;
+	transition: all 2.1s ease-out;
 }
 
 #wrap {

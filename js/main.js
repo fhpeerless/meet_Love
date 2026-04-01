@@ -7,6 +7,39 @@ $(function() {
     var $diaryEntries = $('#diary-entries');
     var $musicSection = $('#music-section');
 
+    function initTitleAnimation() {
+        var titleText = "樱花树下站谁都美，我的爱给谁都热烈";
+        var $titleContainer = $('#main-title');
+        $titleContainer.empty();
+        
+        for (var i = 0; i < titleText.length; i++) {
+            var $charSpan = $('<span class="title-char"></span>');
+            $charSpan.text(titleText[i]);
+            $titleContainer.append($charSpan);
+        }
+        
+        function animateTitle() {
+            var $chars = $('.title-char');
+            $chars.css({
+                'opacity': 0,
+                'filter': 'blur(15px)'
+            });
+            
+            $chars.each(function(index) {
+                var $char = $(this);
+                setTimeout(function() {
+                    $char.css({
+                        'opacity': 1,
+                        'filter': 'blur(0px)'
+                    });
+                }, index * 350);
+            });
+        }
+        
+        setTimeout(animateTitle, 500);
+    }
+
+    initTitleAnimation();
     initMusicPlayer();
 
     $musicBtn.click(function() {
@@ -73,8 +106,8 @@ $(function() {
     canvas.attr("height", height);
 
     var fallingPhotos = [
-        "http://note.youdao.com/yws/api/personal/file/WEB590105f1a9d07ac686e941d38cdad971?method=download&inline=true&shareKey=60cbe361e727d561d2425f3fd26b3cf1",
-        "http://note.youdao.com/yws/api/personal/file/WEB726ae6fa64eed5a096d10745a5fc99ac?method=download&inline=true&shareKey=0db2aab9fa92b3d2066a676f7ba3ca31",
+        "falling-photos/1.jpg",
+        "falling-photos/2.jpg",
         "falling-photos/3.jpg",
         "falling-photos/4.jpg",
         "falling-photos/5.jpg"
@@ -271,8 +304,8 @@ $(function() {
         together.setMilliseconds(0);
 
         var photos = [
-            "http://note.youdao.com/yws/api/personal/file/WEB590105f1a9d07ac686e941d38cdad971?method=download&inline=true&shareKey=60cbe361e727d561d2425f3fd26b3cf1",
-            "http://note.youdao.com/yws/api/personal/file/WEB726ae6fa64eed5a096d10745a5fc99ac?method=download&inline=true&shareKey=0db2aab9fa92b3d2066a676f7ba3ca31",
+            "photos/1.jpg",
+            "photos/2.jpg",
             "photos/3.jpg",
             "photos/4.jpg",
             "photos/5.jpg"
