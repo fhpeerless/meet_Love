@@ -10,7 +10,7 @@ var MusicPlayer = (function() {
                                     {
                 title: '群星 - 风吹透',
                 url: 'https://note.youdao.com/yws/api/personal/file/WEB42fef8283e691254a8993032d6216ebe?method=download&inline=true&shareKey=8e55342d374d568b9657128ba9f16212',
-                lrcUrl: './lrc/fengchuitou.srt'
+                lrcUrl: './lrc/fengchuitou.lrc'
             },
                         {
                 title: '群星 - 失控',
