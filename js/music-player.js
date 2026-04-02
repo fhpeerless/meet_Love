@@ -9,8 +9,8 @@ var MusicPlayer = (function() {
         this.musicList = [
             {
                 title: '毛毛 - 一程山路',
-                url: 'http://note.youdao.com/yws/api/personal/file/WEB08eae1417bb953cc4a65a4b56f549d3a?method=download&inline=true&shareKey=07388e5e1b3ca4787da9fc5f8c39ce8a',
-                lrcUrl: 'http://note.youdao.com/yws/api/personal/file/WEB53bf55af8306cce258de575f61d65b56?method=download&inline=true&shareKey=c12b4936900e0eef69c9309abc1c1bdb'
+                url: 'https://note.youdao.com/yws/api/personal/file/WEB08eae1417bb953cc4a65a4b56f549d3a?method=download&inline=true&shareKey=07388e5e1b3ca4787da9fc5f8c39ce8a',
+                lrcUrl: 'https://note.youdao.com/yws/api/personal/file/WEB53bf55af8306cce258de575f61d65b56?method=download&inline=true&shareKey=c12b4936900e0eef69c9309abc1c1bdb'
             },
                                     {
                 title: '群星 - 风吹透',
@@ -19,22 +19,22 @@ var MusicPlayer = (function() {
             },
                         {
                 title: '群星 - 失控',
-                url: 'http://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c',
+                url: 'https://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c',
                 lrcUrl: './lrc/shikong.lrc'
             },
             {
                 title: '孙燕姿 - 遇见',
-                url: 'http://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
+                url: 'https://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
                 lrcUrl: './lrc/yujian.lrc'
             },
             {
                 title: '毛不易 - 给你给我',
-                url: 'http://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931',
+                url: 'https://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931',
                 lrcUrl: './lrc/gngwo.lrc'
             },
             {
                 title: '张杰 - 少年中国说',
-                url: 'http://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768',
+                url: 'https://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768',
                 lrcUrl: './lrc/china_say.lrc'
             },
 
