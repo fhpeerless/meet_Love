@@ -7,6 +7,11 @@ var MusicPlayer = (function() {
         this.currentLyricIndex = -1;
         
         this.musicList = [
+            {
+                title: '毛毛 - 一程山路',
+                url: 'http://note.youdao.com/yws/api/personal/file/WEB08eae1417bb953cc4a65a4b56f549d3a?method=download&inline=true&shareKey=07388e5e1b3ca4787da9fc5f8c39ce8a',
+                lrcUrl: './lrc/fengchuitou.lrc'
+            },
                                     {
                 title: '群星 - 风吹透',
                 url: 'https://note.youdao.com/yws/api/personal/file/WEB42fef8283e691254a8993032d6216ebe?method=download&inline=true&shareKey=8e55342d374d568b9657128ba9f16212',
