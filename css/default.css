@@ -6,7 +6,8 @@ body {
 	font-family: '微软雅黑', '宋体', sans-serif;
 	color: #000000;
 	overflow: hidden;
-	min-height: 100vh;
+  width: 100vw;  /* 100% 视口宽度 */
+  height: 100vh; /* 100% 视口高度 */
 	display: flex;
 	flex-direction: column;
 }
@@ -69,16 +70,19 @@ body {
 
 #diary-section {
 	display: none;
-	flex: 1;
+	height: calc(100% - 10%);
 	padding-top: 100px;
 	padding-bottom: 50px;
-	overflow-y: auto;
+	overflow: hidden;
 }
 
 #diary-content {
-	max-width: 800px;
+	max-width: 73%;
 	margin: 0 auto;
 	padding: 30px;
+	height: calc(100% - 20px);
+	max-height: calc(100% - 80px);
+	overflow: hidden;
 }
 
 #diary-content h2 {
@@ -94,6 +98,12 @@ body {
 	font-size: 16px;
 	margin-bottom: 30px;
 	font-style: italic;
+}
+
+#diary-entries {
+	height: calc(100% - 10%);
+	overflow-y: auto;
+	padding-right: 10px;
 }
 
 .diary-entry {
