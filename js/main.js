@@ -98,6 +98,10 @@ $(function() {
         $main.hide();
         $diarySection.show();
         $musicSection.hide();
+        
+        $diaryEntries.animate({
+            scrollTop: $diaryEntries[0].scrollHeight
+        }, 'slow');
     });
 });
 
