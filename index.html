@@ -378,6 +378,7 @@
             this.wanderStrength = 0.6 + Math.random() * 0.4;
             this.flapPhase = Math.random() * Math.PI * 2;
             this.flapFreq = 0.008 + Math.random() * 0.004;
+            this.flapFreqTarget = this.flapFreq;
             this.bobAmplitude = 0.4 + Math.random() * 0.3;
             this.state = 'wandering';
             this.stateTimer = 0;
@@ -402,6 +403,12 @@
         }
 
         Butterfly.prototype.update = function(dt) {
+            if (this.state === 'resting') {
+                this.flapFreqTarget = 0.003;
+            } else {
+                this.flapFreqTarget = 0.008 + Math.random() * 0.004;
+            }
+            this.flapFreq += (this.flapFreqTarget - this.flapFreq) * 0.02;
             this.flapPhase += this.flapFreq * dt;
 
             switch (this.state) {
@@ -561,6 +568,22 @@
             this.el.style.transform = 'scaleY(' + this.scale + ')';
             var inner = this.el.querySelector('.butterfly-inner');
             inner.style.transform = 'scaleX(' + innerScaleX + ') rotate(' + (this.bodyTilt * dir) + 'deg)';
+
+            var isResting = this.state === 'resting';
+            var maxAngle = isResting ? 30 : 70;
+            var minScaleX = isResting ? 0.7 : 0.3;
+            var wingAngle = Math.sin(this.flapPhase) * 0.5 + 0.5;
+            var rotateY = wingAngle * maxAngle;
+            var scaleXVal = 1 - wingAngle * (1 - minScaleX);
+
+            var leftWing = this.el.querySelector('.butterfly-wing-left');
+            var rightWing = this.el.querySelector('.butterfly-wing-right');
+            if (leftWing) {
+                leftWing.style.transform = 'rotateY(' + rotateY + 'deg) scaleX(' + scaleXVal + ')';
+            }
+            if (rightWing) {
+                rightWing.style.transform = 'rotateY(' + (-rotateY) + 'deg) scaleX(' + scaleXVal + ')';
+            }
         };
 
         function spawnButterfly() {
