@@ -334,7 +334,6 @@ body {
 .butterfly-wing-side {
 	position: absolute;
 	top: 0;
-	animation: flutter 0.3s ease-in-out infinite alternate;
 }
 
 .butterfly-wing-left {
@@ -494,32 +493,6 @@ body {
 
 .butterfly.resting .butterfly-poem {
 	opacity: 1;
-}
-
-@keyframes flutter {
-	0% {
-		transform: rotateY(0deg) scaleX(1);
-	}
-	100% {
-		transform: rotateY(70deg) scaleX(0.3);
-	}
-}
-
-.butterfly.resting .butterfly-wing-side.butterfly-wing-left {
-	animation: flutter-land 0.8s ease-in-out infinite alternate;
-}
-
-.butterfly.resting .butterfly-wing-side.butterfly-wing-right {
-	animation: flutter-land 0.8s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes flutter-land {
-	0% {
-		transform: rotateY(0deg) scaleX(1);
-	}
-	100% {
-		transform: rotateY(30deg) scaleX(0.7);
-	}
 }
 
 .diary-subtitle {
