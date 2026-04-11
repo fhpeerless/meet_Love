@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "樱花树下站谁都美，我的爱给谁都热烈";
+        var titleText = "不知道再等谁，但我的心依然慢慢凋落了......";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
