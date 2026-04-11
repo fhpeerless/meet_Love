@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "不知道在等什么，但我的心开始慢慢飘落...";
+        var titleText = "樱花树下站谁都美，我的爱给谁都热烈";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
@@ -141,70 +141,6 @@ $(function() {
     
     window.fallingImages = loadedImages;
 
-    var textChars = "请和我交往吧".split("");
-    var fallingDOMTexts = [];
-    var textSpawnTimer = 0;
-    var currentCharIndex = 0;
-    var container = document.getElementById('falling-texts-container');
-
-    function startFallingTexts() {
-        setInterval(function() {
-            textSpawnTimer++;
-            if (textSpawnTimer >= 30) {
-                textSpawnTimer = 0;
-                var charIndex = currentCharIndex;
-                currentCharIndex = (currentCharIndex + 1) % textChars.length;
-                
-                var textEl = document.createElement('div');
-                textEl.className = 'falling-text';
-                textEl.textContent = textChars[charIndex];
-                
-                var positions = [];
-                for (var i = 0; i < textChars.length; i++) {
-                    positions.push((window.innerWidth / (textChars.length + 1)) * (i + 1));
-                }
-                var baseX = positions[charIndex];
-                var x = baseX + (Math.random() - 0.5) * 80;
-                var y = -100 - Math.random() * 50;
-                var speedY = 1.5 + Math.random() * 1.5;
-                var speedX = (Math.random() - 0.5) * 0.3;
-                var rotation = (Math.random() - 0.5) * 0.3;
-                var rotationSpeed = (Math.random() - 0.5) * 0.02;
-                
-                textEl.style.left = x + 'px';
-                textEl.style.top = y + 'px';
-                
-                container.appendChild(textEl);
-                
-                fallingDOMTexts.push({
-                    element: textEl,
-                    x: x,
-                    y: y,
-                    speedY: speedY,
-                    speedX: speedX,
-                    rotation: rotation,
-                    rotationSpeed: rotationSpeed
-                });
-            }
-            
-            for (var i = fallingDOMTexts.length - 1; i >= 0; i--) {
-                var ft = fallingDOMTexts[i];
-                ft.y += ft.speedY;
-                ft.x += ft.speedX;
-                ft.rotation += ft.rotationSpeed;
-                
-                ft.element.style.top = ft.y + 'px';
-                ft.element.style.left = ft.x + 'px';
-                ft.element.style.transform = 'rotate(' + ft.rotation + 'rad)';
-                
-                if (ft.y > window.innerHeight + 100) {
-                    ft.element.remove();
-                    fallingDOMTexts.splice(i, 1);
-                }
-            }
-        }, 25);
-    }
-
     var opts = {
         seed: {
             x: width / 2 - 20,
@@ -274,14 +210,14 @@ $(function() {
 
     var moveAnimate = eval(Jscex.compile("async", function () {
         tree.snapshot("p1", 240, 0, 610, 680);
-        while (tree.move("p1", -50, 0)) {
+        while (tree.move("p1", -20, 0)) {
             foot.draw();
             $await(Jscex.Async.sleep(10));
         }
         foot.draw();
-        tree.snapshot("p2", -50, 0, 610, 680);
+        tree.snapshot("p2", -20, 0, 610, 680);
 
-        canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
+        canvas.parent().css({"background": "url(" + tree.toDataURL('image/png') + ") no-repeat center", "background-color": "#ffc0cb"});
         canvas.css("background", "#ffc0cb");
         $await(Jscex.Async.sleep(300));
         canvas.css("background", "none");
@@ -361,7 +297,6 @@ $(function() {
         $await(moveAnimate());
 
         textAnimate().start();
-        startFallingTexts();
 
         $await(jumpAnimate());
     }));

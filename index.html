@@ -19,10 +19,22 @@
     <script type="text/javascript" src="./js/jscex-async-powerpack.min.js"></script>
     <script type="text/javascript" src="./js/functions.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/love.js" charset="utf-8"></script>
+    <style>
+        #stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
 
 </head>
 
 <body>
+    <canvas id="stars-bg"></canvas>
     <div id="navbar">
         <button id="animation-btn" class="nav-btn active">爱心树</button>
         <button id="diary-btn" class="nav-btn">日记</button>
@@ -107,12 +119,474 @@
 
     </div>
 
-    <div id="falling-texts-container"></div>
+    <div id="butterfly-container"></div>
 
     
     <script type="text/javascript" src="./js/music-player.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/main.js" charset="utf-8"></script>
+    
+    <script>
+    (function() {
+        var context;
+        var arr = new Array();
+        var starCount = 34;
+        var rains = new Array();
+        var rainCount = 20;
+        var windowWidth = window.innerWidth;
+        var windowHeight = window.innerHeight;
 
+        function init() {
+            var stars = document.getElementById("stars-bg");
+            windowWidth = window.innerWidth;
+            windowHeight = window.innerHeight;
+            stars.width = windowWidth;
+            stars.height = windowHeight;
+            context = stars.getContext("2d");
+        }
+
+        var Star = function() {
+            this.x = windowWidth * Math.random();
+            this.y = windowHeight * Math.random();
+            this.text = "❤";
+            this.color = "#ea80b0";
+
+            this.getColor = function() {
+                var _r = Math.random();
+                if (_r < 0.5) {
+                    this.color = "#333";
+                } else {
+                    this.color = "#ea80b0";
+                }
+            };
+
+            this.init = function() {
+                this.getColor();
+            };
+
+            this.draw = function() {
+                context.fillStyle = this.color;
+                context.fillText(this.text, this.x, this.y);
+            };
+        };
+
+        var MeteorRain = function() {
+            this.x = -1;
+            this.y = -1;
+            this.length = -1;
+            this.angle = 30;
+            this.width = -1;
+            this.height = -1;
+            this.speed = 1;
+            this.offset_x = -1;
+            this.offset_y = -1;
+            this.alpha = 1;
+            this.color1 = "#ea80b0";
+            this.color2 = "";
+
+            this.init = function() {
+                this.getPos();
+                this.alpha = 1;
+                this.getRandomColor();
+                var x = Math.random() * 80 + 150;
+                this.length = Math.ceil(x);
+                this.angle = 30;
+                x = Math.random() + 0.5;
+                this.speed = Math.ceil(x);
+                var cos = Math.cos(this.angle * 3.14 / 180);
+                var sin = Math.sin(this.angle * 3.14 / 180);
+                this.width = this.length * cos;
+                this.height = this.length * sin;
+                this.offset_x = this.speed * cos;
+                this.offset_y = this.speed * sin;
+            };
+
+            this.getRandomColor = function() {
+                var a = Math.ceil(255 - 240 * Math.random());
+                this.color1 = "rgba(" + a + "," + a + "," + a + ",1)";
+                this.color2 = "black";
+            };
+
+            this.countPos = function() {
+                this.x = this.x - this.offset_x;
+                this.y = this.y + this.offset_y;
+            };
+
+            this.getPos = function() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+            };
+
+            this.draw = function() {
+                context.save();
+                context.beginPath();
+                context.lineWidth = 1;
+                context.globalAlpha = this.alpha;
+                var line = context.createLinearGradient(
+                    this.x, this.y,
+                    this.x + this.width,
+                    this.y - this.height
+                );
+                line.addColorStop(0, "#ea80b0");
+                line.addColorStop(0.3, this.color1);
+                line.addColorStop(0.6, this.color2);
+                context.strokeStyle = line;
+                context.moveTo(this.x, this.y);
+                context.lineTo(this.x + this.width, this.y - this.height);
+                context.closePath();
+                context.stroke();
+                context.restore();
+            };
+
+            this.move = function() {
+                var x = this.x + this.width - this.offset_x;
+                var y = this.y - this.height;
+                context.clearRect(x - 3, y - 3, this.offset_x + 5, this.offset_y + 5);
+                this.countPos();
+                this.alpha -= 0.002;
+                this.draw();
+            };
+        };
+
+        function playStars() {
+            for (var n = 0; n < starCount; n++) {
+                arr[n].getColor();
+                arr[n].draw();
+            }
+            setTimeout(playStars, 100);
+        }
+
+        function playRains() {
+            for (var n = 0; n < rainCount; n++) {
+                var rain = rains[n];
+                rain.move();
+                if (rain.y > window.innerHeight) {
+                    context.clearRect(rain.x, rain.y - rain.height, rain.width, rain.height);
+                    rains[n] = new MeteorRain();
+                    rains[n].init();
+                }
+            }
+            setTimeout(playRains, 2);
+        }
+
+        function startBackground() {
+            init();
+            
+            for (var i = 0; i < starCount; i++) {
+                var star = new Star();
+                star.init();
+                star.draw();
+                arr.push(star);
+            }
+
+            for (var i = 0; i < rainCount; i++) {
+                var rain = new MeteorRain();
+                rain.init();
+                rain.draw();
+                rains.push(rain);
+            }
+
+            playStars();
+            playRains();
+        }
+
+        window.addEventListener('resize', function() {
+            init();
+            arr = [];
+            rains = [];
+            
+            for (var i = 0; i < starCount; i++) {
+                var star = new Star();
+                star.init();
+                star.draw();
+                arr.push(star);
+            }
+
+            for (var i = 0; i < rainCount; i++) {
+                var rain = new MeteorRain();
+                rain.init();
+                rain.draw();
+                rains.push(rain);
+            }
+        });
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startBackground);
+        } else {
+            startBackground();
+        }
+    })();
+    </script>
+
+    <script>
+    (function() {
+        var container = document.getElementById('butterfly-container');
+        var poemLines = ['红豆生南国', '春来发几枝', '愿君多采撷', '此物最相思'];
+        var globalPoemIndex = 0;
+        var butterflies = [];
+        var maxButterflies = 1;
+        var spawnInterval = 5000;
+        var W = window.innerWidth;
+        var H = window.innerHeight;
+
+        window.addEventListener('resize', function() {
+            W = window.innerWidth;
+            H = window.innerHeight;
+        });
+
+        function createButterflyElement() {
+            var el = document.createElement('div');
+            el.className = 'butterfly butterfly-glow';
+            el.innerHTML =
+                '<div class="butterfly-inner">' +
+                    '<div class="butterfly-head">' +
+                        '<div class="butterfly-antenna butterfly-antenna-left"></div>' +
+                        '<div class="butterfly-antenna butterfly-antenna-right"></div>' +
+                        '<div class="butterfly-eye butterfly-eye-left"></div>' +
+                        '<div class="butterfly-eye butterfly-eye-right"></div>' +
+                    '</div>' +
+                    '<div class="butterfly-wing-container">' +
+                        '<div class="butterfly-wing-side butterfly-wing-left">' +
+                            '<div class="butterfly-wing-upper"></div>' +
+                            '<div class="butterfly-wing-lower"></div>' +
+                        '</div>' +
+                        '<div class="butterfly-wing-side butterfly-wing-right">' +
+                            '<div class="butterfly-wing-upper"></div>' +
+                            '<div class="butterfly-wing-lower"></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="butterfly-body-line">' +
+                        '<div class="butterfly-legs">' +
+                            '<div class="butterfly-leg"></div>' +
+                            '<div class="butterfly-leg"></div>' +
+                            '<div class="butterfly-leg"></div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="butterfly-poem"></div>';
+            return el;
+        }
+
+        function Butterfly() {
+            this.el = createButterflyElement();
+            this.x = Math.random() * W;
+            this.y = Math.random() * H * 0.5 + 50;
+            this.angle = Math.random() * Math.PI * 2;
+            this.speed = 0.8 + Math.random() * 0.6;
+            this.baseSpeed = this.speed;
+            this.wanderAngle = this.angle;
+            this.wanderRate = 0.3 + Math.random() * 0.4;
+            this.wanderStrength = 0.6 + Math.random() * 0.4;
+            this.flapPhase = Math.random() * Math.PI * 2;
+            this.flapFreq = 0.008 + Math.random() * 0.004;
+            this.bobAmplitude = 0.4 + Math.random() * 0.3;
+            this.state = 'wandering';
+            this.stateTimer = 0;
+            this.restDuration = 3000 + Math.random() * 5000;
+            this.wanderDuration = 4000 + Math.random() * 6000;
+            this.directionChangeTimer = 0;
+            this.directionChangeInterval = 800 + Math.random() * 2000;
+            this.poemLine = poemLines[globalPoemIndex];
+            this.poemIndex = globalPoemIndex;
+            globalPoemIndex = (globalPoemIndex + 1) % poemLines.length;
+            this.scale = 1.8 + Math.random() * 0.4;
+            this.bodyTilt = 0;
+            this.targetBodyTilt = 0;
+            this.landingX = 0;
+            this.landingY = 0;
+            this.approachAngle = 0;
+            this.approachRadius = 0;
+            this.circling = false;
+
+            this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
+            container.appendChild(this.el);
+        }
+
+        Butterfly.prototype.update = function(dt) {
+            this.flapPhase += this.flapFreq * dt;
+
+            switch (this.state) {
+                case 'wandering':
+                    this.updateWandering(dt);
+                    break;
+                case 'approaching':
+                    this.updateApproaching(dt);
+                    break;
+                case 'resting':
+                    this.updateResting(dt);
+                    break;
+                case 'taking_off':
+                    this.updateTakingOff(dt);
+                    break;
+            }
+
+            this.render();
+        };
+
+        Butterfly.prototype.updateWandering = function(dt) {
+            this.stateTimer += dt;
+            this.directionChangeTimer += dt;
+
+            if (this.directionChangeTimer >= this.directionChangeInterval) {
+                this.directionChangeTimer = 0;
+                this.directionChangeInterval = 600 + Math.random() * 2500;
+                this.wanderAngle += (Math.random() - 0.5) * Math.PI * 0.8;
+            }
+
+            this.wanderAngle += (Math.random() - 0.5) * this.wanderRate * dt * 0.01;
+            this.angle += (this.wanderAngle - this.angle) * 0.03;
+
+            var bob = Math.sin(this.flapPhase) * this.bobAmplitude;
+            var glideDip = -Math.abs(Math.sin(this.flapPhase * 0.5)) * 0.15;
+
+            this.speed = this.baseSpeed + Math.sin(this.flapPhase * 0.7) * 0.3;
+
+            this.x += Math.cos(this.angle) * this.speed + Math.sin(this.flapPhase * 1.3) * 0.2;
+            this.y += Math.sin(this.angle) * this.speed * 0.5 + bob + glideDip;
+
+            this.targetBodyTilt = Math.sin(this.angle) * 15;
+            this.bodyTilt += (this.targetBodyTilt - this.bodyTilt) * 0.05;
+
+            if (this.x < 60) { this.x = 60; this.wanderAngle = 0; this.angle += 0.15; }
+            if (this.x > W - 60) { this.x = W - 60; this.wanderAngle = Math.PI; this.angle -= 0.15; }
+            if (this.y < 60) { this.y = 60; this.wanderAngle = Math.PI * 0.5; this.angle += 0.1; }
+            if (this.y > H - 80) { this.y = H - 80; this.wanderAngle = -Math.PI * 0.5; this.angle -= 0.1; }
+
+            if (this.stateTimer > this.wanderDuration && Math.random() < 0.01) {
+                this.startApproaching();
+            }
+        };
+
+        Butterfly.prototype.startApproaching = function() {
+            this.state = 'approaching';
+            this.stateTimer = 0;
+            this.landingX = 120 + Math.random() * (W - 240);
+            this.landingY = H * 0.3 + Math.random() * (H * 0.4);
+            this.approachRadius = 60 + Math.random() * 40;
+            this.approachAngle = Math.random() * Math.PI * 2;
+            this.circling = false;
+        };
+
+        Butterfly.prototype.updateApproaching = function(dt) {
+            this.stateTimer += dt;
+
+            var dx = this.landingX - this.x;
+            var dy = this.landingY - this.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > this.approachRadius * 2.5) {
+                var targetAngle = Math.atan2(dy, dx);
+                var angleDiff = targetAngle - this.angle;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+                this.angle += angleDiff * 0.04;
+
+                this.speed = this.baseSpeed * 1.2;
+                var bob = Math.sin(this.flapPhase) * this.bobAmplitude * 0.7;
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed * 0.6 + bob;
+            } else {
+                this.circling = true;
+                this.approachAngle += 0.025 * dt * 0.06;
+
+                var targetX = this.landingX + Math.cos(this.approachAngle) * this.approachRadius;
+                var targetY = this.landingY + Math.sin(this.approachAngle) * this.approachRadius * 0.5;
+
+                var toDx = targetX - this.x;
+                var toDy = targetY - this.y;
+                this.angle = Math.atan2(toDy, toDx);
+
+                this.approachRadius *= 0.998;
+
+                this.speed = this.baseSpeed * 0.7;
+                var bob = Math.sin(this.flapPhase) * this.bobAmplitude * 0.4;
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed * 0.5 + bob;
+
+                if (this.approachRadius < 8) {
+                    this.state = 'resting';
+                    this.stateTimer = 0;
+                    this.el.classList.add('resting');
+                    this.speed = 0;
+                    this.x = this.landingX;
+                    this.y = this.landingY;
+                }
+            }
+
+            this.targetBodyTilt = Math.sin(this.angle) * 20;
+            this.bodyTilt += (this.targetBodyTilt - this.bodyTilt) * 0.05;
+        };
+
+        Butterfly.prototype.updateResting = function(dt) {
+            this.stateTimer += dt;
+
+            this.bodyTilt += (0 - this.bodyTilt) * 0.05;
+
+            if (this.stateTimer >= this.restDuration) {
+                this.state = 'taking_off';
+                this.stateTimer = 0;
+                this.el.classList.remove('resting');
+                this.poemIndex = (this.poemIndex + 1) % poemLines.length;
+                this.poemLine = poemLines[this.poemIndex];
+                this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
+            }
+        };
+
+        Butterfly.prototype.updateTakingOff = function(dt) {
+            this.stateTimer += dt;
+
+            this.angle = -Math.PI * 0.5 + (Math.random() - 0.5) * Math.PI * 0.6;
+            this.speed = this.baseSpeed * (this.stateTimer / 800);
+            this.speed = Math.min(this.speed, this.baseSpeed);
+
+            var bob = Math.sin(this.flapPhase) * this.bobAmplitude;
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed + bob - 0.5;
+
+            this.targetBodyTilt = Math.sin(this.angle) * 15;
+            this.bodyTilt += (this.targetBodyTilt - this.bodyTilt) * 0.05;
+
+            if (this.stateTimer > 800) {
+                this.state = 'wandering';
+                this.stateTimer = 0;
+                this.wanderDuration = 4000 + Math.random() * 6000;
+                this.directionChangeTimer = 0;
+            }
+        };
+
+        Butterfly.prototype.render = function() {
+            var dir = Math.cos(this.angle) >= 0 ? 1 : -1;
+            var innerScaleX = this.scale * dir;
+            this.el.style.left = this.x + 'px';
+            this.el.style.top = this.y + 'px';
+            this.el.style.transform = 'scaleY(' + this.scale + ')';
+            var inner = this.el.querySelector('.butterfly-inner');
+            inner.style.transform = 'scaleX(' + innerScaleX + ') rotate(' + (this.bodyTilt * dir) + 'deg)';
+        };
+
+        function spawnButterfly() {
+            if (butterflies.length < maxButterflies) {
+                butterflies.push(new Butterfly());
+            }
+        }
+
+        spawnButterfly();
+
+        var lastTime = Date.now();
+        function animate() {
+            var now = Date.now();
+            var dt = now - lastTime;
+            lastTime = now;
+            if (dt > 100) dt = 16;
+
+            for (var i = 0; i < butterflies.length; i++) {
+                butterflies[i].update(dt);
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    })();
+    </script>
 
 
 </body>
