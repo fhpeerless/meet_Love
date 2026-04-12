@@ -62,7 +62,7 @@
         this.bobAmplitude = 0.4 + Math.random() * 0.3;
         this.state = 'wandering';
         this.stateTimer = 0;
-        this.restDuration = 3000 + Math.random() * 5000;
+        this.restDuration = 15000 + Math.random() * 10000;
         this.wanderDuration = 4000 + Math.random() * 6000;
         this.directionChangeTimer = 0;
         this.directionChangeInterval = 800 + Math.random() * 2000;
@@ -77,18 +77,39 @@
         this.approachAngle = 0;
         this.approachRadius = 0;
         this.circling = false;
+        this.wingMaxAngle = 70;
+        this.wingMinScaleX = 0.3;
+        this.wingMaxAngleTarget = 70;
+        this.wingMinScaleXTarget = 0.3;
+        this.prevX = this.x;
+        this.prevY = this.y;
+        this.moveSpeed = 0;
 
         this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
         container.appendChild(this.el);
     }
 
     Butterfly.prototype.update = function(dt) {
+        var dx = this.x - this.prevX;
+        var dy = this.y - this.prevY;
+        this.moveSpeed = Math.sqrt(dx * dx + dy * dy);
+        this.prevX = this.x;
+        this.prevY = this.y;
+
+        var speedRatio = Math.min(this.moveSpeed / 2.0, 1.0);
+
         if (this.state === 'resting') {
             this.flapFreqTarget = 0.003;
+            this.wingMaxAngleTarget = 30;
+            this.wingMinScaleXTarget = 0.7;
         } else {
-            this.flapFreqTarget = 0.008 + Math.random() * 0.004;
+            this.flapFreqTarget = 0.004 + speedRatio * 0.012;
+            this.wingMaxAngleTarget = 30 + speedRatio * 40;
+            this.wingMinScaleXTarget = 0.7 - speedRatio * 0.4;
         }
-        this.flapFreq += (this.flapFreqTarget - this.flapFreq) * 0.02;
+        this.flapFreq += (this.flapFreqTarget - this.flapFreq) * 0.03;
+        this.wingMaxAngle += (this.wingMaxAngleTarget - this.wingMaxAngle) * 0.03;
+        this.wingMinScaleX += (this.wingMinScaleXTarget - this.wingMinScaleX) * 0.03;
         this.flapPhase += this.flapFreq * dt;
 
         switch (this.state) {
@@ -148,7 +169,7 @@
         this.stateTimer = 0;
         this.landingX = 120 + Math.random() * (W - 240);
         this.landingY = H * 0.3 + Math.random() * (H * 0.4);
-        this.approachRadius = 60 + Math.random() * 40;
+        this.approachRadius = 30 + Math.random() * 20;
         this.approachAngle = Math.random() * Math.PI * 2;
         this.circling = false;
     };
@@ -160,12 +181,12 @@
         var dy = this.landingY - this.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist > this.approachRadius * 2.5) {
+        if (dist > this.approachRadius * 1.5) {
             var targetAngle = Math.atan2(dy, dx);
             var angleDiff = targetAngle - this.angle;
             while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
             while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-            this.angle += angleDiff * 0.04;
+            this.angle += angleDiff * 0.06;
 
             this.speed = this.baseSpeed * 1.2;
             var bob = Math.sin(this.flapPhase) * this.bobAmplitude * 0.7;
@@ -173,7 +194,7 @@
             this.y += Math.sin(this.angle) * this.speed * 0.6 + bob;
         } else {
             this.circling = true;
-            this.approachAngle += 0.025 * dt * 0.06;
+            this.approachAngle += 0.025 * dt * 0.1;
 
             var targetX = this.landingX + Math.cos(this.approachAngle) * this.approachRadius;
             var targetY = this.landingY + Math.sin(this.approachAngle) * this.approachRadius * 0.5;
@@ -182,14 +203,14 @@
             var toDy = targetY - this.y;
             this.angle = Math.atan2(toDy, toDx);
 
-            this.approachRadius *= 0.998;
+            this.approachRadius *= 0.99;
 
             this.speed = this.baseSpeed * 0.7;
             var bob = Math.sin(this.flapPhase) * this.bobAmplitude * 0.4;
             this.x += Math.cos(this.angle) * this.speed;
             this.y += Math.sin(this.angle) * this.speed * 0.5 + bob;
 
-            if (this.approachRadius < 8) {
+            if (this.approachRadius < 5) {
                 this.state = 'resting';
                 this.stateTimer = 0;
                 this.el.classList.add('resting');
@@ -249,12 +270,9 @@
         var inner = this.el.querySelector('.butterfly-inner');
         inner.style.transform = 'scaleX(' + innerScaleX + ') rotate(' + (this.bodyTilt * dir) + 'deg)';
 
-        var isResting = this.state === 'resting';
-        var maxAngle = isResting ? 30 : 70;
-        var minScaleX = isResting ? 0.7 : 0.3;
         var wingAngle = Math.sin(this.flapPhase) * 0.5 + 0.5;
-        var rotateY = wingAngle * maxAngle;
-        var scaleXVal = 1 - wingAngle * (1 - minScaleX);
+        var rotateY = wingAngle * this.wingMaxAngle;
+        var scaleXVal = 1 - wingAngle * (1 - this.wingMinScaleX);
 
         var leftWing = this.el.querySelector('.butterfly-wing-left');
         var rightWing = this.el.querySelector('.butterfly-wing-right');
