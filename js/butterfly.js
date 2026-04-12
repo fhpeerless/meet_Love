@@ -46,6 +46,12 @@
         return el;
     }
 
+    function normalizeAngle(a) {
+        while (a > 180) a -= 360;
+        while (a < -180) a += 360;
+        return a;
+    }
+
     function Butterfly() {
         this.el = createButterflyElement();
         this.x = Math.random() * W;
@@ -70,8 +76,8 @@
         this.poemIndex = globalPoemIndex;
         globalPoemIndex = (globalPoemIndex + 1) % poemLines.length;
         this.scale = 1.8 + Math.random() * 0.4;
-        this.bodyTilt = 0;
-        this.targetBodyTilt = 0;
+        this.headingAngle = this.angle * 180 / Math.PI + 90;
+        this.headingAngleTarget = this.headingAngle;
         this.landingX = 0;
         this.landingY = 0;
         this.approachAngle = 0;
@@ -88,6 +94,31 @@
         this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
         container.appendChild(this.el);
     }
+
+    Butterfly.prototype.updateHeading = function() {
+        var targetDeg = this.angle * 180 / Math.PI + 90;
+        targetDeg = normalizeAngle(targetDeg);
+        this.headingAngleTarget = normalizeAngle(this.headingAngleTarget);
+
+        var diff = normalizeAngle(targetDeg - this.headingAngleTarget);
+        this.headingAngleTarget += diff;
+        this.headingAngleTarget = normalizeAngle(this.headingAngleTarget);
+
+        var lerpRate;
+        if (this.state === 'resting') {
+            lerpRate = 0.01;
+        } else if (this.state === 'approaching' && this.circling) {
+            lerpRate = 0.008;
+        } else if (this.state === 'taking_off') {
+            lerpRate = 0.01;
+        } else {
+            lerpRate = 0.03;
+        }
+
+        var headingDiff = normalizeAngle(this.headingAngleTarget - this.headingAngle);
+        this.headingAngle += headingDiff * lerpRate;
+        this.headingAngle = normalizeAngle(this.headingAngle);
+    };
 
     Butterfly.prototype.update = function(dt) {
         var dx = this.x - this.prevX;
@@ -127,6 +158,7 @@
                 break;
         }
 
+        this.updateHeading();
         this.render();
     };
 
@@ -150,9 +182,6 @@
 
         this.x += Math.cos(this.angle) * this.speed + Math.sin(this.flapPhase * 1.3) * 0.2;
         this.y += Math.sin(this.angle) * this.speed * 0.5 + bob + glideDip;
-
-        this.targetBodyTilt = Math.sin(this.angle) * 15;
-        this.bodyTilt += (this.targetBodyTilt - this.bodyTilt) * 0.05;
 
         if (this.x < 60) { this.x = 60; this.wanderAngle = 0; this.angle += 0.15; }
         if (this.x > W - 60) { this.x = W - 60; this.wanderAngle = Math.PI; this.angle -= 0.15; }
@@ -219,15 +248,10 @@
                 this.y = this.landingY;
             }
         }
-
-        this.targetBodyTilt = Math.sin(this.angle) * 20;
-        this.bodyTilt += (this.targetBodyTilt - this.bodyTilt) * 0.05;
     };
 
     Butterfly.prototype.updateResting = function(dt) {
         this.stateTimer += dt;
-
-        this.bodyTilt += (0 - this.bodyTilt) * 0.05;
 
         if (this.stateTimer >= this.restDuration) {
             this.state = 'taking_off';
@@ -250,9 +274,6 @@
         this.x += Math.cos(this.angle) * this.speed;
         this.y += Math.sin(this.angle) * this.speed + bob - 0.5;
 
-        this.targetBodyTilt = Math.sin(this.angle) * 15;
-        this.bodyTilt += (this.targetBodyTilt - this.bodyTilt) * 0.05;
-
         if (this.stateTimer > 800) {
             this.state = 'wandering';
             this.stateTimer = 0;
@@ -262,13 +283,12 @@
     };
 
     Butterfly.prototype.render = function() {
-        var dir = Math.cos(this.angle) >= 0 ? 1 : -1;
-        var innerScaleX = this.scale * dir;
         this.el.style.left = this.x + 'px';
         this.el.style.top = this.y + 'px';
-        this.el.style.transform = 'scaleY(' + this.scale + ')';
+        this.el.style.transform = 'scale(' + this.scale + ')';
+
         var inner = this.el.querySelector('.butterfly-inner');
-        inner.style.transform = 'scaleX(' + innerScaleX + ') rotate(' + (this.bodyTilt * dir) + 'deg)';
+        inner.style.transform = 'rotate(' + this.headingAngle + 'deg)';
 
         var wingAngle = Math.sin(this.flapPhase) * 0.5 + 0.5;
         var rotateY = wingAngle * this.wingMaxAngle;
