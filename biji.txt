@@ -1,0 +1,5 @@
+- 1.#diary-section 的 height: calc(100% - 10%) 没有包含 padding（100px top + 50px bottom），导致实际内容区域被 padding 挤出视口
+- 2.#diary-content 和 #diary-entries 用百分比高度层层嵌套，加上各自的 padding，底部空间不够
+
+分析
+问题找到了。 #diary-section 有 padding-top: 100px 和 padding-bottom: 50px ，但 height: calc(100% - 10%) 没有考虑 padding，导致内容被撑出容器。同时 #diary-content 和 #diary-entries 用百分比高度叠加，加上 padding 占用空间，底部内容被截断。
