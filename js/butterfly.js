@@ -90,12 +90,17 @@
         this.prevX = this.x;
         this.prevY = this.y;
         this.moveSpeed = 0;
+        this.particles = [];
+        this.particleTimer = 0;
+        this.particleColors = ['#ff69b4', '#ffb6c1', '#ff1493', '#ffd700', '#87ceeb', '#dda0dd', '#ff6347', '#7fffd4'];
 
         this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
         container.appendChild(this.el);
     }
 
     Butterfly.prototype.updateHeading = function() {
+        if (this.state === 'resting') return;
+
         var targetDeg = this.angle * 180 / Math.PI + 90;
         targetDeg = normalizeAngle(targetDeg);
         this.headingAngleTarget = normalizeAngle(this.headingAngleTarget);
@@ -105,9 +110,7 @@
         this.headingAngleTarget = normalizeAngle(this.headingAngleTarget);
 
         var lerpRate;
-        if (this.state === 'resting') {
-            lerpRate = 0.01;
-        } else if (this.state === 'approaching' && this.circling) {
+        if (this.state === 'approaching' && this.circling) {
             lerpRate = 0.008;
         } else if (this.state === 'taking_off') {
             lerpRate = 0.01;
@@ -159,6 +162,7 @@
         }
 
         this.updateHeading();
+        this.updateParticles(dt);
         this.render();
     };
 
@@ -280,6 +284,64 @@
             this.wanderDuration = 4000 + Math.random() * 6000;
             this.directionChangeTimer = 0;
         }
+    };
+
+    Butterfly.prototype.updateParticles = function(dt) {
+        this.particleTimer += dt;
+
+        var spawnRate = this.state === 'resting' ? 200 : 80;
+        if (this.particleTimer >= spawnRate) {
+            this.particleTimer = 0;
+            this.spawnParticle();
+        }
+
+        for (var i = this.particles.length - 1; i >= 0; i--) {
+            var p = this.particles[i];
+            p.life -= dt;
+            if (p.life <= 0) {
+                p.el.remove();
+                this.particles.splice(i, 1);
+                continue;
+            }
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.01;
+            var lifeRatio = p.life / p.maxLife;
+            p.el.style.left = p.x + 'px';
+            p.el.style.top = p.y + 'px';
+            p.el.style.opacity = lifeRatio;
+            p.el.style.transform = 'scale(' + lifeRatio + ')';
+        }
+    };
+
+    Butterfly.prototype.spawnParticle = function() {
+        var el = document.createElement('div');
+        el.className = 'butterfly-particle';
+        var color = this.particleColors[Math.floor(Math.random() * this.particleColors.length)];
+        el.style.background = color;
+        el.style.boxShadow = '0 0 4px ' + color;
+
+        var wingContainer = this.el.querySelector('.butterfly-wing-container');
+        var rect = wingContainer.getBoundingClientRect();
+        var containerRect = container.getBoundingClientRect();
+
+        var px = rect.left - containerRect.left + Math.random() * rect.width;
+        var py = rect.top - containerRect.top + Math.random() * rect.height;
+
+        el.style.left = px + 'px';
+        el.style.top = py + 'px';
+        container.appendChild(el);
+
+        var maxLife = 800 + Math.random() * 600;
+        this.particles.push({
+            el: el,
+            x: px,
+            y: py,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: -0.3 - Math.random() * 0.5,
+            life: maxLife,
+            maxLife: maxLife
+        });
     };
 
     Butterfly.prototype.render = function() {
