@@ -3,3 +3,10 @@
 
 分析
 问题找到了。 #diary-section 有 padding-top: 100px 和 padding-bottom: 50px ，但 height: calc(100% - 10%) 没有考虑 padding，导致内容被撑出容器。同时 #diary-content 和 #diary-entries 用百分比高度叠加，加上 padding 占用空间，底部内容被截断。
+
+已修复。改用 Flex 布局 替代固定高度计算：
+
+- #diary-content ： display: flex; flex-direction: column ，纵向排列子元素
+- h2 和 .diary-intro ： flex-shrink: 0 ，不会被压缩
+- #diary-entries ： flex: 1; min-height: 0 ，自动填充剩余空间， min-height: 0 允许内容在 flex 容器内正确滚动
+这样无论标题和简介占多少空间，日记列表都会精确占满剩余高度，不会再被截断。
