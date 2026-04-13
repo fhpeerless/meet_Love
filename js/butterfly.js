@@ -52,6 +52,44 @@
         return a;
     }
 
+    var BOUNDARY_MARGIN = 150;
+    var BOUNDARY_FORCE = 0.12;
+
+    function applyBoundaryForce(butterfly) {
+        var fx = 0, fy = 0;
+
+        if (butterfly.x < BOUNDARY_MARGIN) {
+            var ratio = 1 - butterfly.x / BOUNDARY_MARGIN;
+            fx += BOUNDARY_FORCE * ratio * ratio;
+        }
+        if (butterfly.x > W - BOUNDARY_MARGIN) {
+            var ratio = 1 - (W - butterfly.x) / BOUNDARY_MARGIN;
+            fx -= BOUNDARY_FORCE * ratio * ratio;
+        }
+        if (butterfly.y < BOUNDARY_MARGIN) {
+            var ratio = 1 - butterfly.y / BOUNDARY_MARGIN;
+            fy += BOUNDARY_FORCE * ratio * ratio;
+        }
+        if (butterfly.y > H - BOUNDARY_MARGIN) {
+            var ratio = 1 - (H - butterfly.y) / BOUNDARY_MARGIN;
+            fy -= BOUNDARY_FORCE * ratio * ratio;
+        }
+
+        if (fx !== 0 || fy !== 0) {
+            var forceAngle = Math.atan2(fy, fx);
+            var angleDiff = forceAngle - butterfly.angle;
+            while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+            while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+            butterfly.angle += angleDiff * 0.15;
+
+            butterfly.x += fx;
+            butterfly.y += fy;
+        }
+
+        butterfly.x = Math.max(30, Math.min(W - 30, butterfly.x));
+        butterfly.y = Math.max(30, Math.min(H - 30, butterfly.y));
+    }
+
     function Butterfly() {
         this.el = createButterflyElement();
         this.x = Math.random() * W;
@@ -161,6 +199,10 @@
                 break;
         }
 
+        if (this.state !== 'resting') {
+            applyBoundaryForce(this);
+        }
+
         this.updateHeading();
         this.updateParticles(dt);
         this.render();
@@ -187,11 +229,6 @@
         this.x += Math.cos(this.angle) * this.speed + Math.sin(this.flapPhase * 1.3) * 0.2;
         this.y += Math.sin(this.angle) * this.speed * 0.5 + bob + glideDip;
 
-        if (this.x < 60) { this.x = 60; this.wanderAngle = 0; this.angle += 0.15; }
-        if (this.x > W - 60) { this.x = W - 60; this.wanderAngle = Math.PI; this.angle -= 0.15; }
-        if (this.y < 60) { this.y = 60; this.wanderAngle = Math.PI * 0.5; this.angle += 0.1; }
-        if (this.y > H - 80) { this.y = H - 80; this.wanderAngle = -Math.PI * 0.5; this.angle -= 0.1; }
-
         if (this.stateTimer > this.wanderDuration && Math.random() < 0.01) {
             this.startApproaching();
         }
@@ -200,8 +237,8 @@
     Butterfly.prototype.startApproaching = function() {
         this.state = 'approaching';
         this.stateTimer = 0;
-        this.landingX = 120 + Math.random() * (W - 240);
-        this.landingY = H * 0.3 + Math.random() * (H * 0.4);
+        this.landingX = BOUNDARY_MARGIN + Math.random() * (W - BOUNDARY_MARGIN * 2);
+        this.landingY = BOUNDARY_MARGIN + Math.random() * (H - BOUNDARY_MARGIN * 2);
         this.approachRadius = 30 + Math.random() * 20;
         this.approachAngle = Math.random() * Math.PI * 2;
         this.circling = false;
