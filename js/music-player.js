@@ -10,7 +10,7 @@ var MusicPlayer = (function() {
                {
                 title: '此生不换 - DJ降调',
                 url: 'http://note.youdao.com/yws/api/personal/file/WEB01f0aecd49e612afcd4a4a4d4e26f60a?method=download&inline=true&shareKey=2a134f98a4f5da480e94c3da309cbc33',
-                lrcUrl: 'http://note.youdao.com/yws/api/personal/file/WEB10ed30419a0b830b3b9771dad740909a?method=download&inline=true&shareKey=48e1ff3d962d711402c6bb120ef563d7'
+                lrcUrl: 'http://note.youdao.com/yws/api/personal/file/WEB5f974d67cf6cc41847f7fe27e079beb3?method=download&inline=true&shareKey=1fd36ece2aaa251f84e006e631b7d12d'
             },
             {
                 title: '毛毛 - 一程山路',
