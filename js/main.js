@@ -53,6 +53,8 @@ $(function() {
         if (musicPlayer && !musicPlayer.isPlaying) {
             musicPlayer.play();
         }
+
+        $('#desktop-lyrics').removeClass('desktop-lyrics-show');
     });
 
     function loadDiary() {
@@ -60,7 +62,17 @@ $(function() {
             $diaryEntries.empty();
             $.each(data, function(index, entry) {
                 var entryHtml = '<div class="diary-entry">' +
-                    '<h3>' + entry.date + '</h3>' +
+                    '<div class="diary-entry-header">' +
+                    '<h3>' + entry.date + '</h3>';
+                
+                if (entry.songId && musicPlayer) {
+                    var song = musicPlayer.getSongById(entry.songId);
+                    if (song) {
+                        entryHtml += '<button class="diary-play-btn" data-song-id="' + entry.songId + '" title="播放: ' + song.title + '">🎵 播放 ' + song.title + '</button>';
+                    }
+                }
+                
+                entryHtml += '</div>' +
                     '<p class="diary-subtitle">' + (entry.subtitle || '') + '</p>' +
                     '<p>' + entry.content + '</p>';
                 
@@ -74,6 +86,13 @@ $(function() {
                 
                 entryHtml += '</div>';
                 $diaryEntries.append(entryHtml);
+            });
+
+            $diaryEntries.off('click', '.diary-play-btn').on('click', '.diary-play-btn', function() {
+                var songId = $(this).data('song-id');
+                if (musicPlayer && songId) {
+                    musicPlayer.loadSongById(songId);
+                }
             });
         }).fail(function() {
             $diaryEntries.html('<p style="text-align:center;color:#666;">加载日记失败，请确保config/diary.json文件存在</p>');
@@ -89,6 +108,8 @@ $(function() {
         $main.show();
         $diarySection.hide();
         $musicSection.hide();
+
+        $('#desktop-lyrics').removeClass('desktop-lyrics-show');
     });
 
     $diaryBtn.click(function() {
@@ -98,6 +119,10 @@ $(function() {
         $main.hide();
         $diarySection.show();
         $musicSection.hide();
+        
+        if (musicPlayer && musicPlayer.desktopLyricsEnabled) {
+            $('#desktop-lyrics').addClass('desktop-lyrics-show');
+        }
         
         $diaryEntries.animate({
             scrollTop: $diaryEntries[0].scrollHeight

@@ -5,44 +5,51 @@ var MusicPlayer = (function() {
         this.currentSongIndex = 0;
         this.lyrics = [];
         this.currentLyricIndex = -1;
+        this.desktopLyricsEnabled = true;
         
         this.musicList = [
                {
+                id: 'cishengbuhuan',
                 title: '此生不换 - DJ降调',
                 url: 'https://note.youdao.com/yws/api/personal/file/WEB01f0aecd49e612afcd4a4a4d4e26f60a?method=download&inline=true&shareKey=2a134f98a4f5da480e94c3da309cbc33',
                 lrcUrl: 'https://note.youdao.com/yws/api/personal/file/WEB5f974d67cf6cc41847f7fe27e079beb3?method=download&inline=true&shareKey=1fd36ece2aaa251f84e006e631b7d12d'
             },
             {
+                id: 'yichengshanlu',
                 title: '毛毛 - 一程山路',
                 url: 'https://note.youdao.com/yws/api/personal/file/WEB08eae1417bb953cc4a65a4b56f549d3a?method=download&inline=true&shareKey=07388e5e1b3ca4787da9fc5f8c39ce8a',
                 lrcUrl: 'https://note.youdao.com/yws/api/personal/file/WEB53bf55af8306cce258de575f61d65b56?method=download&inline=true&shareKey=c12b4936900e0eef69c9309abc1c1bdb'
             },
-                                    {
+            {
+                id: 'fengchuitou',
                 title: '群星 - 风吹透',
                 url: 'https://note.youdao.com/yws/api/personal/file/WEB42fef8283e691254a8993032d6216ebe?method=download&inline=true&shareKey=8e55342d374d568b9657128ba9f16212',
                 lrcUrl: './lrc/fengchuitou.lrc'
             },
-                        {
+            {
+                id: 'shikong',
                 title: '群星 - 失控',
                 url: 'https://note.youdao.com/yws/api/personal/file/00234c8c38ecd64c6019d46c9b8f153b?method=download&inline=true&shareKey=98669ad7c421a1f6d7e59350f4ad943c',
                 lrcUrl: './lrc/shikong.lrc'
             },
             {
+                id: 'yujian',
                 title: '孙燕姿 - 遇见',
                 url: 'https://note.youdao.com/yws/api/personal/file/1f3ec446fd52ecd683be5c509aebf58d?method=download&inline=true&shareKey=fc9eac5d25590b1c61a9d8a9450d653a',
                 lrcUrl: './lrc/yujian.lrc'
             },
             {
+                id: 'geinigeiwo',
                 title: '毛不易 - 给你给我',
                 url: 'https://note.youdao.com/yws/api/personal/file/e9255f74a03034e6194aad0a8d1f277e?method=download&inline=true&shareKey=be61f4113153eade2911bf6fe6891931',
                 lrcUrl: './lrc/gngwo.lrc'
             },
             {
+                id: 'shaonianzhongguoshuo',
                 title: '张杰 - 少年中国说',
                 url: 'https://note.youdao.com/yws/api/personal/file/19803c2bfda5cfd06df07147ee8ece54?method=download&inline=true&shareKey=4ab84312ba36407a167125812538a768',
                 lrcUrl: './lrc/china_say.lrc'
-            },
-
+            }
         ];
         
         this.init();
@@ -122,6 +129,24 @@ var MusicPlayer = (function() {
                 $btn.text('隐藏播放列表');
             }
         });
+
+        $('#desktopLyricsBtn').off('click').on('click', function() {
+            self.toggleDesktopLyrics();
+            var $btn = $(this);
+            if (self.desktopLyricsEnabled) {
+                $btn.addClass('active');
+                $btn.text('🖥️ 关闭桌面歌词');
+            } else {
+                $btn.removeClass('active');
+                $btn.text('🖥️ 桌面歌词');
+            }
+        });
+
+        var $desktopLyricsBtn = $('#desktopLyricsBtn');
+        if (this.desktopLyricsEnabled) {
+            $desktopLyricsBtn.addClass('active');
+            $desktopLyricsBtn.text('🖥️ 关闭桌面歌词');
+        }
     };
     
     MusicPlayer.prototype.loadSong = function(index) {
@@ -251,6 +276,7 @@ var MusicPlayer = (function() {
                 this.currentLyricIndex = newIndex;
                 $('.lyrics-line').removeClass('active');
                 $('.lyrics-line[data-index="' + newIndex + '"]').addClass('active');
+                this.updateDesktopLyrics();
             }
             
             var container = $('.lyrics-display');
@@ -358,6 +384,58 @@ var MusicPlayer = (function() {
         }
     };
     
+    MusicPlayer.prototype.loadSongById = function(songId) {
+        for (var i = 0; i < this.musicList.length; i++) {
+            if (this.musicList[i].id === songId) {
+                this.loadSong(i);
+                this.play();
+                return true;
+            }
+        }
+        return false;
+    };
+
+    MusicPlayer.prototype.getSongById = function(songId) {
+        for (var i = 0; i < this.musicList.length; i++) {
+            if (this.musicList[i].id === songId) {
+                return this.musicList[i];
+            }
+        }
+        return null;
+    };
+
+    MusicPlayer.prototype.toggleDesktopLyrics = function() {
+        var $desktopLyrics = $('#desktop-lyrics');
+        if ($desktopLyrics.length === 0) {
+            return;
+        }
+        if ($desktopLyrics.hasClass('desktop-lyrics-show')) {
+            $desktopLyrics.removeClass('desktop-lyrics-show');
+            this.desktopLyricsEnabled = false;
+        } else {
+            $desktopLyrics.addClass('desktop-lyrics-show');
+            this.desktopLyricsEnabled = true;
+            this.updateDesktopLyrics();
+        }
+    };
+
+    MusicPlayer.prototype.updateDesktopLyrics = function() {
+        if (!this.desktopLyricsEnabled) return;
+        var $line = $('#desktop-lyrics-line');
+        if (this.currentLyricIndex >= 0 && this.currentLyricIndex < this.lyrics.length) {
+            var text = this.lyrics[this.currentLyricIndex].text;
+            if ($line.text() !== text) {
+                $line.css('opacity', '0');
+                setTimeout(function() {
+                    $line.text(text);
+                    $line.css('opacity', '1');
+                }, 150);
+            }
+        } else {
+            $line.text('');
+        }
+    };
+
     MusicPlayer.prototype.prevSong = function() {
         var newIndex = (this.currentSongIndex - 1 + this.musicList.length) % this.musicList.length;
         this.loadSong(newIndex);
