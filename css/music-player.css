@@ -25,6 +25,10 @@
     text-align: center;
     padding: 10px 30px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
 }
 
 .music-header h2 {
@@ -32,6 +36,12 @@
     font-size: 28px;
     text-align: center;
     margin: 0;
+}
+
+.music-header-btns {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .music-layout {
@@ -563,6 +573,11 @@
 }
 
 .toggle-playlist-btn:hover {
+    background: rgb(190, 26, 37);
+    color: white;
+}
+
+.toggle-playlist-btn.active {
     background: rgb(190, 26, 37);
     color: white;
 }
