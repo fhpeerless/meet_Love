@@ -12,7 +12,7 @@ var MusicPlayer = (function() {
                 id: 'mang',
                 title: '茫 - 群星',
                 url: 'http://note.youdao.com/yws/api/personal/file/WEBf4e96e6012b361ff92b7fb1f4b5323d0?method=download&inline=true&shareKey=339ddbc23cc95a244a8feb25891cc095',
-                lrcUrl: 'http://note.youdao.com/yws/api/personal/file/WEBe358f83fa7ee2258104dd9d2ec30c217?method=download&inline=true&shareKey=3deaa21b712e17895557da822c2a151b'
+                lrcUrl: 'https://note.youdao.com/yws/api/personal/file/WEBe358f83fa7ee2258104dd9d2ec30c217?method=download&inline=true&shareKey=3deaa21b712e17895557da822c2a151b'
             },
                {
                 id: 'cishengbuhuan',
