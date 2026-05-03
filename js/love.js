@@ -224,6 +224,8 @@
         this.opt = opt || {};
 
         this.record = {};
+        this.yellowRatio = 0;
+        this.sproutHearts = [];
         
         this.initSeed();
         this.initFooter();
@@ -374,6 +376,58 @@
 
         createBloom: function(width, height, radius, figure, color, alpha, angle, scale, place, speed, image) {
             var x, y;
+            color = color || this.fruitColor;
+            if (!color) {
+                var h, s, v;
+                if (this.ripeMode) {
+                    h = random(45, 65);
+                    s = random(0.6, 0.9);
+                    v = random(0.85, 1.0);
+                } else if (this.yellowRatio > 0) {
+                    if (Math.random() < this.yellowRatio) {
+                        h = random(45, 65);
+                        s = random(0.6, 0.9);
+                        v = random(0.85, 1.0);
+                    } else {
+                        var hueRanges = [
+                            [345, 360], [0, 15],
+                            [315, 345],
+                            [15, 35],
+                            [270, 315],
+                            [180, 225],
+                            [90, 150]
+                        ];
+                        var range = hueRanges[random(0, hueRanges.length - 1)];
+                        h = random(range[0], range[1]);
+                        s = random(0.35, 0.65);
+                        v = random(0.88, 1.0);
+                    }
+                } else {
+                    var hueRanges = [
+                        [345, 360], [0, 15],
+                        [315, 345],
+                        [15, 35],
+                        [270, 315],
+                        [180, 225],
+                        [90, 150]
+                    ];
+                    var range = hueRanges[random(0, hueRanges.length - 1)];
+                    h = random(range[0], range[1]);
+                    s = random(0.35, 0.65);
+                    v = random(0.88, 1.0);
+                }
+                var c = v * s;
+                var x1 = c * (1 - Math.abs(((h / 60) % 2) - 1));
+                var m = v - c;
+                var r, g, b;
+                if (h < 60) { r = c; g = x1; b = 0; }
+                else if (h < 120) { r = x1; g = c; b = 0; }
+                else if (h < 180) { r = 0; g = c; b = x1; }
+                else if (h < 240) { r = 0; g = x1; b = c; }
+                else if (h < 300) { r = x1; g = 0; b = c; }
+                else { r = c; g = 0; b = x1; }
+                color = 'rgb(' + Math.round((r + m) * 255) + ',' + Math.round((g + m) * 255) + ',' + Math.round((b + m) * 255) + ')';
+            }
             while (true) {
                 x = random(20, width - 20);
                 y = random(20, height - 20);
@@ -449,11 +503,17 @@
 
         jump: function() {
             var s = this, blooms = s.blooms;
+            var limit = s.bloomLimit;
+            if (limit === 0) {
+                s.blooms = [];
+                return;
+            }
             if (blooms.length) {
-                for (var i = 0; i < blooms.length; i++) {
+                for (var i = blooms.length - 1; i >= 0; i--) {
                     blooms[i].jump();
                 }
-            } 
+            }
+            limit = limit || Infinity;
             if ((blooms.length && blooms.length < 3) || !blooms.length) {
                 var bloom = this.opt.bloom || {},
                     width = bloom.width || this.width,
@@ -461,10 +521,46 @@
                     figure = this.seed.heart.figure;
                 var r = 240, x, y;
                 for (var i = 0; i < random(1,2); i++) {
+                    if (blooms.length >= limit) break;
                     var randomImage = window.fallingImages ? window.fallingImages[Math.floor(Math.random() * window.fallingImages.length)] : null;
                     blooms.push(this.createBloom(random(400, 600), random(200, 500), r, figure, null, 1, null, 1, new Point(random(600,1200), 720), random(200,300), randomImage));
                 }
             }
+        },
+
+        drawSproutHearts: function() {
+            var s = this, ctx = s.ctx, figure = this.seed.heart.figure;
+            for (var i = 0; i < s.sproutHearts.length; i++) {
+                var h = s.sproutHearts[i];
+                ctx.save();
+                ctx.globalAlpha = 0.9;
+                ctx.translate(h.point.x, h.point.y);
+                ctx.scale(h.scale, h.scale);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                for (var j = 0; j < figure.length; j++) {
+                    var p = figure.get(j);
+                    ctx.lineTo(p.x, -p.y);
+                }
+                ctx.closePath();
+                ctx.fillStyle = h.color;
+                ctx.shadowColor = h.color;
+                ctx.shadowBlur = 6;
+                ctx.fill();
+                ctx.restore();
+            }
+        },
+
+        addSproutHeart: function(point, scale, color) {
+            this.sproutHearts.push({
+                point: point,
+                scale: scale || 0.25,
+                color: color || '#FFB6C1'
+            });
+        },
+
+        clearSproutHearts: function() {
+            this.sproutHearts = [];
         },
 
         drawHeartPhotos: function(images) {
@@ -566,7 +662,7 @@
         this.point = point;
         this.color = color || 'rgb(255,' + random(0, 255) + ',' + random(0, 255) + ')';
         this.alpha = alpha || random(0.3, 1);
-        this.angle = angle || random(0, 360);
+        this.angle = angle || 0;
         this.scale = scale || 0.1;
         this.place = place;
         this.speed = speed;
@@ -637,6 +733,7 @@
     window.random = random;
     window.bezier = bezier;
     window.Point = Point;
+    window.inheart = inheart;
     window.Tree = Tree;
 
 })(window);

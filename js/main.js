@@ -191,7 +191,7 @@ $(function() {
             ]]
         ],
         bloom: {
-            num: 700,
+            num: 520,
             width: 1080,
             height: 650,
         },
@@ -205,6 +205,131 @@ $(function() {
     var tree = new Tree(canvas[0], width, height, opts);
     var seed = tree.seed;
     var foot = tree.footer;
+
+    // ===== 爱心树果实系统 =====
+    var FRUIT_TOTAL = 520;
+
+    var sproutHeartColors = [
+        '#FFB6C1', '#FFC0CB', '#FFDAB9', '#E6E6FA', '#D8BFD8',
+        '#DDA0DD', '#F0E68C', '#FFFACD', '#E0F0FF', '#B0E0E6',
+        '#98FB98', '#AFEEEE', '#FFE4E1', '#F5DEB3', '#FFF5EE',
+        '#F0FFF0', '#F5F5DC', '#FFE4B5', '#FFD700', '#FFA07A'
+    ];
+
+    function getDayOfYear(month, day) {
+        var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        var doy = 0;
+        for (var i = 0; i < month - 1; i++) {
+            doy += daysInMonth[i];
+        }
+        doy += day;
+        return doy;
+    }
+
+    function getDaysBetween(md1, md2) {
+        var m1 = Math.floor(md1 / 100);
+        var d1 = md1 % 100;
+        var m2 = Math.floor(md2 / 100);
+        var d2 = md2 % 100;
+        return getDayOfYear(m2, d2) - getDayOfYear(m1, d1);
+    }
+
+    function getSproutHeartCount(md) {
+        if (md >= 310 && md < 320) {
+            var daysSince = getDaysBetween(310, md);
+            return Math.min(20, (daysSince + 1) * 2);
+        }
+        return 0;
+    }
+
+    function getTreeState() {
+        var now = new Date();
+        var month = now.getMonth() + 1;
+        var day = now.getDate();
+        var md = month * 100 + day;
+
+        if (md >= 1226 || md < 302) {
+            return { state: 'DORMANT', label: '休眠中', fruitCount: 0, yellowCount: 0, yellowRatio: 0, sproutCount: 0 };
+        }
+        if (md >= 302 && md < 310) {
+            return { state: 'AWAKENING', label: '苏醒中', fruitCount: 0, yellowCount: 0, yellowRatio: 0, sproutCount: 0 };
+        }
+        if (md >= 310 && md < 320) {
+            var sproutCount = getSproutHeartCount(md);
+            return { state: 'SPROUTING', label: '发芽中 (' + sproutCount + '/20)', fruitCount: 0, yellowCount: 0, yellowRatio: 0, sproutCount: sproutCount };
+        }
+        if (md >= 320 && md < 815) {
+            var daysSince = getDaysBetween(320, md);
+            var totalDays = getDaysBetween(320, 815);
+            var fruitCount = Math.min(FRUIT_TOTAL, Math.round(1 + (daysSince * (FRUIT_TOTAL - 1) / totalDays)));
+            return { state: 'GROWING', label: '结果中 (' + fruitCount + '/' + FRUIT_TOTAL + ')', fruitCount: fruitCount, yellowCount: 0, yellowRatio: 0, sproutCount: 0 };
+        }
+        if (md >= 815 && md < 902) {
+            return { state: 'STABLE', label: '结果完毕 (' + FRUIT_TOTAL + '颗)', fruitCount: FRUIT_TOTAL, yellowCount: 0, yellowRatio: 0, sproutCount: 0 };
+        }
+        if (md >= 902 && md < 1006) {
+            var daysSince = getDaysBetween(902, md);
+            var totalDays = getDaysBetween(902, 1006);
+            var yellowCount = Math.min(FRUIT_TOTAL, Math.round(1 + (daysSince * (FRUIT_TOTAL - 1) / totalDays)));
+            var yellowRatio = yellowCount / FRUIT_TOTAL;
+            return { state: 'RIPENING', label: '成熟中 (' + yellowCount + '/' + FRUIT_TOTAL + ')', fruitCount: FRUIT_TOTAL, yellowCount: yellowCount, yellowRatio: yellowRatio, sproutCount: 0 };
+        }
+        if (md >= 1006 && md < 1101) {
+            return { state: 'RIPE', label: '已熟透', fruitCount: FRUIT_TOTAL, yellowCount: FRUIT_TOTAL, yellowRatio: 1, sproutCount: 0 };
+        }
+        if (md >= 1101 && md < 1226) {
+            var daysSince = getDaysBetween(1101, md);
+            var totalDays = getDaysBetween(1101, 1226);
+            var remaining = Math.max(0, Math.round(FRUIT_TOTAL * (1 - daysSince / totalDays)));
+            return { state: 'FALLING', label: '果实掉落 (' + remaining + '/' + FRUIT_TOTAL + ')', fruitCount: remaining, yellowCount: remaining, yellowRatio: 1, sproutCount: 0 };
+        }
+        return { state: 'DORMANT', label: '休眠中', fruitCount: 0, yellowCount: 0, yellowRatio: 0, sproutCount: 0 };
+    }
+
+    function generateSproutHeartPositions(count, figure, width, height) {
+        var positions = [];
+        var r = 240;
+        var centerX = width / 2;
+        var centerY = height / 2 + 30;
+        var attempts = 0;
+        while (positions.length < count && attempts < 5000) {
+            var x = random(centerX - 200, centerX + 200);
+            var y = random(centerY - 150, centerY + 150);
+            if (inheart(x - centerX, centerY - y, r)) {
+                var colors = sproutHeartColors;
+                positions.push({
+                    x: x,
+                    y: y,
+                    color: colors[positions.length % colors.length]
+                });
+            }
+            attempts++;
+        }
+        return positions;
+    }
+
+    function updateProgressBar(state) {
+        var now = new Date();
+        var dayOfYear = getDayOfYear(now.getMonth() + 1, now.getDate());
+        var percent = (dayOfYear / 365) * 100;
+        $('#progress-bar-fill').css('width', percent + '%');
+        $('#progress-bar-thumb').css('left', percent + '%');
+        $('#progress-bar-state').text(state.label).css('left', percent + '%');
+    }
+
+    updateProgressBar(getTreeState());
+    var initialState = getTreeState();
+    tree.bloomLimit = initialState.fruitCount;
+    tree.ripeMode = initialState.state === 'RIPE' || initialState.state === 'FALLING';
+    tree.yellowRatio = initialState.yellowRatio;
+
+    if (initialState.state === 'SPROUTING') {
+        var positions = generateSproutHeartPositions(initialState.sproutCount, tree.seed.heart.figure, width, height);
+        tree.clearSproutHearts();
+        for (var si = 0; si < positions.length; si++) {
+            tree.addSproutHeart(new Point(positions[si].x, positions[si].y), 0.22, positions[si].color);
+        }
+    }
 
     var seedAnimate = eval(Jscex.compile("async", function () {
         seed.draw();
@@ -227,10 +352,16 @@ $(function() {
     }));
 
     var flowAnimate = eval(Jscex.compile("async", function () {
+        var maxBlooms = tree.bloomLimit;
+        var released = 0;
         do {
-            tree.flower(2);
+            var batch = Math.min(2, maxBlooms - released);
+            if (batch > 0) {
+                tree.flower(batch);
+                released += batch;
+            }
             $await(Jscex.Async.sleep(10));
-        } while (tree.canFlower());
+        } while (tree.canFlower() && released < maxBlooms);
     }));
 
     var moveAnimate = eval(Jscex.compile("async", function () {
@@ -250,22 +381,41 @@ $(function() {
 
     var jumpAnimate = eval(Jscex.compile("async", function () {
         var ctx = tree.ctx;
+        var currentState = getTreeState();
         var frameCount = 0;
-        var showHeartPhotos = false;
         while (true) {
-            tree.ctx.clearRect(0, 0, width, height);
+            ctx.clearRect(0, 0, width, height);
             tree.jump();
             foot.draw();
-            
+
+            if (currentState.state === 'SPROUTING') {
+                tree.drawSproutHearts();
+            }
+
             frameCount++;
-            if (frameCount > 100 && !showHeartPhotos) {
-                showHeartPhotos = true;
+            if (frameCount % 40 === 0) {
+                var prevState = currentState;
+                currentState = getTreeState();
+                tree.bloomLimit = currentState.fruitCount;
+                tree.ripeMode = currentState.state === 'RIPE' || currentState.state === 'FALLING';
+                tree.yellowRatio = currentState.yellowRatio;
+                updateProgressBar(currentState);
+
+                if (currentState.state === 'SPROUTING') {
+                    if (prevState.state !== 'SPROUTING' || currentState.sproutCount !== prevState.sproutCount) {
+                        var positions = generateSproutHeartPositions(currentState.sproutCount, tree.seed.heart.figure, width, height);
+                        tree.clearSproutHearts();
+                        for (var si = 0; si < positions.length; si++) {
+                            tree.addSproutHeart(new Point(positions[si].x, positions[si].y), 0.22, positions[si].color);
+                        }
+                    }
+                } else {
+                    if (prevState.state === 'SPROUTING') {
+                        tree.clearSproutHearts();
+                    }
+                }
             }
-            
-            if (showHeartPhotos && window.fallingImages) {
-                tree.drawHeartPhotos(window.fallingImages);
-            }
-            
+
             $await(Jscex.Async.sleep(25));
         }
     }));
