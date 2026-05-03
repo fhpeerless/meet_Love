@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "没有在等什么，但我的心开始慢慢飘落...";
+        var titleText = "人间四季轮番流转，初心炽热始终未改，只是繁华落尽，只剩孤单与清欢...";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
