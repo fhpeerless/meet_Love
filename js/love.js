@@ -376,57 +376,52 @@
 
         createBloom: function(width, height, radius, figure, color, alpha, angle, scale, place, speed, image) {
             var x, y;
+            var treeColors = [
+                '#FFB6A0',  // 蜜桃粉
+                '#FFB7D5',  // 樱花粉
+                '#E84393',  // 火龙果玫红
+                '#4A7CFF',  // 宝蓝色
+                '#FF7F50',  // 珊瑚橙
+                '#C44569'   // 酒红浆果色
+            ];
             color = color || this.fruitColor;
             if (!color) {
-                var h, s, v;
                 if (this.ripeMode) {
-                    h = random(45, 65);
-                    s = random(0.6, 0.9);
-                    v = random(0.85, 1.0);
+                    var h = random(45, 65);
+                    var s = random(0.6, 0.9);
+                    var v = random(0.85, 1.0);
+                    var c = v * s;
+                    var x1 = c * (1 - Math.abs(((h / 60) % 2) - 1));
+                    var m = v - c;
+                    var r, g, b;
+                    if (h < 60) { r = c; g = x1; b = 0; }
+                    else if (h < 120) { r = x1; g = c; b = 0; }
+                    else if (h < 180) { r = 0; g = c; b = x1; }
+                    else if (h < 240) { r = 0; g = x1; b = c; }
+                    else if (h < 300) { r = x1; g = 0; b = c; }
+                    else { r = c; g = 0; b = x1; }
+                    color = 'rgb(' + Math.round((r + m) * 255) + ',' + Math.round((g + m) * 255) + ',' + Math.round((b + m) * 255) + ')';
                 } else if (this.yellowRatio > 0) {
                     if (Math.random() < this.yellowRatio) {
                         h = random(45, 65);
                         s = random(0.6, 0.9);
                         v = random(0.85, 1.0);
+                        c = v * s;
+                        x1 = c * (1 - Math.abs(((h / 60) % 2) - 1));
+                        m = v - c;
+                        if (h < 60) { r = c; g = x1; b = 0; }
+                        else if (h < 120) { r = x1; g = c; b = 0; }
+                        else if (h < 180) { r = 0; g = c; b = x1; }
+                        else if (h < 240) { r = 0; g = x1; b = c; }
+                        else if (h < 300) { r = x1; g = 0; b = c; }
+                        else { r = c; g = 0; b = x1; }
+                        color = 'rgb(' + Math.round((r + m) * 255) + ',' + Math.round((g + m) * 255) + ',' + Math.round((b + m) * 255) + ')';
                     } else {
-                        var hueRanges = [
-                            [345, 360], [0, 15],
-                            [315, 345],
-                            [15, 35],
-                            [270, 315],
-                            [180, 225],
-                            [90, 150]
-                        ];
-                        var range = hueRanges[random(0, hueRanges.length - 1)];
-                        h = random(range[0], range[1]);
-                        s = random(0.35, 0.65);
-                        v = random(0.88, 1.0);
+                        color = treeColors[random(0, treeColors.length - 1)];
                     }
                 } else {
-                    var hueRanges = [
-                        [345, 360], [0, 15],
-                        [315, 345],
-                        [15, 35],
-                        [270, 315],
-                        [180, 225],
-                        [90, 150]
-                    ];
-                    var range = hueRanges[random(0, hueRanges.length - 1)];
-                    h = random(range[0], range[1]);
-                    s = random(0.35, 0.65);
-                    v = random(0.88, 1.0);
+                    color = treeColors[random(0, treeColors.length - 1)];
                 }
-                var c = v * s;
-                var x1 = c * (1 - Math.abs(((h / 60) % 2) - 1));
-                var m = v - c;
-                var r, g, b;
-                if (h < 60) { r = c; g = x1; b = 0; }
-                else if (h < 120) { r = x1; g = c; b = 0; }
-                else if (h < 180) { r = 0; g = c; b = x1; }
-                else if (h < 240) { r = 0; g = x1; b = c; }
-                else if (h < 300) { r = x1; g = 0; b = c; }
-                else { r = c; g = 0; b = x1; }
-                color = 'rgb(' + Math.round((r + m) * 255) + ',' + Math.round((g + m) * 255) + ',' + Math.round((b + m) * 255) + ')';
             }
             while (true) {
                 x = random(20, width - 20);
