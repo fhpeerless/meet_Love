@@ -116,7 +116,7 @@ $(function() {
                 var $label = $embed.find('.douyin-embed-label');
                 var $hint = $embed.find('.douyin-embed-hint');
                 var apiUrl = 'https://api.douyin.wtf/api/hybrid/video_data?url=' + encodeURIComponent(url) + '&minimal=true';
-                var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl);
+                var proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(apiUrl);
                 fetch(proxyUrl)
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
