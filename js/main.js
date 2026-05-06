@@ -83,6 +83,21 @@ $(function() {
                     }
                     entryHtml += '</div>';
                 }
+
+                if (entry.douyinUrl) {
+                    var douyinMatch = entry.douyinUrl.match(/video\/(\d+)/);
+                    if (douyinMatch) {
+                        entryHtml += '<div class="diary-douyin-embed" data-douyin-url="' + entry.douyinUrl + '">' +
+                            '<a href="' + entry.douyinUrl + '" target="_blank" class="douyin-embed-card">' +
+                            '<div class="douyin-embed-icon">▶</div>' +
+                            '<div class="douyin-embed-info">' +
+                            '<span class="douyin-embed-label">正在加载视频信息...</span>' +
+                            '<span class="douyin-embed-hint">抖音视频</span>' +
+                            '</div>' +
+                            '</a>' +
+                            '</div>';
+                    }
+                }
                 
                 entryHtml += '</div>';
                 $diaryEntries.append(entryHtml);
@@ -94,6 +109,33 @@ $(function() {
                     musicPlayer.loadSongById(songId);
                 }
             });
+
+            $diaryEntries.find('[data-douyin-url]').each(function() {
+                var $embed = $(this);
+                var url = $embed.data('douyin-url');
+                var $label = $embed.find('.douyin-embed-label');
+                var $hint = $embed.find('.douyin-embed-hint');
+                var apiUrl = 'https://api.douyin.wtf/api/hybrid/video_data?url=' + encodeURIComponent(url) + '&minimal=true';
+                var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl);
+                fetch(proxyUrl)
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (data && data.data) {
+                            var desc = data.data.desc || '';
+                            var author = data.data.author ? data.data.author.nickname : '';
+                            if (desc) $label.text(desc);
+                            if (author) $hint.text('@' + author);
+                            return;
+                        }
+                        $label.text('查看抖音视频');
+                        $hint.text('点此跳转抖音查看 ↗');
+                    })
+                    .catch(function() {
+                        $label.text('查看抖音视频');
+                        $hint.text('点此跳转抖音查看 ↗');
+                    });
+            });
+
         }).fail(function() {
             $diaryEntries.html('<p style="text-align:center;color:#666;">加载日记失败，请确保config/diary.json文件存在</p>');
         });
