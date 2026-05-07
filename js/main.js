@@ -85,14 +85,16 @@ $(function() {
                 }
 
                 if (entry.douyinUrl) {
-                    var douyinMatch = entry.douyinUrl.match(/video\/(\d+)/);
+                    var douyinMatch = entry.douyinUrl.match(/(video|note)\/(\d+)/);
                     if (douyinMatch) {
-                        entryHtml += '<div class="diary-douyin-embed" data-douyin-url="' + entry.douyinUrl + '">' +
+                        var douyinType = douyinMatch[1];
+                        var typeLabel = douyinType === 'note' ? '图文' : '视频';
+                        entryHtml += '<div class="diary-douyin-embed" data-douyin-url="' + entry.douyinUrl + '" data-douyin-type="' + douyinType + '">' +
                             '<a href="' + entry.douyinUrl + '" target="_blank" class="douyin-embed-card">' +
                             '<div class="douyin-embed-icon">▶</div>' +
                             '<div class="douyin-embed-info">' +
-                            '<span class="douyin-embed-label">正在加载视频信息...</span>' +
-                            '<span class="douyin-embed-hint">抖音视频</span>' +
+                            '<span class="douyin-embed-label">正在加载' + typeLabel + '信息...</span>' +
+                            '<span class="douyin-embed-hint">抖音' + typeLabel + '</span>' +
                             '</div>' +
                             '</a>' +
                             '</div>';
@@ -113,6 +115,8 @@ $(function() {
             $diaryEntries.find('[data-douyin-url]').each(function() {
                 var $embed = $(this);
                 var url = $embed.data('douyin-url');
+                var douyinType = $embed.data('douyin-type') || 'video';
+                var typeLabel = douyinType === 'note' ? '图文' : '视频';
                 var $label = $embed.find('.douyin-embed-label');
                 var $hint = $embed.find('.douyin-embed-hint');
                 var apiUrl = 'https://api.douyin.wtf/api/hybrid/video_data?url=' + encodeURIComponent(url) + '&minimal=true';
@@ -127,11 +131,11 @@ $(function() {
                             if (author) $hint.text('@' + author);
                             return;
                         }
-                        $label.text('查看抖音视频');
+                        $label.text('查看抖音' + typeLabel);
                         $hint.text('点此跳转抖音查看 ↗');
                     })
                     .catch(function() {
-                        $label.text('查看抖音视频');
+                        $label.text('查看抖音' + typeLabel);
                         $hint.text('点此跳转抖音查看 ↗');
                     });
             });
