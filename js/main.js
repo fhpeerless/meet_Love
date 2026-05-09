@@ -119,8 +119,7 @@ $(function() {
                 var typeLabel = douyinType === 'note' ? '图文' : '视频';
                 var $label = $embed.find('.douyin-embed-label');
                 var $hint = $embed.find('.douyin-embed-hint');
-                var apiUrl = 'https://api.douyin.wtf/api/hybrid/video_data?url=' + encodeURIComponent(url) + '&minimal=true';
-                var proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(apiUrl);
+                var proxyUrl = 'https://wild-tree-2dbf.68208932.workers.dev/?url=' + encodeURIComponent(url);
                 fetch(proxyUrl)
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
