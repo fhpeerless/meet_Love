@@ -130,10 +130,14 @@ $(function() {
                             if (author) $hint.text('@' + author);
                             return;
                         }
+                        if (data && data.error) {
+                            console.warn('Worker error:', data);
+                        }
                         $label.text('查看抖音' + typeLabel);
                         $hint.text('点此跳转抖音查看 ↗');
                     })
-                    .catch(function() {
+                    .catch(function(err) {
+                        console.warn('Fetch error:', err);
                         $label.text('查看抖音' + typeLabel);
                         $hint.text('点此跳转抖音查看 ↗');
                     });
