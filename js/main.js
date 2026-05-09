@@ -565,9 +565,49 @@ function formatTime(ts) {
            pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 }
 
+var _chartJsLoading = false;
+
+function ensureChartJs(callback) {
+    if (typeof Chart !== 'undefined') {
+        callback();
+        return;
+    }
+    if (_chartJsLoading) {
+        setTimeout(function() { ensureChartJs(callback); }, 500);
+        return;
+    }
+    _chartJsLoading = true;
+    var urls = [
+        'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.7/chart.umd.min.js'
+    ];
+    var tryLoad = function(index) {
+        if (index >= urls.length) {
+            var container = document.querySelector('.fund-chart-container');
+            if (container) {
+                container.insertAdjacentHTML('beforeend',
+                    '<div class="fund-chart-loading">图表库加载失败，请检查网络连接</div>');
+            }
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = urls[index];
+        script.onload = function() {
+            _chartJsLoading = false;
+            callback();
+        };
+        script.onerror = function() {
+            tryLoad(index + 1);
+        };
+        document.head.appendChild(script);
+    };
+    tryLoad(0);
+}
+
 function loadFundData() {
     $('#fund-position-text').text('查询中...');
     $('#fund-update-time').text('');
+    $('#fund-chart').hide();
 
     $.when(
         $.ajax({ url: proxyApi('/api/status'), dataType: 'json', timeout: 15000 }),
@@ -613,7 +653,10 @@ function loadFundData() {
         }
 
         if (recordsData && recordsData.ok && recordsData.records && recordsData.records.length >= 1) {
-            renderFundChart(recordsData.records);
+            console.log('API返回记录:', JSON.stringify(recordsData.records));
+            ensureChartJs(function() {
+                renderFundChart(recordsData.records);
+            });
         } else {
             var container = $('.fund-chart-container');
             container.find('.fund-chart-loading').remove();
@@ -631,9 +674,13 @@ function loadFundData() {
 
 function renderFundChart(records) {
     try {
-        var sorted = records.slice().reverse();
+        console.log('renderFundChart 开始, records数量:', records.length);
 
-        var barCount = sorted.length >= 2 ? Math.min(7, sorted.length - 1) : 1;
+        var data = records.slice();
+        console.log('data(最早在前):', JSON.stringify(data));
+
+        var barCount = Math.min(7, data.length);
+        console.log('barCount:', barCount);
 
         var labels = [];
         var dailyGrowthData = [];
@@ -641,51 +688,60 @@ function renderFundChart(records) {
 
         for (var i = 0; i < 7; i++) {
             if (i < barCount) {
-                var idx = sorted.length - 1 - i;
-                var prevIdx = idx - 1;
+                var current = data[i];
+                labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
 
-                if (sorted.length >= 2 && prevIdx >= 0) {
-                    var current = sorted[idx];
-                    var prev = sorted[prevIdx];
-
-                    labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
-
+                if (i > 0) {
+                    var prev = data[i - 1];
                     if (prev && prev.available_balance && prev.available_balance !== 0) {
                         var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
                         dailyGrowthData.push(parseFloat(dailyRate.toFixed(2)));
                     } else {
                         dailyGrowthData.push(0);
                     }
-
-                    var monthlyRecord = sorted[prevIdx - 29];
-                    if (monthlyRecord && monthlyRecord.available_balance && monthlyRecord.available_balance !== 0) {
-                        var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
-                        monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
-                    } else {
-                        monthlyGrowthData.push(null);
-                    }
                 } else {
-                    var single = sorted[0];
-                    labels.push(single.snapshot_date ? single.snapshot_date.slice(5) : '--');
                     dailyGrowthData.push(0);
-                    monthlyGrowthData.push(null);
+                }
+
+                var monthlyRecord = data[i - 30];
+                if (monthlyRecord && monthlyRecord.available_balance && monthlyRecord.available_balance !== 0) {
+                    var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
+                    monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
+                } else {
+                    monthlyGrowthData.push(0);
                 }
             } else {
                 labels.push('--');
                 dailyGrowthData.push(0);
-                monthlyGrowthData.push(null);
+                monthlyGrowthData.push(0);
             }
         }
 
+        console.log('图表数据:', { labels: labels, daily: dailyGrowthData, monthly: monthlyGrowthData });
+
         var canvas = document.getElementById('fund-chart');
-        if (!canvas) return;
+        console.log('Canvas元素:', canvas);
+        if (!canvas) {
+            console.error('Canvas元素未找到!');
+            return;
+        }
+
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        canvas.style.width = canvas.offsetWidth + 'px';
+        canvas.style.height = canvas.offsetHeight + 'px';
 
         var ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx) {
+            console.error('Canvas上下文获取失败!');
+            return;
+        }
 
         if (window.fundChart) {
             window.fundChart.destroy();
         }
+
+        console.log('Chart对象可用:', typeof Chart);
 
         window.fundChart = new Chart(ctx, {
             type: 'bar',
@@ -701,26 +757,25 @@ function renderFundChart(records) {
                         borderColor: dailyGrowthData.map(function(v) {
                             return v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)';
                         }),
-                        borderWidth: dailyGrowthData.map(function(v) {
-                            return v === 0 ? 1 : 2;
-                        }),
-                        borderRadius: 4,
-                        barPercentage: 0.35,
+                        borderWidth: 1,
+                        borderRadius: 2,
+                        barPercentage: 0.4,
                     },
                     {
                         label: '月增长率 (%)',
                         data: monthlyGrowthData,
                         backgroundColor: 'rgba(52, 152, 219, 0.7)',
                         borderColor: 'rgb(52, 152, 219)',
-                        borderWidth: 2,
-                        borderRadius: 4,
-                        barPercentage: 0.35,
+                        borderWidth: 1,
+                        borderRadius: 2,
+                        barPercentage: 0.4,
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: { duration: 800 },
                 plugins: {
                     legend: {
                         position: 'top',
@@ -734,7 +789,7 @@ function renderFundChart(records) {
                         callbacks: {
                             label: function(context) {
                                 var val = context.raw;
-                                if (val === null) return context.dataset.label + ': N/A';
+                                if (val === null || val === undefined) return context.dataset.label + ': N/A';
                                 return context.dataset.label + ': ' + val.toFixed(2) + '%';
                             }
                         }
@@ -757,6 +812,10 @@ function renderFundChart(records) {
                 }
             }
         });
+
+        console.log('图表创建成功');
+        $('#fund-chart').show();
+
     } catch (e) {
         console.error('柱形图渲染失败:', e);
         var container = $('.fund-chart-container');
