@@ -57,9 +57,7 @@ $(function() {
 
         $('#desktop-lyrics').removeClass('desktop-lyrics-show');
 
-        if (!window.fundChart) {
-            loadFundData();
-        }
+        loadFundData();
     });
 
     $musicBtn.click(function() {
@@ -606,7 +604,7 @@ function loadFundData() {
             $('#fund-position-text').text(sideText + ' ' + statusData.instrument_id + ' | 杠杆' + statusData.leverage + 'x');
             $('#fund-position-text').css('color', statusData.position_side === 'long' ? '#e74c3c' : '#27ae60');
         } else {
-            $('#fund-position-text').text('🟢 空仓');
+            $('#fund-position-text').text('🟢 无投资');
             $('#fund-position-text').css('color', '#27ae60');
         }
 
@@ -614,12 +612,12 @@ function loadFundData() {
             $('#fund-update-time').text('更新于 ' + formatTime(statusData.timestamp));
         }
 
-        if (recordsData && recordsData.ok && recordsData.records && recordsData.records.length >= 2) {
+        if (recordsData && recordsData.ok && recordsData.records && recordsData.records.length >= 1) {
             renderFundChart(recordsData.records);
         } else {
             var container = $('.fund-chart-container');
             container.find('.fund-chart-loading').remove();
-            container.append('<div class="fund-chart-loading">暂无足够的快照数据</div>');
+            container.append('<div class="fund-chart-loading">暂无快照数据，明天凌晨4点自动生成</div>');
         }
     }).fail(function() {
         $('#fund-position-text').text('连接失败').css('color', '#ff6b6b');
@@ -632,109 +630,139 @@ function loadFundData() {
 }
 
 function renderFundChart(records) {
-    var displayCount = Math.min(7, records.length - 1);
-    var chartRecords = records.slice(0, displayCount + 1);
+    try {
+        var sorted = records.slice().reverse();
 
-    var labels = [];
-    var dailyGrowthData = [];
-    var monthlyGrowthData = [];
+        var barCount = sorted.length >= 2 ? Math.min(7, sorted.length - 1) : 1;
 
-    for (var i = 0; i < displayCount; i++) {
-        var current = chartRecords[i];
-        var prev = chartRecords[i + 1];
-        labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
+        var labels = [];
+        var dailyGrowthData = [];
+        var monthlyGrowthData = [];
 
-        if (prev && prev.available_balance && prev.available_balance !== 0) {
-            var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
-            dailyGrowthData.push(parseFloat(dailyRate.toFixed(2)));
-        } else {
-            dailyGrowthData.push(0);
-        }
+        for (var i = 0; i < 7; i++) {
+            if (i < barCount) {
+                var idx = sorted.length - 1 - i;
+                var prevIdx = idx - 1;
 
-        var monthlyIdx = i + 30;
-        var monthlyRecord = records[monthlyIdx];
-        if (monthlyRecord && monthlyRecord.available_balance && monthlyRecord.available_balance !== 0) {
-            var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
-            monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
-        } else {
-            monthlyGrowthData.push(null);
-        }
-    }
+                if (sorted.length >= 2 && prevIdx >= 0) {
+                    var current = sorted[idx];
+                    var prev = sorted[prevIdx];
 
-    var ctx = document.getElementById('fund-chart').getContext('2d');
+                    labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
 
-    if (window.fundChart) {
-        window.fundChart.destroy();
-    }
+                    if (prev && prev.available_balance && prev.available_balance !== 0) {
+                        var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
+                        dailyGrowthData.push(parseFloat(dailyRate.toFixed(2)));
+                    } else {
+                        dailyGrowthData.push(0);
+                    }
 
-    window.fundChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: '日增长率 (%)',
-                    data: dailyGrowthData,
-                    backgroundColor: dailyGrowthData.map(function(v) {
-                        return v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)';
-                    }),
-                    borderColor: dailyGrowthData.map(function(v) {
-                        return v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)';
-                    }),
-                    borderWidth: 2,
-                    borderRadius: 4,
-                    barPercentage: 0.35,
-                },
-                {
-                    label: '月增长率 (%)',
-                    data: monthlyGrowthData,
-                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                    borderColor: 'rgb(52, 152, 219)',
-                    borderWidth: 2,
-                    borderRadius: 4,
-                    barPercentage: 0.35,
+                    var monthlyRecord = sorted[prevIdx - 29];
+                    if (monthlyRecord && monthlyRecord.available_balance && monthlyRecord.available_balance !== 0) {
+                        var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
+                        monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
+                    } else {
+                        monthlyGrowthData.push(null);
+                    }
+                } else {
+                    var single = sorted[0];
+                    labels.push(single.snapshot_date ? single.snapshot_date.slice(5) : '--');
+                    dailyGrowthData.push(0);
+                    monthlyGrowthData.push(null);
                 }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        font: { size: 13, family: '微软雅黑' },
-                        padding: 15,
-                        usePointStyle: true,
+            } else {
+                labels.push('--');
+                dailyGrowthData.push(0);
+                monthlyGrowthData.push(null);
+            }
+        }
+
+        var canvas = document.getElementById('fund-chart');
+        if (!canvas) return;
+
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        if (window.fundChart) {
+            window.fundChart.destroy();
+        }
+
+        window.fundChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '日增长率 (%)',
+                        data: dailyGrowthData,
+                        backgroundColor: dailyGrowthData.map(function(v) {
+                            return v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)';
+                        }),
+                        borderColor: dailyGrowthData.map(function(v) {
+                            return v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)';
+                        }),
+                        borderWidth: dailyGrowthData.map(function(v) {
+                            return v === 0 ? 1 : 2;
+                        }),
+                        borderRadius: 4,
+                        barPercentage: 0.35,
+                    },
+                    {
+                        label: '月增长率 (%)',
+                        data: monthlyGrowthData,
+                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                        borderColor: 'rgb(52, 152, 219)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                        barPercentage: 0.35,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { size: 13, family: '微软雅黑' },
+                            padding: 15,
+                            usePointStyle: true,
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var val = context.raw;
+                                if (val === null) return context.dataset.label + ': N/A';
+                                return context.dataset.label + ': ' + val.toFixed(2) + '%';
+                            }
+                        }
                     }
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            var val = context.raw;
-                            if (val === null) return context.dataset.label + ': N/A';
-                            return context.dataset.label + ': ' + val.toFixed(2) + '%';
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 12, family: '微软雅黑' }
+                        }
+                    },
+                    y: {
+                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        ticks: {
+                            font: { size: 12, family: '微软雅黑' },
+                            callback: function(value) { return value.toFixed(1) + '%'; }
                         }
                     }
                 }
-            },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        font: { size: 12, family: '微软雅黑' }
-                    }
-                },
-                y: {
-                    grid: { color: 'rgba(0,0,0,0.06)' },
-                    ticks: {
-                        font: { size: 12, family: '微软雅黑' },
-                        callback: function(value) { return value.toFixed(1) + '%'; }
-                    }
-                }
             }
-        }
-    });
+        });
+    } catch (e) {
+        console.error('柱形图渲染失败:', e);
+        var container = $('.fund-chart-container');
+        container.find('.fund-chart-loading').remove();
+        container.append('<div class="fund-chart-loading">图表加载失败: ' + e.message + '</div>');
+    }
 }
 
 $(document).on('click', '#fund-refresh-btn', function() {
