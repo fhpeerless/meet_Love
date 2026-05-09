@@ -11,6 +11,7 @@
     <link type="text/css" rel="stylesheet" href="./css/default.css">
     <link type="text/css" rel="stylesheet" href="./css/music-player.css">
     <link type="text/css" rel="stylesheet" href="./css/stars-bg.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./js/jscex.min.js"></script>
     <script type="text/javascript" src="./js/jscex-parser.js"></script>
@@ -28,6 +29,7 @@
     <div id="navbar">
         <button id="animation-btn" class="nav-btn active">爱心树</button>
         <button id="diary-btn" class="nav-btn">日记</button>
+        <button id="fund-btn" class="nav-btn">💰 未来经济</button>
         <button id="music-btn" class="nav-btn music-btn">🎵 播放音乐</button>
     </div>
     <div id="diary-section">
@@ -36,6 +38,49 @@
             <p class="diary-intro">人潮人海中我可能并不耀眼，但我们就是彼此惺惺相惜呢！</p>
             <p class="diary-intro">只要敢搭讪我，我就能安排好孩子在哪上学，邮箱:68208932@qq.com</p>
             <div id="diary-entries"></div>
+        </div>
+    </div>
+    <div id="fund-section">
+        <div id="fund-content">
+            <h2>💰 未来经济</h2>
+            <div class="fund-status-cards">
+                <div class="fund-card">
+                    <div class="fund-card-label">总权益</div>
+                    <div class="fund-card-value" id="fund-total-equity">--</div>
+                    <div class="fund-card-unit">金币</div>
+                </div>
+                <div class="fund-card">
+                    <div class="fund-card-label">可用余额</div>
+                    <div class="fund-card-value" id="fund-available-balance">--</div>
+                    <div class="fund-card-unit">金币</div>
+                </div>
+                <div class="fund-card">
+                    <div class="fund-card-label">冻结资金</div>
+                    <div class="fund-card-value" id="fund-frozen-balance">--</div>
+                    <div class="fund-card-unit">金币</div>
+                </div>
+                <div class="fund-card">
+                    <div class="fund-card-label">未实现盈亏</div>
+                    <div class="fund-card-value" id="fund-unrealized-pnl">--</div>
+                    <div class="fund-card-unit">金币</div>
+                </div>
+                <div class="fund-card">
+                    <div class="fund-card-label">收益率</div>
+                    <div class="fund-card-value" id="fund-pnl-ratio">--</div>
+                    <div class="fund-card-unit">%</div>
+                </div>
+            </div>
+            <div class="fund-position-badge" id="fund-position-badge">
+                <span class="fund-badge-label">趋势状态</span>
+                <span class="fund-badge-value" id="fund-position-text">查询中...</span>
+            </div>
+            <div class="fund-chart-container">
+                <canvas id="fund-chart"></canvas>
+            </div>
+            <div class="fund-footer">
+                <button id="fund-refresh-btn" class="fund-btn">🔄 刷新数据</button>
+                <span class="fund-update-time" id="fund-update-time"></span>
+            </div>
         </div>
     </div>
     <div id="music-section">
