@@ -42,12 +42,34 @@ $(function() {
     initTitleAnimation();
     initMusicPlayer();
 
-    $musicBtn.click(function() {
+    var $fundBtn = $('#fund-btn');
+    var $fundSection = $('#fund-section');
+
+    $fundBtn.click(function() {
         $animationBtn.removeClass('active');
         $diaryBtn.removeClass('active');
+        $musicBtn.removeClass('active');
         $(this).addClass('active');
         $main.hide();
         $diarySection.hide();
+        $musicSection.hide();
+        $fundSection.show();
+
+        $('#desktop-lyrics').removeClass('desktop-lyrics-show');
+
+        if (!window.fundChart) {
+            loadFundData();
+        }
+    });
+
+    $musicBtn.click(function() {
+        $animationBtn.removeClass('active');
+        $diaryBtn.removeClass('active');
+        $fundBtn.removeClass('active');
+        $(this).addClass('active');
+        $main.hide();
+        $diarySection.hide();
+        $fundSection.hide();
         $musicSection.show();
         
         if (musicPlayer && !musicPlayer.isPlaying) {
@@ -154,9 +176,11 @@ $(function() {
         $(this).addClass('active');
         $diaryBtn.removeClass('active');
         $musicBtn.removeClass('active');
+        $fundBtn.removeClass('active');
         $main.show();
         $diarySection.hide();
         $musicSection.hide();
+        $fundSection.hide();
 
         $('#desktop-lyrics').removeClass('desktop-lyrics-show');
     });
@@ -165,9 +189,11 @@ $(function() {
         $(this).addClass('active');
         $animationBtn.removeClass('active');
         $musicBtn.removeClass('active');
+        $fundBtn.removeClass('active');
         $main.hide();
         $diarySection.show();
         $musicSection.hide();
+        $fundSection.hide();
         
         if (musicPlayer && musicPlayer.desktopLyricsEnabled) {
             $('#desktop-lyrics').addClass('desktop-lyrics-show');
@@ -527,3 +553,190 @@ $(function() {
 
     runAsync().start();
 })();
+
+var FUND_API_BASE = 'https://api.xtwa.org';
+
+function proxyApi(path) {
+    return FUND_API_BASE + path;
+}
+
+function formatTime(ts) {
+    var d = new Date(ts * 1000);
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
+           pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+function loadFundData() {
+    $('#fund-position-text').text('查询中...');
+    $('#fund-update-time').text('');
+
+    $.when(
+        $.ajax({ url: proxyApi('/api/status'), dataType: 'json', timeout: 15000 }),
+        $.ajax({ url: proxyApi('/api/records?limit=37'), dataType: 'json', timeout: 15000 })
+    ).done(function(statusRes, recordsRes) {
+        var statusData = statusRes[0];
+        var recordsData = recordsRes[0];
+
+        if (!statusData || !statusData.ok) {
+            $('#fund-position-text').text('获取失败').css('color', '#ff6b6b');
+            return;
+        }
+
+        $('#fund-total-equity').text(statusData.total_equity != null ? statusData.total_equity.toFixed(2) : '--');
+        $('#fund-available-balance').text(statusData.available_balance != null ? statusData.available_balance.toFixed(2) : '--');
+        $('#fund-frozen-balance').text(statusData.frozen_balance != null ? statusData.frozen_balance.toFixed(2) : '--');
+        $('#fund-unrealized-pnl').text(statusData.unrealized_pnl != null ? statusData.unrealized_pnl.toFixed(2) : '--');
+
+        var pnlEl = $('#fund-unrealized-pnl');
+        if (statusData.unrealized_pnl != null) {
+            pnlEl.css('color', statusData.unrealized_pnl >= 0 ? '#e74c3c' : '#27ae60');
+        }
+
+        var ratioEl = $('#fund-pnl-ratio');
+        if (statusData.pnl_ratio_percent != null) {
+            ratioEl.text(statusData.pnl_ratio_percent.toFixed(2));
+            ratioEl.css('color', statusData.pnl_ratio_percent >= 0 ? '#e74c3c' : '#27ae60');
+        } else {
+            ratioEl.text('--');
+        }
+
+        if (statusData.has_position) {
+            var sideText = statusData.position_side === 'long' ? '📈 做多' : '📉 做空';
+            $('#fund-position-text').text(sideText + ' ' + statusData.instrument_id + ' | 杠杆' + statusData.leverage + 'x');
+            $('#fund-position-text').css('color', statusData.position_side === 'long' ? '#e74c3c' : '#27ae60');
+        } else {
+            $('#fund-position-text').text('🟢 空仓');
+            $('#fund-position-text').css('color', '#27ae60');
+        }
+
+        if (statusData.timestamp) {
+            $('#fund-update-time').text('更新于 ' + formatTime(statusData.timestamp));
+        }
+
+        if (recordsData && recordsData.ok && recordsData.records && recordsData.records.length >= 2) {
+            renderFundChart(recordsData.records);
+        } else {
+            var container = $('.fund-chart-container');
+            container.find('.fund-chart-loading').remove();
+            container.append('<div class="fund-chart-loading">暂无足够的快照数据</div>');
+        }
+    }).fail(function() {
+        $('#fund-position-text').text('连接失败').css('color', '#ff6b6b');
+        $('#fund-total-equity').text('--');
+        $('#fund-available-balance').text('--');
+        $('#fund-frozen-balance').text('--');
+        $('#fund-unrealized-pnl').text('--');
+        $('#fund-pnl-ratio').text('--');
+    });
+}
+
+function renderFundChart(records) {
+    var displayCount = Math.min(7, records.length - 1);
+    var chartRecords = records.slice(0, displayCount + 1);
+
+    var labels = [];
+    var dailyGrowthData = [];
+    var monthlyGrowthData = [];
+
+    for (var i = 0; i < displayCount; i++) {
+        var current = chartRecords[i];
+        var prev = chartRecords[i + 1];
+        labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
+
+        if (prev && prev.available_balance && prev.available_balance !== 0) {
+            var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
+            dailyGrowthData.push(parseFloat(dailyRate.toFixed(2)));
+        } else {
+            dailyGrowthData.push(0);
+        }
+
+        var monthlyIdx = i + 30;
+        var monthlyRecord = records[monthlyIdx];
+        if (monthlyRecord && monthlyRecord.available_balance && monthlyRecord.available_balance !== 0) {
+            var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
+            monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
+        } else {
+            monthlyGrowthData.push(null);
+        }
+    }
+
+    var ctx = document.getElementById('fund-chart').getContext('2d');
+
+    if (window.fundChart) {
+        window.fundChart.destroy();
+    }
+
+    window.fundChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: '日增长率 (%)',
+                    data: dailyGrowthData,
+                    backgroundColor: dailyGrowthData.map(function(v) {
+                        return v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)';
+                    }),
+                    borderColor: dailyGrowthData.map(function(v) {
+                        return v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)';
+                    }),
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    barPercentage: 0.35,
+                },
+                {
+                    label: '月增长率 (%)',
+                    data: monthlyGrowthData,
+                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                    borderColor: 'rgb(52, 152, 219)',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    barPercentage: 0.35,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: { size: 13, family: '微软雅黑' },
+                        padding: 15,
+                        usePointStyle: true,
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            var val = context.raw;
+                            if (val === null) return context.dataset.label + ': N/A';
+                            return context.dataset.label + ': ' + val.toFixed(2) + '%';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 12, family: '微软雅黑' }
+                    }
+                },
+                y: {
+                    grid: { color: 'rgba(0,0,0,0.06)' },
+                    ticks: {
+                        font: { size: 12, family: '微软雅黑' },
+                        callback: function(value) { return value.toFixed(1) + '%'; }
+                    }
+                }
+            }
+        }
+    });
+}
+
+$(document).on('click', '#fund-refresh-btn', function() {
+    loadFundData();
+});
