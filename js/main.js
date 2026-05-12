@@ -55,7 +55,9 @@ $(function() {
         $musicSection.hide();
         $fundSection.show();
 
-        $('#desktop-lyrics').removeClass('desktop-lyrics-show');
+        if (musicPlayer && musicPlayer.desktopLyricsEnabled) {
+            $('#desktop-lyrics').addClass('desktop-lyrics-show');
+        }
 
         loadFundData();
     });
