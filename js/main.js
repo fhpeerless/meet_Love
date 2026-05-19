@@ -684,18 +684,23 @@ function renderFundChart(records) {
         var barCount = Math.min(7, data.length);
         console.log('barCount:', barCount);
 
+        // 取最后7条记录（最近7天），数据是"最早在前"排列
+        var startIndex = data.length - barCount;
+
         var labels = [];
         var dailyGrowthData = [];
         var monthlyGrowthData = [];
 
         for (var i = 0; i < 7; i++) {
             if (i < barCount) {
-                var current = data[i];
+                var dataIndex = startIndex + i;
+                var current = data[dataIndex];
                 labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
 
-                if (i > 0) {
-                    var prev = data[i - 1];
-                    if (prev && prev.available_balance && prev.available_balance !== 0) {
+                // 日增长率：与前一天比较
+                if (dataIndex > 0) {
+                    var prev = data[dataIndex - 1];
+                    if (prev && prev.available_balance != null && prev.available_balance !== 0) {
                         var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
                         dailyGrowthData.push(parseFloat(dailyRate.toFixed(2)));
                     } else {
@@ -705,8 +710,10 @@ function renderFundChart(records) {
                     dailyGrowthData.push(0);
                 }
 
-                var monthlyRecord = data[i - 30];
-                if (monthlyRecord && monthlyRecord.available_balance && monthlyRecord.available_balance !== 0) {
+                // 月增长率：与30天前的记录比较
+                var monthlyIndex = dataIndex - 30;
+                var monthlyRecord = monthlyIndex >= 0 ? data[monthlyIndex] : null;
+                if (monthlyRecord && monthlyRecord.available_balance != null && monthlyRecord.available_balance !== 0) {
                     var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
                     monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
                 } else {
