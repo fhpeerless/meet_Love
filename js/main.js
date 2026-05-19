@@ -642,8 +642,8 @@ function loadFundData() {
         }
 
         if (statusData.has_position) {
-            var sideText = statusData.position_side === 'long' ? '📈 做多' : '📉 做空';
-            $('#fund-position-text').text(sideText + ' ' + statusData.instrument_id + ' | 杠杆' + statusData.leverage + 'x');
+            var sideText = statusData.position_side === 'long' ? '方向多' : '方向空';
+            $('#fund-position-text').text('投资中 ' + sideText + ' | ' + statusData.leverage + '倍速');
             $('#fund-position-text').css('color', statusData.position_side === 'long' ? '#e74c3c' : '#27ae60');
         } else {
             $('#fund-position-text').text('🟢 无投资');
