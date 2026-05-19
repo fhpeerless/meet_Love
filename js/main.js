@@ -688,8 +688,10 @@ function renderFundChart(records) {
         var startIndex = data.length - barCount;
 
         var labels = [];
-        var dailyGrowthData = [];
-        var monthlyGrowthData = [];
+        var dailyGrowthData = [];     // 柱形高度用绝对值
+        var dailyGrowthValues = [];   // 原始带符号值（标签和颜色用）
+        var monthlyGrowthData = [];   // 柱形高度用绝对值
+        var monthlyGrowthValues = []; // 原始带符号值（标签和颜色用）
 
         for (var i = 0; i < 7; i++) {
             if (i < barCount) {
@@ -702,11 +704,15 @@ function renderFundChart(records) {
                     var prev = data[dataIndex - 1];
                     if (prev && prev.available_balance != null && prev.available_balance !== 0) {
                         var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
-                        dailyGrowthData.push(parseFloat(dailyRate.toFixed(2)));
+                        var dailyVal = parseFloat(dailyRate.toFixed(2));
+                        dailyGrowthValues.push(dailyVal);
+                        dailyGrowthData.push(Math.abs(dailyVal));
                     } else {
+                        dailyGrowthValues.push(0);
                         dailyGrowthData.push(0);
                     }
                 } else {
+                    dailyGrowthValues.push(0);
                     dailyGrowthData.push(0);
                 }
 
@@ -715,18 +721,23 @@ function renderFundChart(records) {
                 var monthlyRecord = monthlyIndex >= 0 ? data[monthlyIndex] : null;
                 if (monthlyRecord && monthlyRecord.available_balance != null && monthlyRecord.available_balance !== 0) {
                     var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
-                    monthlyGrowthData.push(parseFloat(monthlyRate.toFixed(2)));
+                    var monthlyVal = parseFloat(monthlyRate.toFixed(2));
+                    monthlyGrowthValues.push(monthlyVal);
+                    monthlyGrowthData.push(Math.abs(monthlyVal));
                 } else {
+                    monthlyGrowthValues.push(0);
                     monthlyGrowthData.push(0);
                 }
             } else {
                 labels.push('--');
+                dailyGrowthValues.push(0);
                 dailyGrowthData.push(0);
+                monthlyGrowthValues.push(0);
                 monthlyGrowthData.push(0);
             }
         }
 
-        console.log('图表数据:', { labels: labels, daily: dailyGrowthData, monthly: monthlyGrowthData });
+        console.log('图表数据:', { labels: labels, daily: dailyGrowthValues, monthly: monthlyGrowthValues, dailyAbs: dailyGrowthData, monthlyAbs: monthlyGrowthData });
 
         var canvas = document.getElementById('fund-chart');
         console.log('Canvas元素:', canvas);
@@ -752,18 +763,57 @@ function renderFundChart(records) {
 
         console.log('Chart对象可用:', typeof Chart);
 
+        // 柱形上方显示实际带符号数值的自定义插件
+        var datalabelsPlugin = {
+            id: 'datalabels',
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                ctx.save();
+                ctx.font = 'bold 11px 微软雅黑';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+
+                chart.data.datasets.forEach(function(dataset, dsIndex) {
+                    var meta = chart.getDatasetMeta(dsIndex);
+                    if (!meta || !meta.data) return;
+
+                    // 获取原始带符号的值
+                    var values;
+                    if (dsIndex === 0) {
+                        values = dailyGrowthValues;
+                    } else if (dsIndex === 1) {
+                        values = monthlyGrowthValues;
+                    } else {
+                        return;
+                    }
+
+                    meta.data.forEach(function(bar, index) {
+                        if (values[index] === undefined || values[index] === null) return;
+                        var displayVal = values[index];
+                        // 柱形图按绝对值绘制，数值标签显示在柱顶
+                        var barTop = bar.y;
+                        var color = displayVal >= 0 ? '#e74c3c' : '#27ae60';
+                        ctx.fillStyle = color;
+                        ctx.fillText(displayVal.toFixed(2) + '%', bar.x, barTop - 4);
+                    });
+                });
+
+                ctx.restore();
+            }
+        };
+
         window.fundChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [
                     {
-                        label: '日增长率 (%)',
+                        label: '日变化量 (%)',
                         data: dailyGrowthData,
-                        backgroundColor: dailyGrowthData.map(function(v) {
+                        backgroundColor: dailyGrowthValues.map(function(v) {
                             return v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)';
                         }),
-                        borderColor: dailyGrowthData.map(function(v) {
+                        borderColor: dailyGrowthValues.map(function(v) {
                             return v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)';
                         }),
                         borderWidth: 1,
@@ -771,10 +821,14 @@ function renderFundChart(records) {
                         barPercentage: 0.4,
                     },
                     {
-                        label: '月增长率 (%)',
+                        label: '月变化量 (%)',
                         data: monthlyGrowthData,
-                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                        borderColor: 'rgb(52, 152, 219)',
+                        backgroundColor: dailyGrowthValues.map(function(v) {
+                            return v >= 0 ? 'rgba(231, 76, 60, 0.45)' : 'rgba(39, 174, 96, 0.45)';
+                        }),
+                        borderColor: dailyGrowthValues.map(function(v) {
+                            return v >= 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(39, 174, 96, 0.9)';
+                        }),
                         borderWidth: 1,
                         borderRadius: 2,
                         barPercentage: 0.4,
@@ -797,7 +851,10 @@ function renderFundChart(records) {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                var val = context.raw;
+                                var dsIndex = context.datasetIndex;
+                                var idx = context.dataIndex;
+                                var valuesArr = dsIndex === 0 ? dailyGrowthValues : monthlyGrowthValues;
+                                var val = valuesArr ? valuesArr[idx] : context.raw;
                                 if (val === null || val === undefined) return context.dataset.label + ': N/A';
                                 return context.dataset.label + ': ' + val.toFixed(2) + '%';
                             }
@@ -812,14 +869,18 @@ function renderFundChart(records) {
                         }
                     },
                     y: {
+                        min: 0,
+                        max: 30,
                         grid: { color: 'rgba(0,0,0,0.06)' },
                         ticks: {
+                            stepSize: 1,
                             font: { size: 12, family: '微软雅黑' },
-                            callback: function(value) { return value.toFixed(1) + '%'; }
+                            callback: function(value) { return value.toFixed(0) + '%'; }
                         }
                     }
                 }
-            }
+            },
+            plugins: [datalabelsPlugin]
         });
 
         console.log('图表创建成功');
