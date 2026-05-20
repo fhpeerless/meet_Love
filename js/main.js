@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "人间四季轮番流转，初心炽热始终未改，只是繁华落尽，只剩孤单与清欢...";
+        var titleText = "我在樱花树下，那与我携手看遍山川湖海，岁岁年年的人呢，在哪呢！";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
