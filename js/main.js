@@ -684,14 +684,23 @@ function renderFundChart(records, monthlyRecords) {
         var dailyData = records.slice();
         var monthlyData = monthlyRecords && monthlyRecords.ok ? monthlyRecords.records : [];
 
-        var TOTAL_BARS = 14; // 7天 + 7月
-        var labels = [];
+        // ===== 格式化日期辅助函数 =====
+        function formatDate(dateStr) {
+            if (!dateStr) return '--';
+            var parts = dateStr.split('-');
+            if (parts.length >= 3) {
+                return parseInt(parts[1]) + '/' + parseInt(parts[2]);
+            }
+            return dateStr;
+        }
+
+        // ===== 第1部分: 近7天日增长率 (索引 0-6) =====
+        var labels = ['近7天', '', '', '', '', '', ''];
         var dailyGrowthValues = [];
         var dailyGrowthData = [];
         var monthlyGrowthValues = [];
         var monthlyGrowthData = [];
 
-        // ===== 第1部分: 近7天日增长率 (索引 0-6) =====
         var barCount = Math.min(7, dailyData.length);
         var startIndex = dailyData.length - barCount;
 
@@ -699,7 +708,7 @@ function renderFundChart(records, monthlyRecords) {
             if (i < barCount) {
                 var dataIndex = startIndex + i;
                 var current = dailyData[dataIndex];
-                labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
+                labels[i] = formatDate(current.snapshot_date);
 
                 // 日增长率：与前一天比较
                 if (dataIndex > 0) {
@@ -717,10 +726,15 @@ function renderFundChart(records, monthlyRecords) {
                     dailyGrowthValues.push(0);
                     dailyGrowthData.push(0);
                 }
+                // 月数据集对应位置填null（不显示柱子）
+                monthlyGrowthValues.push(null);
+                monthlyGrowthData.push(null);
             } else {
-                labels.push('--');
+                labels[i] = '--';
                 dailyGrowthValues.push(0);
                 dailyGrowthData.push(0);
+                monthlyGrowthValues.push(null);
+                monthlyGrowthData.push(null);
             }
         }
 
@@ -729,8 +743,12 @@ function renderFundChart(records, monthlyRecords) {
         for (var i = 0; i < 7; i++) {
             if (i < monthCount) {
                 var currentMonth = monthlyData[i];
-                var monthLabel = currentMonth.snapshot_month ? currentMonth.snapshot_month.slice(5) + '月' : '--';
+                var monthLabel = (currentMonth.snapshot_month ? parseInt(currentMonth.snapshot_month.slice(5)) + '月' : '--');
                 labels.push(monthLabel);
+
+                // 日数据集对应位置填null（不显示柱子）
+                dailyGrowthValues.push(null);
+                dailyGrowthData.push(null);
 
                 // 月增长率：与上一个月比较
                 if (i > 0) {
@@ -750,6 +768,8 @@ function renderFundChart(records, monthlyRecords) {
                 }
             } else {
                 labels.push('--');
+                dailyGrowthValues.push(null);
+                dailyGrowthData.push(null);
                 monthlyGrowthValues.push(0);
                 monthlyGrowthData.push(0);
             }
@@ -822,6 +842,55 @@ function renderFundChart(records, monthlyRecords) {
             }
         };
 
+        // 分隔线和分区标签插件
+        var sectionPlugin = {
+            id: 'sectionLabels',
+            afterDraw: function(chart) {
+                var ctx = chart.ctx;
+                var chartArea = chart.chartArea;
+                var xScale = chart.scales.x;
+
+                if (!xScale || !chartArea) return;
+
+                // 计算第7根和第8根柱子中间的X坐标
+                var separatorX = (xScale.getPixelForValue(6) + xScale.getPixelForValue(7)) / 2;
+                if (!separatorX) return;
+
+                ctx.save();
+
+                // 绘制垂直虚线分隔线
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(separatorX, chartArea.top);
+                ctx.lineTo(separatorX, chartArea.bottom);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 计算"近7天"标签位置（第1-7根柱子中间）
+                var dayStartX = xScale.getPixelForValue(0);
+                var dayEndX = xScale.getPixelForValue(6);
+                var dayCenterX = dayStartX + (dayEndX - dayStartX) / 2;
+
+                // 计算"近7个月"标签位置（第8-14根柱子中间）
+                var monthStartX = xScale.getPixelForValue(7);
+                var monthEndX = xScale.getPixelForValue(13);
+                var monthCenterX = monthStartX + (monthEndX - monthStartX) / 2;
+
+                // 在X轴下方绘制分区标签
+                var labelY = chartArea.bottom + 30;
+                ctx.font = 'bold 12px 微软雅黑';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = '#666';
+                ctx.fillText('— 近7天 —', dayCenterX, labelY);
+                ctx.fillText('— 近7个月 —', monthCenterX, labelY);
+
+                ctx.restore();
+            }
+        };
+
         window.fundChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -831,10 +900,10 @@ function renderFundChart(records, monthlyRecords) {
                         label: '日变化量 (%)',
                         data: dailyGrowthData,
                         backgroundColor: dailyGrowthValues.map(function(v) {
-                            return v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)';
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)');
                         }),
                         borderColor: dailyGrowthValues.map(function(v) {
-                            return v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)';
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)');
                         }),
                         borderWidth: 1,
                         borderRadius: 2,
@@ -844,10 +913,10 @@ function renderFundChart(records, monthlyRecords) {
                         label: '月变化量 (%)',
                         data: monthlyGrowthData,
                         backgroundColor: monthlyGrowthValues.map(function(v) {
-                            return v >= 0 ? 'rgba(231, 76, 60, 0.45)' : 'rgba(39, 174, 96, 0.45)';
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.45)' : 'rgba(39, 174, 96, 0.45)');
                         }),
                         borderColor: monthlyGrowthValues.map(function(v) {
-                            return v >= 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(39, 174, 96, 0.9)';
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(39, 174, 96, 0.9)');
                         }),
                         borderWidth: 1,
                         borderRadius: 2,
@@ -859,6 +928,9 @@ function renderFundChart(records, monthlyRecords) {
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: { duration: 800 },
+                layout: {
+                    padding: { bottom: 30 }
+                },
                 plugins: {
                     legend: {
                         position: 'top',
@@ -885,10 +957,10 @@ function renderFundChart(records, monthlyRecords) {
                     x: {
                         grid: { display: false },
                         ticks: {
-                            maxRotation: 45,
+                            maxRotation: 0,
                             minRotation: 0,
                             autoSkip: false,
-                            font: { size: 11, family: '微软雅黑' }
+                            font: { size: 10, family: '微软雅黑' }
                         }
                     },
                     y: {
@@ -903,7 +975,7 @@ function renderFundChart(records, monthlyRecords) {
                     }
                 }
             },
-            plugins: [datalabelsPlugin]
+            plugins: [datalabelsPlugin, sectionPlugin]
         });
 
         console.log('图表创建成功');
