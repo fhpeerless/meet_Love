@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "我站在樱花树下，那与我携手度过余生的人呢，在哪呢！";
+        var titleText = "人间四季轮番流转，初心炽热始终未改，只是繁华落尽，只剩孤单与清欢...";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
@@ -613,10 +613,12 @@ function loadFundData() {
 
     $.when(
         $.ajax({ url: proxyApi('/api/status'), dataType: 'json', timeout: 15000 }),
-        $.ajax({ url: proxyApi('/api/records?limit=7'), dataType: 'json', timeout: 15000 })
-    ).done(function(statusRes, recordsRes) {
+        $.ajax({ url: proxyApi('/api/records?limit=7'), dataType: 'json', timeout: 15000 }),
+        $.ajax({ url: proxyApi('/api/monthly-records?limit=7'), dataType: 'json', timeout: 15000 })
+    ).done(function(statusRes, recordsRes, monthlyRes) {
         var statusData = statusRes[0];
         var recordsData = recordsRes[0];
+        var monthlyData = monthlyRes[0];
 
         if (!statusData || !statusData.ok) {
             $('#fund-position-text').text('获取失败').css('color', '#ff6b6b');
@@ -655,9 +657,10 @@ function loadFundData() {
         }
 
         if (recordsData && recordsData.ok && recordsData.records && recordsData.records.length >= 1) {
-            console.log('API返回记录:', JSON.stringify(recordsData.records));
+            console.log('API返回日记录:', JSON.stringify(recordsData.records));
+            console.log('API返回月记录:', JSON.stringify(monthlyData));
             ensureChartJs(function() {
-                renderFundChart(recordsData.records);
+                renderFundChart(recordsData.records, monthlyData);
             });
         } else {
             var container = $('.fund-chart-container');
@@ -674,34 +677,33 @@ function loadFundData() {
     });
 }
 
-function renderFundChart(records) {
+function renderFundChart(records, monthlyRecords) {
     try {
-        console.log('renderFundChart 开始, records数量:', records.length);
+        console.log('renderFundChart 开始, 日记录数:', records.length, '月记录数:', monthlyRecords ? monthlyRecords.records.length : 0);
 
-        var data = records.slice();
-        console.log('data(最早在前):', JSON.stringify(data));
+        var dailyData = records.slice();
+        var monthlyData = monthlyRecords && monthlyRecords.ok ? monthlyRecords.records : [];
 
-        var barCount = Math.min(7, data.length);
-        console.log('barCount:', barCount);
-
-        // 取最后7条记录（最近7天），数据是"最早在前"排列
-        var startIndex = data.length - barCount;
-
+        var TOTAL_BARS = 14; // 7天 + 7月
         var labels = [];
-        var dailyGrowthData = [];     // 柱形高度用绝对值
-        var dailyGrowthValues = [];   // 原始带符号值（标签和颜色用）
-        var monthlyGrowthData = [];   // 柱形高度用绝对值
-        var monthlyGrowthValues = []; // 原始带符号值（标签和颜色用）
+        var dailyGrowthValues = [];
+        var dailyGrowthData = [];
+        var monthlyGrowthValues = [];
+        var monthlyGrowthData = [];
+
+        // ===== 第1部分: 近7天日增长率 (索引 0-6) =====
+        var barCount = Math.min(7, dailyData.length);
+        var startIndex = dailyData.length - barCount;
 
         for (var i = 0; i < 7; i++) {
             if (i < barCount) {
                 var dataIndex = startIndex + i;
-                var current = data[dataIndex];
+                var current = dailyData[dataIndex];
                 labels.push(current.snapshot_date ? current.snapshot_date.slice(5) : '--');
 
                 // 日增长率：与前一天比较
                 if (dataIndex > 0) {
-                    var prev = data[dataIndex - 1];
+                    var prev = dailyData[dataIndex - 1];
                     if (prev && prev.available_balance != null && prev.available_balance !== 0) {
                         var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
                         var dailyVal = parseFloat(dailyRate.toFixed(2));
@@ -715,29 +717,47 @@ function renderFundChart(records) {
                     dailyGrowthValues.push(0);
                     dailyGrowthData.push(0);
                 }
+            } else {
+                labels.push('--');
+                dailyGrowthValues.push(0);
+                dailyGrowthData.push(0);
+            }
+        }
 
-                // 月增长率：与30天前的记录比较
-                var monthlyIndex = dataIndex - 30;
-                var monthlyRecord = monthlyIndex >= 0 ? data[monthlyIndex] : null;
-                if (monthlyRecord && monthlyRecord.available_balance != null && monthlyRecord.available_balance !== 0) {
-                    var monthlyRate = ((current.available_balance - monthlyRecord.available_balance) / monthlyRecord.available_balance) * 100;
-                    var monthlyVal = parseFloat(monthlyRate.toFixed(2));
-                    monthlyGrowthValues.push(monthlyVal);
-                    monthlyGrowthData.push(Math.abs(monthlyVal));
+        // ===== 第2部分: 近7月月增长率 (索引 7-13) =====
+        var monthCount = Math.min(7, monthlyData.length);
+        for (var i = 0; i < 7; i++) {
+            if (i < monthCount) {
+                var currentMonth = monthlyData[i];
+                var monthLabel = currentMonth.snapshot_month ? currentMonth.snapshot_month.slice(5) + '月' : '--';
+                labels.push(monthLabel);
+
+                // 月增长率：与上一个月比较
+                if (i > 0) {
+                    var prevMonth = monthlyData[i - 1];
+                    if (prevMonth && prevMonth.equity != null && prevMonth.equity !== 0) {
+                        var monthlyRate = ((currentMonth.equity - prevMonth.equity) / prevMonth.equity) * 100;
+                        var monthlyVal = parseFloat(monthlyRate.toFixed(2));
+                        monthlyGrowthValues.push(monthlyVal);
+                        monthlyGrowthData.push(Math.abs(monthlyVal));
+                    } else {
+                        monthlyGrowthValues.push(0);
+                        monthlyGrowthData.push(0);
+                    }
                 } else {
                     monthlyGrowthValues.push(0);
                     monthlyGrowthData.push(0);
                 }
             } else {
                 labels.push('--');
-                dailyGrowthValues.push(0);
-                dailyGrowthData.push(0);
                 monthlyGrowthValues.push(0);
                 monthlyGrowthData.push(0);
             }
         }
 
-        console.log('图表数据:', { labels: labels, daily: dailyGrowthValues, monthly: monthlyGrowthValues, dailyAbs: dailyGrowthData, monthlyAbs: monthlyGrowthData });
+        console.log('图表标签:', labels);
+        console.log('日增长率:', dailyGrowthValues);
+        console.log('月增长率:', monthlyGrowthValues);
 
         var canvas = document.getElementById('fund-chart');
         console.log('Canvas元素:', canvas);
@@ -823,10 +843,10 @@ function renderFundChart(records) {
                     {
                         label: '月变化量 (%)',
                         data: monthlyGrowthData,
-                        backgroundColor: dailyGrowthValues.map(function(v) {
+                        backgroundColor: monthlyGrowthValues.map(function(v) {
                             return v >= 0 ? 'rgba(231, 76, 60, 0.45)' : 'rgba(39, 174, 96, 0.45)';
                         }),
-                        borderColor: dailyGrowthValues.map(function(v) {
+                        borderColor: monthlyGrowthValues.map(function(v) {
                             return v >= 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(39, 174, 96, 0.9)';
                         }),
                         borderWidth: 1,
@@ -865,7 +885,10 @@ function renderFundChart(records) {
                     x: {
                         grid: { display: false },
                         ticks: {
-                            font: { size: 12, family: '微软雅黑' }
+                            maxRotation: 45,
+                            minRotation: 0,
+                            autoSkip: false,
+                            font: { size: 11, family: '微软雅黑' }
                         }
                     },
                     y: {
