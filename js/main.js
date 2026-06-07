@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "我站在樱花树下，那与我共度余生的人呢，在哪呢！";
+        var titleText = "人间四季轮番流转，初心炽热始终未改，只是繁华落尽，只剩孤单与清欢...";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
@@ -710,22 +710,11 @@ function renderFundChart(records, monthlyRecords) {
                 var current = dailyData[dataIndex];
                 labels[i] = formatDate(current.snapshot_date);
 
-                // 日增长率：与前一天比较
-                if (dataIndex > 0) {
-                    var prev = dailyData[dataIndex - 1];
-                    if (prev && prev.available_balance != null && prev.available_balance !== 0) {
-                        var dailyRate = ((current.available_balance - prev.available_balance) / prev.available_balance) * 100;
-                        var dailyVal = parseFloat(dailyRate.toFixed(2));
-                        dailyGrowthValues.push(dailyVal);
-                        dailyGrowthData.push(Math.abs(dailyVal));
-                    } else {
-                        dailyGrowthValues.push(0);
-                        dailyGrowthData.push(0);
-                    }
-                } else {
-                    dailyGrowthValues.push(0);
-                    dailyGrowthData.push(0);
-                }
+                // 直接使用后端预计算的日增长率
+                var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
+                dailyGrowthValues.push(dailyVal);
+                dailyGrowthData.push(Math.abs(dailyVal));
+
                 // 月数据集对应位置填null（不显示柱子）
                 monthlyGrowthValues.push(null);
                 monthlyGrowthData.push(null);
@@ -750,22 +739,10 @@ function renderFundChart(records, monthlyRecords) {
                 dailyGrowthValues.push(null);
                 dailyGrowthData.push(null);
 
-                // 月增长率：与上一个月比较
-                if (i > 0) {
-                    var prevMonth = monthlyData[i - 1];
-                    if (prevMonth && prevMonth.equity != null && prevMonth.equity !== 0) {
-                        var monthlyRate = ((currentMonth.equity - prevMonth.equity) / prevMonth.equity) * 100;
-                        var monthlyVal = parseFloat(monthlyRate.toFixed(2));
-                        monthlyGrowthValues.push(monthlyVal);
-                        monthlyGrowthData.push(Math.abs(monthlyVal));
-                    } else {
-                        monthlyGrowthValues.push(0);
-                        monthlyGrowthData.push(0);
-                    }
-                } else {
-                    monthlyGrowthValues.push(0);
-                    monthlyGrowthData.push(0);
-                }
+                // 直接使用后端预计算的月增长率
+                var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
+                monthlyGrowthValues.push(monthlyVal);
+                monthlyGrowthData.push(Math.abs(monthlyVal));
             } else {
                 labels.push('--');
                 dailyGrowthValues.push(null);
