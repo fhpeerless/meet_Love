@@ -819,7 +819,7 @@ function renderFundChart(records, monthlyRecords) {
             }
         };
 
-        // 分隔线和分区标签插件
+        // 分隔线和分区标签插件（含自定义刻度标签绘制）
         var sectionPlugin = {
             id: 'sectionLabels',
             afterDraw: function(chart) {
@@ -844,6 +844,32 @@ function renderFundChart(records, monthlyRecords) {
                 ctx.lineTo(separatorX, chartArea.bottom);
                 ctx.stroke();
                 ctx.setLineDash([]);
+
+                // 手动绘制 x 轴刻度标签（隐藏默认刻度，自定义绘制以精确对齐每个柱形）
+                var labels = chart.data.labels;
+                ctx.font = '10px 微软雅黑';
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = '#666';
+                var tickY = chartArea.bottom + 6;
+
+                // 计算柱形在分组中的偏移量
+                // 在 grouped bar 中，dataset 0（日）在左边，dataset 1（月）在右边
+                var catWidth = xScale.getPixelForValue(1) - xScale.getPixelForValue(0);
+                // categoryPercentage 默认 0.8，barPercentage=0.4
+                var barOffset = catWidth * 0.8 / 4; // 分组宽度的一半再一半
+
+                for (var i = 0; i < labels.length; i++) {
+                    var x = xScale.getPixelForValue(i);
+                    // 前7个（日增长率）对应 dataset 0，在分组左侧
+                    if (i < 7) {
+                        x -= barOffset;
+                    } else {
+                        // 后7个（月增长率）对应 dataset 1，在分组右侧
+                        x += barOffset;
+                    }
+                    ctx.textAlign = 'center';
+                    ctx.fillText(labels[i], x, tickY);
+                }
 
                 // 计算"近7天"标签位置（第1-7根柱子中间）
                 var dayStartX = xScale.getPixelForValue(0);
@@ -934,10 +960,7 @@ function renderFundChart(records, monthlyRecords) {
                     x: {
                         grid: { display: false },
                         ticks: {
-                            maxRotation: 0,
-                            minRotation: 0,
-                            autoSkip: false,
-                            font: { size: 10, family: '微软雅黑' }
+                            display: false
                         }
                     },
                     y: {
