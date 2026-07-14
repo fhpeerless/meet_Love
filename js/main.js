@@ -625,28 +625,48 @@ function loadFundData() {
             return;
         }
 
+        // 从 balances 数组中提取 USDT 的可用余额和冻结金额
+        var usdtBalance = null;
+        if (statusData.balances && statusData.balances.length > 0) {
+            for (var b = 0; b < statusData.balances.length; b++) {
+                if (statusData.balances[b].currency === 'USDT') {
+                    usdtBalance = statusData.balances[b];
+                    break;
+                }
+            }
+        }
+        var availBal = usdtBalance ? usdtBalance.available : null;
+        var frozenBal = usdtBalance ? usdtBalance.frozen : null;
+
+        // 从 positions 数组中取第一个持仓信息
+        var firstPos = (statusData.positions && statusData.positions.length > 0) ? statusData.positions[0] : null;
+        var unrealizedPnl = firstPos ? firstPos.unrealized_pnl : null;
+        var pnlRatio = firstPos ? firstPos.pnl_ratio_percent : null;
+        var posSide = firstPos ? firstPos.side : null;
+        var leverage = firstPos ? firstPos.leverage : null;
+
         $('#fund-total-equity').text(statusData.total_equity != null ? statusData.total_equity.toFixed(2) : '--');
-        $('#fund-available-balance').text(statusData.available_balance != null ? statusData.available_balance.toFixed(2) : '--');
-        $('#fund-frozen-balance').text(statusData.frozen_balance != null ? statusData.frozen_balance.toFixed(2) : '--');
-        $('#fund-unrealized-pnl').text(statusData.unrealized_pnl != null ? statusData.unrealized_pnl.toFixed(2) : '--');
+        $('#fund-available-balance').text(availBal != null ? availBal.toFixed(2) : '--');
+        $('#fund-frozen-balance').text(frozenBal != null ? frozenBal.toFixed(2) : '--');
+        $('#fund-unrealized-pnl').text(unrealizedPnl != null ? unrealizedPnl.toFixed(2) : '--');
 
         var pnlEl = $('#fund-unrealized-pnl');
-        if (statusData.unrealized_pnl != null) {
-            pnlEl.css('color', statusData.unrealized_pnl >= 0 ? '#e74c3c' : '#27ae60');
+        if (unrealizedPnl != null) {
+            pnlEl.css('color', unrealizedPnl >= 0 ? '#e74c3c' : '#27ae60');
         }
 
         var ratioEl = $('#fund-pnl-ratio');
-        if (statusData.pnl_ratio_percent != null) {
-            ratioEl.text(statusData.pnl_ratio_percent.toFixed(2));
-            ratioEl.css('color', statusData.pnl_ratio_percent >= 0 ? '#e74c3c' : '#27ae60');
+        if (pnlRatio != null) {
+            ratioEl.text(pnlRatio.toFixed(2));
+            ratioEl.css('color', pnlRatio >= 0 ? '#e74c3c' : '#27ae60');
         } else {
             ratioEl.text('--');
         }
 
-        if (statusData.has_position) {
-            var sideText = statusData.position_side === 'long' ? '方向多' : '方向空';
-            $('#fund-position-text').text('投资中 ' + sideText + ' | ' + statusData.leverage + '倍速');
-            $('#fund-position-text').css('color', statusData.position_side === 'long' ? '#e74c3c' : '#27ae60');
+        if (statusData.has_position && firstPos) {
+            var sideText = posSide === 'long' ? '方向多' : '方向空';
+            $('#fund-position-text').text('投资中 ' + sideText + ' | ' + leverage + '倍速');
+            $('#fund-position-text').css('color', posSide === 'long' ? '#e74c3c' : '#27ae60');
         } else {
             $('#fund-position-text').text('🟢 无投资');
             $('#fund-position-text').css('color', '#27ae60');
@@ -694,6 +714,28 @@ function renderFundChart(records, monthlyRecords) {
             return dateStr;
         }
 
+        // ===== 计算日增长率（后端不返回，前端根据 equity 计算）=====
+        for (var di = dailyData.length - 1; di >= 0; di--) {
+            if (di === 0) {
+                dailyData[di].daily_growth_rate = 0;
+            } else {
+                var prevEq = dailyData[di - 1].equity;
+                var currEq = dailyData[di].equity;
+                dailyData[di].daily_growth_rate = prevEq !== 0 ? ((currEq - prevEq) / prevEq) * 100 : 0;
+            }
+        }
+
+        // ===== 计算月增长率 ====
+        for (var mi = monthlyData.length - 1; mi >= 0; mi--) {
+            if (mi === 0) {
+                monthlyData[mi].monthly_growth_rate = 0;
+            } else {
+                var prevEq = monthlyData[mi - 1].equity;
+                var currEq = monthlyData[mi].equity;
+                monthlyData[mi].monthly_growth_rate = prevEq !== 0 ? ((currEq - prevEq) / prevEq) * 100 : 0;
+            }
+        }
+
         // ===== 第1部分: 近7天日增长率 (索引 0-6) =====
         var labels = ['近7天', '', '', '', '', '', ''];
         var dailyGrowthValues = [];
@@ -710,7 +752,7 @@ function renderFundChart(records, monthlyRecords) {
                 var current = dailyData[dataIndex];
                 labels[i] = formatDate(current.snapshot_date);
 
-                // 直接使用后端预计算的日增长率
+                // 使用前端根据 equity 计算的日增长率
                 var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
                 dailyGrowthValues.push(dailyVal);
                 dailyGrowthData.push(Math.abs(dailyVal));
@@ -739,7 +781,7 @@ function renderFundChart(records, monthlyRecords) {
                 dailyGrowthValues.push(null);
                 dailyGrowthData.push(null);
 
-                // 直接使用后端预计算的月增长率
+                // 使用前端根据 equity 计算的月增长率
                 var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
                 monthlyGrowthValues.push(monthlyVal);
                 monthlyGrowthData.push(Math.abs(monthlyVal));
