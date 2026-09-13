@@ -1,0 +1,93 @@
+name: 账户快照
+
+# 每天北京时间 04:00 通过 baba 接口取一次账户信息，写入 data/fund-history.json 并提交回仓库。
+# 前端页面读取该文件里的每日总金额，自行计算日/月增长率。
+# 注意：GitHub Actions 的 cron 只能按 UTC 走，UTC 20:00 = 北京时间 04:00。
+on:
+  schedule:
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data_u_update
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 拉取 baba 接口数据
+        env:
+          # 需要换地址时，在仓库 Settings → Secrets 里加 BABA_FUND_API
+          FUND_API: ${{ secrets.BABA_FUND_API || 'https://baba.xtwa.org/public/fund' }}
+        run: |
+          set -euo pipefail
+          echo "接口地址: $FUND_API"
+          curl -fsS --max-time 30 --retry 3 --retry-delay 5 "$FUND_API" -o /tmp/fund.json
+          cat /tmp/fund.json
+          echo
+
+      - name: 写入每日快照
+        run: |
+          python3 - <<'PY'
+          import json, os, datetime
+
+          snap = json.load(open('/tmp/fund.json', encoding='utf-8'))
+          if not snap.get('ok'):
+              raise SystemExit('接口返回 ok != true，放弃本次快照')
+
+          path = 'data/fund-history.json'
+          os.makedirs('data', exist_ok=True)
+          try:
+              hist = json.load(open(path, encoding='utf-8'))
+          except Exception:
+              hist = {}
+          if not isinstance(hist.get('daily'), list):
+              hist['daily'] = []
+
+          now_cst = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
+          today = now_cst.strftime('%Y-%m-%d')
+
+          hist['updated_at'] = snap.get('time') or now_cst.strftime('%Y-%m-%d %H:%M:%S')
+          hist['current'] = {
+              'total_amount': snap.get('total_amount'),
+              'available': snap.get('available'),
+              'unrealized_pnl': snap.get('unrealized_pnl'),
+              'total_profit': snap.get('total_profit'),
+              'total_profit_pct': snap.get('total_profit_pct'),
+              'open_count': snap.get('open_count'),
+              'direction_text': snap.get('direction_text'),
+              'time': snap.get('time'),
+          }
+
+          # 同一天重复跑只保留最新一条
+          hist['daily'] = [d for d in hist['daily'] if d.get('date') != today]
+          hist['daily'].append({
+              'date': today,
+              'total': snap.get('total_amount'),
+              'profit_pct': snap.get('total_profit_pct'),
+              'open_count': snap.get('open_count'),
+          })
+          hist['daily'].sort(key=lambda d: d.get('date', ''))
+
+          json.dump(hist, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+          print('已写入 %s，共 %d 天，今日总金额 %s' % (path, len(hist['daily']), snap.get('total_amount')))
+          PY
+
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/fund-history.json
+          if git diff --cached --quiet; then
+            echo "数据无变化，跳过提交"
+            exit 0
+          fi
+          git commit -m "chore: 账户快照 $(TZ=Asia/Shanghai date +%F)"
+          git push
