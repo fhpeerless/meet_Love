@@ -1,4 +1,15 @@
 var MusicPlayer = (function() {
+    // 每首歌的歌词偏移（秒，正数=歌词延后显示），存在浏览器本地，按歌曲 id 记住
+    var LRC_OFFSET_KEY = 'baba_lrc_offsets';
+
+    function loadLrcOffsets() {
+        try {
+            return JSON.parse(localStorage.getItem(LRC_OFFSET_KEY)) || {};
+        } catch (e) {
+            return {};
+        }
+    }
+
     function MusicPlayer() {
         this.audio = null;
         this.isPlaying = false;
@@ -6,7 +17,8 @@ var MusicPlayer = (function() {
         this.lyrics = [];
         this.currentLyricIndex = -1;
         this.desktopLyricsEnabled = true;
-        
+        this.lrcOffsets = loadLrcOffsets();
+
         this.musicList = [
                      {
                 id: 'mang',
@@ -18,7 +30,7 @@ var MusicPlayer = (function() {
                 id: 'cishengbuhuan',
                 title: '此生不换 - DJ降调',
                 url: 'https://note.youdao.com/yws/api/personal/file/WEB01f0aecd49e612afcd4a4a4d4e26f60a?method=download&inline=true&shareKey=2a134f98a4f5da480e94c3da309cbc33',
-                lrcUrl: 'https://note.youdao.com/yws/api/personal/file/WEB5f974d67cf6cc41847f7fe27e079beb3?method=download&inline=true&shareKey=1fd36ece2aaa251f84e006e631b7d12d'
+                lrcUrl: './lrc/cishengbuhuan.lrc?v=20260914h'
             },
             {
                 id: 'yichengshanlu',
@@ -153,6 +165,21 @@ var MusicPlayer = (function() {
             $desktopLyricsBtn.addClass('active');
             $desktopLyricsBtn.text('🖥️ 关闭桌面歌词');
         }
+
+        // 歌词偏移微调：键盘 [ ]（只在音乐页生效，按歌曲记住）
+        $(document).off('keydown.lrcOffset').on('keydown.lrcOffset', function(e) {
+            if (!$('#music-section').is(':visible')) return;
+            var tag = (e.target && e.target.tagName || '').toLowerCase();
+            if (tag === 'input' || tag === 'textarea') return;
+            if (e.key === '[') {
+                self.adjustLyricOffset(-0.5);
+            } else if (e.key === ']') {
+                self.adjustLyricOffset(0.5);
+            } else {
+                return;
+            }
+            e.preventDefault();
+        });
     };
     
     MusicPlayer.prototype.loadSong = function(index) {
@@ -166,6 +193,7 @@ var MusicPlayer = (function() {
         
         $('.song-title-display').text(song.title);
         this.updateMusicList();
+        this.updateOffsetText();
         
         if (song.lrcUrl) {
             this.loadLyrics(song.lrcUrl);
@@ -199,7 +227,10 @@ var MusicPlayer = (function() {
             if (match) {
                 var minutes = parseInt(match[1]);
                 var seconds = parseInt(match[2]);
-                var milliseconds = parseInt(match[3]);
+                // 小数位可能是三位(毫秒)也可能是两位(厘秒)：两位要 ×10 才是毫秒，
+                // 否则 [00:07.92] 会被算成 7.092 秒，歌词整体提前
+                var frac = match[3];
+                var milliseconds = parseInt(frac) * (frac.length === 2 ? 10 : 1);
                 var time = minutes * 60 + seconds + milliseconds / 1000;
                 var text = match[4] ? match[4].trim() : '';
                 
@@ -222,7 +253,8 @@ var MusicPlayer = (function() {
                 while ((match = charTimeRegex.exec(line)) !== null) {
                     var minutes = parseInt(match[1]);
                     var seconds = parseInt(match[2]);
-                    var milliseconds = parseInt(match[3]);
+                    var frac = match[3];
+                    var milliseconds = parseInt(frac) * (frac.length === 2 ? 10 : 1);
                     var time = minutes * 60 + seconds + milliseconds / 1000;
                     var char = match[4] || '';
                     
@@ -261,20 +293,60 @@ var MusicPlayer = (function() {
         }
     };
     
+    // 当前歌曲的歌词偏移（秒）
+    MusicPlayer.prototype.currentOffset = function() {
+        var song = this.musicList[this.currentSongIndex];
+        if (!song) return 0;
+        var v = this.lrcOffsets[song.id];
+        return typeof v === 'number' ? v : 0;
+    };
+
+    // 微调当前歌曲的歌词偏移（delta 秒），并持久化到浏览器本地
+    MusicPlayer.prototype.adjustLyricOffset = function(delta) {
+        var song = this.musicList[this.currentSongIndex];
+        if (!song) return;
+        var v = Math.round((this.currentOffset() + delta) * 10) / 10;
+        this.lrcOffsets[song.id] = v;
+        try {
+            localStorage.setItem(LRC_OFFSET_KEY, JSON.stringify(this.lrcOffsets));
+        } catch (e) {}
+        this.updateOffsetText();
+        this.currentLyricIndex = -1;
+        this.updateLyrics();
+    };
+
+    MusicPlayer.prototype.updateOffsetText = function() {
+        var v = this.currentOffset();
+        $('#lrc-offset-text').text('歌词偏移 ' + (v > 0 ? '+' : '') + v.toFixed(1) + 's');
+    };
+
     MusicPlayer.prototype.updateLyrics = function() {
         if (this.lyrics.length === 0) return;
         
-        var currentTime = this.audio.currentTime;
+        // 偏移：正数=歌词延后显示（歌词比人声早时调大）
+        var currentTime = this.audio.currentTime - this.currentOffset();
         var newIndex = -1;
         
         for (var i = 0; i < this.lyrics.length; i++) {
-            if (i === this.lyrics.length - 1 || 
-                (this.lyrics[i].time <= currentTime && this.lyrics[i + 1].time > currentTime)) {
+            // 用「本句 <= t < 下一句」判断；最后一句的下一句视为无穷大，
+            // 这样 t 还没到第一句时不会错误地高亮最后一句
+            var nextTime = (i + 1 < this.lyrics.length) ? this.lyrics[i + 1].time : Infinity;
+            if (this.lyrics[i].time <= currentTime && currentTime < nextTime) {
                 newIndex = i;
                 break;
             }
         }
         
+        if (newIndex < 0) {
+            // 还没到第一句（或偏移调大后时间回退）时清掉高亮，避免留下上一句的残影
+            if (this.currentLyricIndex !== -1) {
+                this.currentLyricIndex = -1;
+                $('.lyrics-line').removeClass('active');
+                this.updateDesktopLyrics();
+            }
+            return;
+        }
+
         if (newIndex >= 0) {
             var shouldUpdateHighlight = newIndex !== this.currentLyricIndex;
             

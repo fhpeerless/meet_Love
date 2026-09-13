@@ -1,7 +1,59 @@
 (function() {
     var container = document.getElementById('butterfly-container');
-    var poemLines = ['红豆生南国', '春来发几枝', '愿君多采撷', '此物最相思'];
-    var globalPoemIndex = 0;
+
+    // 蝴蝶身上的文字 = 当前页面的「分类 · 模块」；只在切换后显示一次（4 秒后自动淡出）
+    var VIEW_LABELS = [
+        { selector: '#animation-btn', text: '首页 · 爱心树' },
+        { selector: '#diary-btn', text: '生活 · 日记' },
+        { selector: '#fund-btn', text: '理财 · 爱心储罐' },
+        { selector: '#music-btn', text: '娱乐 · 音乐播放器' }
+    ];
+    var LABEL_SHOW_MS = 4000;   // 「分类 · 模块」显示时长
+    var INTRO_SHOW_MS = 2500;   // 「你好！我是小花」「我的投资战绩是」各自显示时长
+    var CHIP_SHOW_MS = 4000;    // 最后显示一条「字段 + 数值」的时长
+    var INTRO_LINES = ['你好！我是小花', '我的投资战绩是']; // 公布战绩前的开场白
+    var currentLabel = VIEW_LABELS[0].text;
+    var labelTimer = null;
+    var labelSeq = 0;
+    var chipIndex = 0;          // 账户信息轮播到第几条（多的下次切换再显示）
+
+    // 账户信息：baba 对外接口（实时），失败时回退仓库里的每日快照
+    var FUND_API = 'https://baba.xtwa.org/public/fund';
+    var FUND_HISTORY = './data/fund-history.json';
+
+    // 每条都是「字段 + 数值」一起，不拆开（拆开看效果不好）
+    function fundChips(d) {
+        if (!d) return [];
+        var chips = [];
+        var n = function(v) { return v == null ? '--' : Number(v).toFixed(2); };
+        if (d.total_amount != null) chips.push('总金额 ' + n(d.total_amount));
+        if (d.total_profit_pct != null) {
+            chips.push('总盈亏 ' + (d.total_profit_pct > 0 ? '+' : '') + n(d.total_profit_pct) + '%');
+        }
+        if (d.open_count != null) chips.push('投资 ' + d.open_count + ' 笔');
+        return chips;
+    }
+
+    function fetchFundChips(cb) {
+        var settled = false;
+        var finish = function(c) { if (settled) return; settled = true; cb(c || []); };
+        setTimeout(function() { finish([]); }, 6000); // 兜底：6 秒拿不到就不显示
+        (async function() {
+            try {
+                var r = await fetch(FUND_API);
+                var d = await r.json();
+                if (d && d.ok) return finish(fundChips(d));
+            } catch (e) {}
+            try {
+                var r2 = await fetch(FUND_HISTORY + '?t=' + Date.now());
+                var d2 = await r2.json();
+                finish(fundChips(d2 && d2.current));
+            } catch (e2) {
+                finish([]);
+            }
+        })();
+    }
+
     var butterflies = [];
     var maxButterflies = 1;
     var spawnInterval = 5000;
@@ -110,9 +162,6 @@
         this.wanderDuration = 4000 + Math.random() * 6000;
         this.directionChangeTimer = 0;
         this.directionChangeInterval = 800 + Math.random() * 2000;
-        this.poemLine = poemLines[globalPoemIndex];
-        this.poemIndex = globalPoemIndex;
-        globalPoemIndex = (globalPoemIndex + 1) % poemLines.length;
         this.scale = 1.8 + Math.random() * 0.4;
         this.headingAngle = this.angle * 180 / Math.PI + 90;
         this.headingAngleTarget = this.headingAngle;
@@ -132,7 +181,7 @@
         this.particleTimer = 0;
         this.particleColors = ['#ff69b4', '#ffb6c1', '#ff1493', '#ffd700', '#87ceeb', '#dda0dd', '#ff6347', '#7fffd4'];
 
-        this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
+        this.el.querySelector('.butterfly-poem').textContent = currentLabel;
         container.appendChild(this.el);
     }
 
@@ -298,9 +347,6 @@
             this.state = 'taking_off';
             this.stateTimer = 0;
             this.el.classList.remove('resting');
-            this.poemIndex = (this.poemIndex + 1) % poemLines.length;
-            this.poemLine = poemLines[this.poemIndex];
-            this.el.querySelector('.butterfly-poem').textContent = this.poemLine;
         }
     };
 
@@ -407,6 +453,90 @@
         if (butterflies.length < maxButterflies) {
             butterflies.push(new Butterfly());
         }
+    }
+
+    function eachPoem(fn) {
+        var poems = container.querySelectorAll('.butterfly-poem');
+        for (var i = 0; i < poems.length; i++) fn(poems[i]);
+    }
+
+    function showPoem(text) {
+        eachPoem(function(el) {
+            el.textContent = text;
+            el.classList.add('show');
+        });
+    }
+
+    function hidePoem() {
+        eachPoem(function(el) {
+            el.classList.remove('show');
+        });
+    }
+
+    // 切换分类/模块时，蝴蝶依次说：分类·模块 →「你好！我是小花」→「我的投资战绩是」→ 一条「字段+数值」
+    // 每次切换只走一遍，中途再次切换会作废上一轮；没说完的字段下次切换接着显示
+    function showLabelOnce(text) {
+        var seq = ++labelSeq;
+        currentLabel = text;
+        if (labelTimer) {
+            clearTimeout(labelTimer);
+            labelTimer = null;
+        }
+
+        // 先去取账户数据（和开场白并行，等轮到它时基本已就绪）
+        var chips = null;
+        fetchFundChips(function(list) { chips = list; });
+
+        var steps = [text].concat(INTRO_LINES);
+        var step = 0;
+
+        function showNext() {
+            if (seq !== labelSeq) return;
+            if (step < steps.length) {
+                var cur = steps[step];
+                var ms = step === 0 ? LABEL_SHOW_MS : INTRO_SHOW_MS;
+                step++;
+                showPoem(cur);
+                labelTimer = setTimeout(showNext, ms);
+                return;
+            }
+            // 最后一步：一条「字段 + 数值」（剩下的下次切换再显示）
+            var tries = 0;
+            (function showChip() {
+                if (seq !== labelSeq) return;
+                if (!chips) {
+                    if (tries++ < 6) {
+                        labelTimer = setTimeout(showChip, 500);
+                    } else {
+                        hidePoem();
+                    }
+                    return;
+                }
+                if (!chips.length) {
+                    hidePoem();
+                    return;
+                }
+                var chip = chips[chipIndex % chips.length];
+                chipIndex++;
+                showPoem(chip);
+                labelTimer = setTimeout(function() {
+                    if (seq !== labelSeq) return;
+                    hidePoem();
+                }, CHIP_SHOW_MS);
+            })();
+        }
+
+        showNext();
+    }
+
+    for (var vi = 0; vi < VIEW_LABELS.length; vi++) {
+        (function(cfg) {
+            var btn = document.querySelector(cfg.selector);
+            if (!btn) return;
+            btn.addEventListener('click', function() {
+                showLabelOnce(cfg.text);
+            });
+        })(VIEW_LABELS[vi]);
     }
 
     spawnButterfly();
