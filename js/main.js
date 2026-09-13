@@ -689,6 +689,9 @@ function renderFundData(live, hist) {
 
     function num(v) { return v == null ? '--' : Number(v).toFixed(2); }
 
+    // 缓存到页面：其它组件（如蝴蝶）直接读这份数据，不再重复请求接口
+    window.__fundSnapshot = snap;
+
     // 总权益 -> 总金额（接口 total_amount）
     $('#fund-total-equity').text(num(snap.total_amount));
     // 可用余额

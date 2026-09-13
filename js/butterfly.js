@@ -1,28 +1,28 @@
 (function() {
     var container = document.getElementById('butterfly-container');
 
-    // 蝴蝶身上的文字 = 当前页面的「分类 · 模块」；只在切换后显示一次（4 秒后自动淡出）
+    // 蝴蝶身上的文字：切换页面后下一次「停落」显示「分类 · 模块」，
+    // 其余时间按顺序循环播报账户信息；只在停留时显示，起身即消失
     var VIEW_LABELS = [
         { selector: '#animation-btn', text: '首页 · 爱心树' },
         { selector: '#diary-btn', text: '生活 · 日记' },
         { selector: '#fund-btn', text: '理财 · 爱心储罐' },
         { selector: '#music-btn', text: '娱乐 · 音乐播放器' }
     ];
-    var LABEL_SHOW_MS = 4000;   // 「分类 · 模块」显示时长
-    var INTRO_SHOW_MS = 2500;   // 「你好！我是小花」「我的投资战绩是」各自显示时长
-    var CHIP_SHOW_MS = 4000;    // 最后显示一条「字段 + 数值」的时长
-    var INTRO_LINES = ['你好！我是小花', '我的投资战绩是']; // 公布战绩前的开场白
-    var currentLabel = VIEW_LABELS[0].text;
-    var labelTimer = null;
-    var labelSeq = 0;
-    var chipIndex = 0;          // 账户信息轮播到第几条（多的下次切换再显示）
+    var INTRO_LINES = ['你好！我是小花', '我的投资战绩是']; // 开场白（和账户信息一起循环显示）
 
-    // 账户信息：baba 对外接口（实时），失败时回退仓库里的每日快照
+    // 账户信息只在「进入页面」时取一次，缓存到浏览器（localStorage）；
+    // 之后蝴蝶只读浏览器缓存，按顺序循环显示，不再请求接口
     var FUND_API = 'https://baba.xtwa.org/public/fund';
     var FUND_HISTORY = './data/fund-history.json';
+    var FUND_CACHE_KEY = 'baba_fund_cache';
+
+    var fundChips = [];        // 账户信息短句（字段 + 数值）
+    var messageIndex = 0;      // 循环到第几条
+    var pendingLabel = null;   // 切换页面后，下一次停落先显示「分类 · 模块」
 
     // 每条都是「字段 + 数值」一起，不拆开（拆开看效果不好）
-    function fundChips(d) {
+    function buildChips(d) {
         if (!d) return [];
         var chips = [];
         var n = function(v) { return v == null ? '--' : Number(v).toFixed(2); };
@@ -34,24 +34,74 @@
         return chips;
     }
 
-    function fetchFundChips(cb) {
-        var settled = false;
-        var finish = function(c) { if (settled) return; settled = true; cb(c || []); };
-        setTimeout(function() { finish([]); }, 6000); // 兜底：6 秒拿不到就不显示
+    function readFundCache() {
+        if (window.__fundSnapshot) return window.__fundSnapshot; // 爱心储罐页刚取过的实况，优先用
+        try {
+            var o = JSON.parse(localStorage.getItem(FUND_CACHE_KEY) || 'null');
+            return o && o.data ? o.data : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function writeFundCache(d) {
+        try {
+            localStorage.setItem(FUND_CACHE_KEY, JSON.stringify({ t: Date.now(), data: d }));
+        } catch (e) {}
+    }
+
+    function useFundData(d) {
+        if (!d) return false;
+        fundChips = buildChips(d);
+        return fundChips.length > 0;
+    }
+
+    // 进入页面时取一次（先让浏览器缓存里的数据立即可用），成功后写回缓存
+    function initFundData() {
+        useFundData(readFundCache());
         (async function() {
             try {
                 var r = await fetch(FUND_API);
                 var d = await r.json();
-                if (d && d.ok) return finish(fundChips(d));
+                if (d && d.ok) {
+                    writeFundCache(d);
+                    useFundData(d);
+                    return;
+                }
             } catch (e) {}
-            try {
-                var r2 = await fetch(FUND_HISTORY + '?t=' + Date.now());
-                var d2 = await r2.json();
-                finish(fundChips(d2 && d2.current));
-            } catch (e2) {
-                finish([]);
+            if (!fundChips.length) { // 接口不通时用仓库里的每日快照兜底
+                try {
+                    var r2 = await fetch(FUND_HISTORY + '?t=' + Date.now());
+                    var d2 = await r2.json();
+                    if (d2 && d2.current) {
+                        writeFundCache(d2.current);
+                        useFundData(d2.current);
+                    }
+                } catch (e2) {}
             }
         })();
+    }
+
+    // 下一条要显示的文字：切换过页面就先报「分类 · 模块」，否则按顺序循环
+    function nextMessage() {
+        if (pendingLabel) {
+            var label = pendingLabel;
+            pendingLabel = null;
+            return label;
+        }
+        var list = INTRO_LINES.concat(fundChips);
+        if (!list.length) return '';
+        var msg = list[messageIndex % list.length];
+        messageIndex++;
+        return msg;
+    }
+
+    // 每次落地开始停歇时换下一条；起身时由 CSS（.butterfly.resting）自动淡出
+    function showMessageOnLanding() {
+        var text = nextMessage();
+        if (!text) return;
+        var poems = container.querySelectorAll('.butterfly-poem');
+        for (var i = 0; i < poems.length; i++) poems[i].textContent = text;
     }
 
     var butterflies = [];
@@ -181,7 +231,7 @@
         this.particleTimer = 0;
         this.particleColors = ['#ff69b4', '#ffb6c1', '#ff1493', '#ffd700', '#87ceeb', '#dda0dd', '#ff6347', '#7fffd4'];
 
-        this.el.querySelector('.butterfly-poem').textContent = currentLabel;
+        this.el.querySelector('.butterfly-poem').textContent = ''; // 落地停歇时才填入要说的文字
         container.appendChild(this.el);
     }
 
@@ -336,6 +386,8 @@
                 this.speed = 0;
                 this.x = this.landingX;
                 this.y = this.landingY;
+                // 落地停歇：换下一条要显示的文字（起身时由 CSS 自动淡出）
+                showMessageOnLanding();
             }
         }
     };
@@ -455,86 +507,16 @@
         }
     }
 
-    function eachPoem(fn) {
-        var poems = container.querySelectorAll('.butterfly-poem');
-        for (var i = 0; i < poems.length; i++) fn(poems[i]);
-    }
-
-    function showPoem(text) {
-        eachPoem(function(el) {
-            el.textContent = text;
-            el.classList.add('show');
-        });
-    }
-
-    function hidePoem() {
-        eachPoem(function(el) {
-            el.classList.remove('show');
-        });
-    }
-
-    // 切换分类/模块时，蝴蝶依次说：分类·模块 →「你好！我是小花」→「我的投资战绩是」→ 一条「字段+数值」
-    // 每次切换只走一遍，中途再次切换会作废上一轮；没说完的字段下次切换接着显示
-    function showLabelOnce(text) {
-        var seq = ++labelSeq;
-        currentLabel = text;
-        if (labelTimer) {
-            clearTimeout(labelTimer);
-            labelTimer = null;
-        }
-
-        // 先去取账户数据（和开场白并行，等轮到它时基本已就绪）
-        var chips = null;
-        fetchFundChips(function(list) { chips = list; });
-
-        var steps = [text].concat(INTRO_LINES);
-        var step = 0;
-
-        function showNext() {
-            if (seq !== labelSeq) return;
-            if (step < steps.length) {
-                var cur = steps[step];
-                var ms = step === 0 ? LABEL_SHOW_MS : INTRO_SHOW_MS;
-                step++;
-                showPoem(cur);
-                labelTimer = setTimeout(showNext, ms);
-                return;
-            }
-            // 最后一步：一条「字段 + 数值」（剩下的下次切换再显示）
-            var tries = 0;
-            (function showChip() {
-                if (seq !== labelSeq) return;
-                if (!chips) {
-                    if (tries++ < 6) {
-                        labelTimer = setTimeout(showChip, 500);
-                    } else {
-                        hidePoem();
-                    }
-                    return;
-                }
-                if (!chips.length) {
-                    hidePoem();
-                    return;
-                }
-                var chip = chips[chipIndex % chips.length];
-                chipIndex++;
-                showPoem(chip);
-                labelTimer = setTimeout(function() {
-                    if (seq !== labelSeq) return;
-                    hidePoem();
-                }, CHIP_SHOW_MS);
-            })();
-        }
-
-        showNext();
-    }
+    // 进入页面就先取一次接口数据放浏览器缓存，之后蝴蝶只读缓存循环显示
+    initFundData();
 
     for (var vi = 0; vi < VIEW_LABELS.length; vi++) {
         (function(cfg) {
             var btn = document.querySelector(cfg.selector);
             if (!btn) return;
             btn.addEventListener('click', function() {
-                showLabelOnce(cfg.text);
+                // 切换页面：等蝴蝶下一次停落时先显示「分类 · 模块」
+                pendingLabel = cfg.text;
             });
         })(VIEW_LABELS[vi]);
     }
