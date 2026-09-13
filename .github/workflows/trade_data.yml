@@ -1,4 +1,4 @@
-name: 账户快照
+name: 账户日数据
 
 # 每天北京时间 04:00 通过 baba 接口取一次账户信息，写入 data/fund-history.json 并提交回仓库。
 # 前端页面读取该文件里的每日总金额，自行计算日/月增长率。
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: data_u_update
+  group: fund-snapshot
   cancel-in-progress: false
 
 jobs:
