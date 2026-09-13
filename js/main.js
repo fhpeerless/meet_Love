@@ -554,17 +554,14 @@ $(function() {
     runAsync().start();
 })();
 
-var FUND_API_BASE = 'https://api.xtwa.org';
+// ===== 爱心储罐数据源 =====
+// 1) baba 程序对外只读接口（实时）：https://baba.xtwa.org/public/fund
+// 2) 仓库每日快照：./data/fund-history.json（GitHub 工作流每天 04:00 写入，作为兜底 + 增长率来源）
+var FUND_API_BASE = 'https://baba.xtwa.org';
+var FUND_HISTORY_URL = './data/fund-history.json';
 
 function proxyApi(path) {
     return FUND_API_BASE + path;
-}
-
-function formatTime(ts) {
-    var d = new Date(ts * 1000);
-    var pad = function(n) { return n < 10 ? '0' + n : n; };
-    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
-           pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 }
 
 var _chartJsLoading = false;
@@ -607,94 +604,122 @@ function ensureChartJs(callback) {
 }
 
 function loadFundData() {
-    $('#fund-position-text').text('查询中...');
+    $('#fund-position-text').text('查询中...').css('color', '');
     $('#fund-update-time').text('');
     $('#fund-chart').hide();
 
-    $.when(
-        $.ajax({ url: proxyApi('/api/status'), dataType: 'json', timeout: 15000 }),
-        $.ajax({ url: proxyApi('/api/records?limit=7'), dataType: 'json', timeout: 15000 }),
-        $.ajax({ url: proxyApi('/api/monthly-records?limit=7'), dataType: 'json', timeout: 15000 })
-    ).done(function(statusRes, recordsRes, monthlyRes) {
-        var statusData = statusRes[0];
-        var recordsData = recordsRes[0];
-        var monthlyData = monthlyRes[0];
+    // 实时接口与仓库每日快照同时请求：实时优先，快照兜底
+    var live = null, hist = null, pending = 2;
+    var done = function() {
+        if (--pending > 0) return;
+        renderFundData(live, hist);
+    };
+    $.ajax({ url: proxyApi('/public/fund'), dataType: 'json', timeout: 10000 })
+        .done(function(d) { if (d && d.ok) live = d; })
+        .always(done);
+    $.ajax({ url: FUND_HISTORY_URL + '?t=' + Date.now(), dataType: 'json', timeout: 10000 })
+        .done(function(d) { hist = d; })
+        .always(done);
+}
 
-        if (!statusData || !statusData.ok) {
-            $('#fund-position-text').text('获取失败').css('color', '#ff6b6b');
-            return;
+// 每日快照去重（同一天只保留最后一条）并按日期升序
+function dedupeDaily(list) {
+    var out = [], index = {};
+    (list || []).forEach(function(d) {
+        if (!d || !d.date || d.total == null) return;
+        if (index[d.date] != null) { out[index[d.date]] = d; return; }
+        index[d.date] = out.length;
+        out.push(d);
+    });
+    out.sort(function(a, b) { return a.date < b.date ? -1 : 1; });
+    return out;
+}
+
+// 按仓库保存的每日总金额汇总出每月总金额（取当月最后一天）
+function buildMonthlyRecords(daily) {
+    var byMonth = {};
+    daily.forEach(function(d) {
+        if (!d || !d.date || d.total == null) return;
+        byMonth[d.date.slice(0, 7)] = d.total;
+    });
+    return Object.keys(byMonth).sort().map(function(m) {
+        return { snapshot_month: m, equity: byMonth[m] };
+    });
+}
+
+// 币种名只显示首字母：'空 MRVL / 空 MSTR' -> '空 M / 空 M'
+function shortDirections(text) {
+    if (!text) return text;
+    return String(text).split('/').map(function(part) {
+        var s = part.trim();
+        if (!s) return s;
+        var bits = s.split(/\s+/);
+        if (bits.length >= 2) {
+            bits[bits.length - 1] = bits[bits.length - 1].charAt(0);
+            return bits.join(' ');
         }
+        return s.charAt(0);
+    }).join(' / ');
+}
 
-        // 从 balances 数组中提取 USDT 的可用余额和冻结金额
-        var usdtBalance = null;
-        if (statusData.balances && statusData.balances.length > 0) {
-            for (var b = 0; b < statusData.balances.length; b++) {
-                if (statusData.balances[b].currency === 'USDT') {
-                    usdtBalance = statusData.balances[b];
-                    break;
-                }
-            }
-        }
-        var availBal = usdtBalance ? usdtBalance.available : null;
-        var frozenBal = usdtBalance ? usdtBalance.frozen : null;
+function renderFundData(live, hist) {
+    var snap = live || (hist && hist.current) || null;
 
-        // 从 positions 数组中取第一个持仓信息
-        var firstPos = (statusData.positions && statusData.positions.length > 0) ? statusData.positions[0] : null;
-        var unrealizedPnl = firstPos ? firstPos.unrealized_pnl : null;
-        var pnlRatio = firstPos ? firstPos.pnl_ratio_percent : null;
-        var posSide = firstPos ? firstPos.side : null;
-        var leverage = firstPos ? firstPos.leverage : null;
-
-        $('#fund-total-equity').text(statusData.total_equity != null ? statusData.total_equity.toFixed(2) : '--');
-        $('#fund-available-balance').text(availBal != null ? availBal.toFixed(2) : '--');
-        $('#fund-frozen-balance').text(frozenBal != null ? frozenBal.toFixed(2) : '--');
-        $('#fund-unrealized-pnl').text(unrealizedPnl != null ? unrealizedPnl.toFixed(2) : '--');
-
-        var pnlEl = $('#fund-unrealized-pnl');
-        if (unrealizedPnl != null) {
-            pnlEl.css('color', unrealizedPnl >= 0 ? '#e74c3c' : '#27ae60');
-        }
-
-        var ratioEl = $('#fund-pnl-ratio');
-        if (pnlRatio != null) {
-            ratioEl.text(pnlRatio.toFixed(2));
-            ratioEl.css('color', pnlRatio >= 0 ? '#e74c3c' : '#27ae60');
-        } else {
-            ratioEl.text('--');
-        }
-
-        if (statusData.has_position && firstPos) {
-            var sideText = posSide === 'long' ? '方向多' : '方向空';
-            $('#fund-position-text').text('投资中 ' + sideText + ' | ' + leverage + '倍速');
-            $('#fund-position-text').css('color', posSide === 'long' ? '#e74c3c' : '#27ae60');
-        } else {
-            $('#fund-position-text').text('🟢 无投资');
-            $('#fund-position-text').css('color', '#27ae60');
-        }
-
-        if (statusData.timestamp) {
-            $('#fund-update-time').text('更新于 ' + formatTime(statusData.timestamp));
-        }
-
-        if (recordsData && recordsData.ok && recordsData.records && recordsData.records.length >= 1) {
-            console.log('API返回日记录:', JSON.stringify(recordsData.records));
-            console.log('API返回月记录:', JSON.stringify(monthlyData));
-            ensureChartJs(function() {
-                renderFundChart(recordsData.records, monthlyData);
-            });
-        } else {
-            var container = $('.fund-chart-container');
-            container.find('.fund-chart-loading').remove();
-            container.append('<div class="fund-chart-loading">暂无快照数据，明天凌晨4点自动生成</div>');
-        }
-    }).fail(function() {
+    if (!snap) {
         $('#fund-position-text').text('连接失败').css('color', '#ff6b6b');
         $('#fund-total-equity').text('--');
         $('#fund-available-balance').text('--');
-        $('#fund-frozen-balance').text('--');
+        $('#fund-open-count').text('--');
         $('#fund-unrealized-pnl').text('--');
         $('#fund-pnl-ratio').text('--');
-    });
+        return;
+    }
+
+    function num(v) { return v == null ? '--' : Number(v).toFixed(2); }
+
+    // 总权益 -> 总金额（接口 total_amount）
+    $('#fund-total-equity').text(num(snap.total_amount));
+    // 可用余额
+    $('#fund-available-balance').text(num(snap.available));
+    // 投资数 -> 当前持仓总数（接口 open_count）
+    $('#fund-open-count').text(snap.open_count == null ? '--' : snap.open_count);
+    // 未实现盈亏
+    $('#fund-unrealized-pnl')
+        .text(num(snap.unrealized_pnl))
+        .css('color', snap.unrealized_pnl == null ? '' : (snap.unrealized_pnl >= 0 ? '#e74c3c' : '#27ae60'));
+    // 总盈亏（接口 total_profit_pct）
+    $('#fund-pnl-ratio')
+        .text(num(snap.total_profit_pct))
+        .css('color', snap.total_profit_pct == null ? '' : (snap.total_profit_pct >= 0 ? '#e74c3c' : '#27ae60'));
+
+    // 趋势状态 -> 当前持仓的所有方向（接口 direction_text）
+    var pos = snap.positions || [];
+    if (snap.open_count > 0 && snap.direction_text) {
+        var allShort = pos.length > 0 && pos.every(function(p) { return p.short; });
+        $('#fund-position-text').text('投资中 ' + shortDirections(snap.direction_text)).css('color', allShort ? '#27ae60' : '#e74c3c');
+    } else {
+        $('#fund-position-text').text('🟢 无投资').css('color', '#27ae60');
+    }
+
+    if (live && live.time) {
+        $('#fund-update-time').text('实时更新于 ' + live.time);
+    } else if (hist && hist.updated_at) {
+        $('#fund-update-time').text('快照 ' + hist.updated_at);
+    }
+
+    // 图表：用仓库保存的每日总金额，前端算出日/月增长率
+    var daily = dedupeDaily(hist && hist.daily);
+    var records = daily.map(function(d) { return { snapshot_date: d.date, equity: d.total }; });
+    var container = $('.fund-chart-container');
+    container.find('.fund-chart-loading').remove();
+
+    if (records.length >= 1) {
+        ensureChartJs(function() {
+            renderFundChart(records, { ok: true, records: buildMonthlyRecords(daily) });
+        });
+    } else {
+        container.append('<div class="fund-chart-loading">暂无快照数据，每天凌晨4点自动生成</div>');
+    }
 }
 
 function renderFundChart(records, monthlyRecords) {
@@ -974,7 +999,8 @@ function renderFundChart(records, monthlyRecords) {
                 maintainAspectRatio: false,
                 animation: { duration: 800 },
                 layout: {
-                    padding: { bottom: 30 }
+                    // 底部留白要够：下面还要画 x 轴刻度(约 +6px) 和「— 近7天 —」分区标签(约 +30px)
+                    padding: { bottom: 56 }
                 },
                 plugins: {
                     legend: {
