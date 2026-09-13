@@ -560,6 +560,18 @@ $(function() {
 var FUND_API_BASE = 'https://baba.xtwa.org';
 var FUND_HISTORY_URL = './data/fund-history.json';
 
+// 版本号取自 index.html 里 main.js 的 ?v=xxx：
+// 页面上显示的版本 = 浏览器实际加载的那份 main.js 的版本，可用来确认有没有吃到旧缓存。
+var FUND_PAGE_VERSION = (function() {
+    var el = document.currentScript || document.querySelector('script[src*="main.js"]');
+    var m = el && el.src ? el.src.match(/[?&]v=([^&]+)/) : null;
+    return m ? m[1] : '';
+})();
+
+$(function() {
+    if (FUND_PAGE_VERSION) $('#fund-version').text('v' + FUND_PAGE_VERSION);
+});
+
 function proxyApi(path) {
     return FUND_API_BASE + path;
 }
