@@ -858,7 +858,25 @@ function renderFundChart(records, monthlyRecords) {
 
         console.log('Chart对象可用:', typeof Chart);
 
-        // 柱形上方显示各自数值的自定义插件：增长率柱显示百分比，总额柱显示金额
+        // 依据柱子宽度自适应字号：文字宽度随柱子一起缩放
+        // 视口放大/缩小时柱子会变宽/变窄，字号同步变化才能保证数值的显示宽度始终等于柱宽
+        function fitLabelFont(ctx, text, barWidth, baseSize) {
+            var size = baseSize;
+            if (barWidth && barWidth > 0) {
+                ctx.font = 'bold ' + baseSize + 'px 微软雅黑';
+                var w = ctx.measureText(text).width;
+                if (w > 0) {
+                    // 目标：文字宽度约为柱宽的 90%，柱子越细字号越小
+                    size = baseSize * (barWidth * 0.9) / w;
+                }
+            }
+            // 下限 7px 保证小视口下仍可辨认，超出柱宽的部分交给 fillText 的 maxWidth 压缩
+            size = Math.max(7, Math.min(22, size));
+            ctx.font = 'bold ' + size.toFixed(1) + 'px 微软雅黑';
+            return size;
+        }
+
+        // 柱形上方显示各自数值的自定义插件：增长率柱显示百分比，金额柱显示金额
         var datalabelsPlugin = {
             id: 'datalabels',
             afterDatasetsDraw: function(chart) {
@@ -872,27 +890,35 @@ function renderFundChart(records, monthlyRecords) {
                     if (!meta || !meta.data) return;
 
                     meta.data.forEach(function(bar, index) {
-                        var text, color;
+                        var text, color, baseSize;
                         if (dsIndex === 0) {
                             // 增长率柱：显示带符号百分比
                             var gv = growthValues[index];
                             if (gv === null || gv === undefined) return;
                             text = gv.toFixed(2) + '%';
                             color = gv >= 0 ? '#e74c3c' : '#27ae60';
-                            ctx.font = 'bold 11px 微软雅黑';
+                            baseSize = 11;
                         } else if (dsIndex === 1) {
                             // 金额柱：显示实际金额(金币)，下降时文字同步转灰
                             var tv = totalValues[index];
                             if (tv === null || tv === undefined) return;
                             text = tv.toFixed(2);
                             color = isTotalDown(index) ? '#7f8c8d' : '#2980b9';
-                            ctx.font = 'bold 10px 微软雅黑';
+                            baseSize = 10;
                         } else {
                             return;
                         }
                         ctx.fillStyle = color;
+                        // 字号随柱子宽度缩放，使数值的显示宽度与柱子保持一致
+                        var fontSize = fitLabelFont(ctx, text, bar.width, baseSize);
                         // 柱形按绝对值向上绘制，数值标签显示在柱顶
-                        ctx.fillText(text, bar.x, bar.y - 4);
+                        var labelY = bar.y - Math.max(3, fontSize * 0.35);
+                        if (bar.width > 0) {
+                            // maxWidth 兜底：柱子再细也不会让数值超出柱宽
+                            ctx.fillText(text, bar.x, labelY, bar.width);
+                        } else {
+                            ctx.fillText(text, bar.x, labelY);
+                        }
                     });
                 });
 
