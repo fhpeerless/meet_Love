@@ -647,15 +647,18 @@ function dedupeDaily(list) {
     return out;
 }
 
-// 按仓库保存的每日总金额汇总出每月总金额（取当月最后一天）
+// 按仓库保存的每日总金额汇总出每月总金额（取当月所有快照的平均值）
 function buildMonthlyRecords(daily) {
     var byMonth = {};
     daily.forEach(function(d) {
         if (!d || !d.date || d.total == null) return;
-        byMonth[d.date.slice(0, 7)] = d.total;
+        var m = d.date.slice(0, 7);
+        if (!byMonth[m]) byMonth[m] = { sum: 0, count: 0 };
+        byMonth[m].sum += Number(d.total);
+        byMonth[m].count += 1;
     });
     return Object.keys(byMonth).sort().map(function(m) {
-        return { snapshot_month: m, equity: byMonth[m] };
+        return { snapshot_month: m, equity: byMonth[m].sum / byMonth[m].count };
     });
 }
 
@@ -776,79 +779,60 @@ function renderFundChart(records, monthlyRecords) {
             }
         }
 
-        // ===== 第1部分: 近7天日增长率 (索引 0-6) =====
-        var labels = ['近7天', '', '', '', '', '', ''];
-        var dailyGrowthValues = [];
-        var dailyGrowthData = [];
-        var dailyEquityValues = [];
-        var monthlyGrowthValues = [];
-        var monthlyGrowthData = [];
-        var monthlyEquityValues = [];
+        // ===== 组装 14 个分类：前 7 个为“近7天”，后 7 个为“近7个月” =====
+        // 每个分类下并排两根柱子：增长率柱 + 金额柱
+        // 竖轴单位：1 金币 / 1%，两者共用同一根竖轴
+        var labels = [];
+        var growthValues = [];   // 带符号的增长率(%)，用于柱顶文字
+        var growthData = [];     // 柱形高度按绝对值绘制
+        var totalValues = [];    // 当日总额 / 当月平均总额(金币)
 
-        var barCount = Math.min(7, dailyData.length);
-        var startIndex = dailyData.length - barCount;
+        // ===== 第1部分: 近7天 (索引 0-6) =====
+        var dayCount = Math.min(7, dailyData.length);
+        var startIndex = dailyData.length - dayCount;
 
         for (var i = 0; i < 7; i++) {
-            if (i < barCount) {
-                var dataIndex = startIndex + i;
-                var current = dailyData[dataIndex];
-                labels[i] = formatDate(current.snapshot_date);
-
-                // 使用前端根据 equity 计算的日增长率
+            if (i < dayCount) {
+                var current = dailyData[startIndex + i];
                 var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
-                dailyGrowthValues.push(dailyVal);
-                dailyGrowthData.push(Math.abs(dailyVal));
-                // 当日数值（用于柱顶标签显示）
-                dailyEquityValues.push(current.equity == null ? null : Number(current.equity));
+                var dayTotal = current.equity == null ? null : Number(current.equity);
 
-                // 月数据集对应位置填null（不显示柱子）
-                monthlyGrowthValues.push(null);
-                monthlyGrowthData.push(null);
-                monthlyEquityValues.push(null);
+                labels.push(formatDate(current.snapshot_date));
+                growthValues.push(dailyVal);
+                growthData.push(Math.abs(dailyVal));
+                totalValues.push(dayTotal);
             } else {
-                labels[i] = '--';
-                dailyGrowthValues.push(0);
-                dailyGrowthData.push(0);
-                dailyEquityValues.push(null);
-                monthlyGrowthValues.push(null);
-                monthlyGrowthData.push(null);
-                monthlyEquityValues.push(null);
+                labels.push('--');
+                growthValues.push(null);
+                growthData.push(null);
+                totalValues.push(null);
             }
         }
 
-        // ===== 第2部分: 近7月月增长率 (索引 7-13) =====
+        // ===== 第2部分: 近7个月 (索引 7-13) =====
         var monthCount = Math.min(7, monthlyData.length);
-        for (var i = 0; i < 7; i++) {
-            if (i < monthCount) {
-                var currentMonth = monthlyData[i];
-                var monthLabel = (currentMonth.snapshot_month ? parseInt(currentMonth.snapshot_month.slice(5)) + '月' : '--');
-                labels.push(monthLabel);
-
-                // 日数据集对应位置填null（不显示柱子）
-                dailyGrowthValues.push(null);
-                dailyGrowthData.push(null);
-                dailyEquityValues.push(null);
-
-                // 使用前端根据 equity 计算的月增长率
+        for (var j = 0; j < 7; j++) {
+            if (j < monthCount) {
+                var currentMonth = monthlyData[j];
                 var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
-                monthlyGrowthValues.push(monthlyVal);
-                monthlyGrowthData.push(Math.abs(monthlyVal));
-                // 当月数值（用于柱顶标签显示）
-                monthlyEquityValues.push(currentMonth.equity == null ? null : Number(currentMonth.equity));
+                var monthTotal = currentMonth.equity == null ? null : Number(currentMonth.equity);
+                var monthLabel = currentMonth.snapshot_month ? parseInt(currentMonth.snapshot_month.slice(5)) + '月' : '--';
+
+                labels.push(monthLabel);
+                growthValues.push(monthlyVal);
+                growthData.push(Math.abs(monthlyVal));
+                totalValues.push(monthTotal);
             } else {
                 labels.push('--');
-                dailyGrowthValues.push(null);
-                dailyGrowthData.push(null);
-                dailyEquityValues.push(null);
-                monthlyGrowthValues.push(0);
-                monthlyGrowthData.push(0);
-                monthlyEquityValues.push(null);
+                growthValues.push(null);
+                growthData.push(null);
+                totalValues.push(null);
             }
         }
 
         console.log('图表标签:', labels);
-        console.log('日增长率:', dailyGrowthValues);
-        console.log('月增长率:', monthlyGrowthValues);
+        console.log('增长率(%):', growthValues);
+        console.log('金额(金币):', totalValues);
 
         var canvas = document.getElementById('fund-chart');
         console.log('Canvas元素:', canvas);
@@ -874,13 +858,12 @@ function renderFundChart(records, monthlyRecords) {
 
         console.log('Chart对象可用:', typeof Chart);
 
-        // 柱形上方显示实际带符号数值的自定义插件
+        // 柱形上方显示各自数值的自定义插件：增长率柱显示百分比，总额柱显示金额
         var datalabelsPlugin = {
             id: 'datalabels',
             afterDatasetsDraw: function(chart) {
                 var ctx = chart.ctx;
                 ctx.save();
-                ctx.font = 'bold 11px 微软雅黑';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
 
@@ -888,37 +871,28 @@ function renderFundChart(records, monthlyRecords) {
                     var meta = chart.getDatasetMeta(dsIndex);
                     if (!meta || !meta.data) return;
 
-                    // 获取原始带符号的增长率数值，以及对应的当日/当月数值
-                    var values, equityValues;
-                    if (dsIndex === 0) {
-                        values = dailyGrowthValues;
-                        equityValues = dailyEquityValues;
-                    } else if (dsIndex === 1) {
-                        values = monthlyGrowthValues;
-                        equityValues = monthlyEquityValues;
-                    } else {
-                        return;
-                    }
-
                     meta.data.forEach(function(bar, index) {
-                        if (values[index] === undefined || values[index] === null) return;
-                        var displayVal = values[index];
-                        // 柱形图按绝对值绘制，柱顶上方依次显示：数值、增长率
-                        var barTop = bar.y;
-                        var color = displayVal >= 0 ? '#e74c3c' : '#27ae60';
-
-                        // 第1行（靠近柱顶）：增长率
-                        ctx.fillStyle = color;
-                        ctx.font = 'bold 11px 微软雅黑';
-                        ctx.fillText(displayVal.toFixed(2) + '%', bar.x, barTop - 4);
-
-                        // 第2行（增长率上方）：当日/当月数值
-                        var equityVal = equityValues ? equityValues[index] : null;
-                        if (equityVal !== null && equityVal !== undefined) {
-                            ctx.fillStyle = '#888';
-                            ctx.font = '10px 微软雅黑';
-                            ctx.fillText(equityVal.toFixed(2), bar.x, barTop - 18);
+                        var text, color;
+                        if (dsIndex === 0) {
+                            // 增长率柱：显示带符号百分比
+                            var gv = growthValues[index];
+                            if (gv === null || gv === undefined) return;
+                            text = gv.toFixed(2) + '%';
+                            color = gv >= 0 ? '#e74c3c' : '#27ae60';
+                            ctx.font = 'bold 11px 微软雅黑';
+                        } else if (dsIndex === 1) {
+                            // 金额柱：显示实际金额(金币)，下降时文字同步转灰
+                            var tv = totalValues[index];
+                            if (tv === null || tv === undefined) return;
+                            text = tv.toFixed(2);
+                            color = isTotalDown(index) ? '#7f8c8d' : '#2980b9';
+                            ctx.font = 'bold 10px 微软雅黑';
+                        } else {
+                            return;
                         }
+                        ctx.fillStyle = color;
+                        // 柱形按绝对值向上绘制，数值标签显示在柱顶
+                        ctx.fillText(text, bar.x, bar.y - 4);
                     });
                 });
 
@@ -952,30 +926,16 @@ function renderFundChart(records, monthlyRecords) {
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // 手动绘制 x 轴刻度标签（隐藏默认刻度，自定义绘制以精确对齐每个柱形）
+                // 手动绘制 x 轴刻度标签（隐藏默认刻度，每个分类居中于一对柱子下方）
                 var labels = chart.data.labels;
                 ctx.font = '10px 微软雅黑';
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = '#666';
                 var tickY = chartArea.bottom + 6;
 
-                // 计算柱形在分组中的偏移量
-                // 在 grouped bar 中，dataset 0（日）在左边，dataset 1（月）在右边
-                var catWidth = xScale.getPixelForValue(1) - xScale.getPixelForValue(0);
-                // categoryPercentage 默认 0.8，barPercentage=0.4
-                var barOffset = catWidth * 0.8 / 4; // 分组宽度的一半再一半
-
                 for (var i = 0; i < labels.length; i++) {
-                    var x = xScale.getPixelForValue(i);
-                    // 前7个（日增长率）对应 dataset 0，在分组左侧
-                    if (i < 7) {
-                        x -= barOffset;
-                    } else {
-                        // 后7个（月增长率）对应 dataset 1，在分组右侧
-                        x += barOffset;
-                    }
                     ctx.textAlign = 'center';
-                    ctx.fillText(labels[i], x, tickY);
+                    ctx.fillText(labels[i], xScale.getPixelForValue(i), tickY);
                 }
 
                 // 计算"近7天"标签位置（第1-7根柱子中间）
@@ -995,11 +955,38 @@ function renderFundChart(records, monthlyRecords) {
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = '#666';
                 ctx.fillText('— 近7天 —', dayCenterX, labelY);
-                ctx.fillText('— 近7个月 —', monthCenterX, labelY);
+                ctx.fillText('— 近7个月均值 —', monthCenterX, labelY);
 
                 ctx.restore();
             }
         };
+
+        // 金额柱使用斜纹填充，与实心的增长率柱形成明显的样式区别
+        // 蓝色：现期数值不低于基期；灰色：现期数值比基期下降
+        function makeStripePattern(fill, stroke) {
+            var pc = document.createElement('canvas');
+            pc.width = 8;
+            pc.height = 8;
+            var pctx = pc.getContext('2d');
+            pctx.fillStyle = fill;
+            pctx.fillRect(0, 0, 8, 8);
+            pctx.strokeStyle = stroke;
+            pctx.lineWidth = 2;
+            pctx.beginPath();
+            pctx.moveTo(-2, 2); pctx.lineTo(2, -2);
+            pctx.moveTo(0, 8); pctx.lineTo(8, 0);
+            pctx.moveTo(6, 10); pctx.lineTo(10, 6);
+            pctx.stroke();
+            return ctx.createPattern(pc, 'repeat');
+        }
+        var totalPatternUp = makeStripePattern('rgba(52, 152, 219, 0.5)', 'rgba(41, 128, 185, 0.9)');
+        var totalPatternDown = makeStripePattern('rgba(160, 160, 160, 0.45)', 'rgba(110, 110, 110, 0.9)');
+
+        // 现期金额是否比基期下降（基期取上一个周期，即增长率为负）
+        function isTotalDown(index) {
+            var gv = growthValues[index];
+            return gv !== null && gv !== undefined && gv < 0;
+        }
 
         window.fundChart = new Chart(ctx, {
             type: 'bar',
@@ -1007,30 +994,35 @@ function renderFundChart(records, monthlyRecords) {
                 labels: labels,
                 datasets: [
                     {
-                        label: '日变化量 (%)',
-                        data: dailyGrowthData,
-                        backgroundColor: dailyGrowthValues.map(function(v) {
-                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.8)' : 'rgba(39, 174, 96, 0.8)');
+                        label: '增长率 (%)',
+                        data: growthData,
+                        backgroundColor: growthValues.map(function(v) {
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.85)' : 'rgba(39, 174, 96, 0.85)');
                         }),
-                        borderColor: dailyGrowthValues.map(function(v) {
+                        borderColor: growthValues.map(function(v) {
                             return v === null ? 'transparent' : (v >= 0 ? 'rgb(231, 76, 60)' : 'rgb(39, 174, 96)');
                         }),
                         borderWidth: 1,
-                        borderRadius: 2,
-                        barPercentage: 0.4,
+                        borderRadius: 3,
+                        // 同一分类下两根柱子紧挨着，不留缝隙
+                        categoryPercentage: 0.5,
+                        barPercentage: 1.0,
                     },
                     {
-                        label: '月变化量 (%)',
-                        data: monthlyGrowthData,
-                        backgroundColor: monthlyGrowthValues.map(function(v) {
-                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.45)' : 'rgba(39, 174, 96, 0.45)');
+                        label: '金额 (金币)',
+                        data: totalValues,
+                        backgroundColor: totalValues.map(function(v, idx) {
+                            if (v === null || v === undefined) return 'transparent';
+                            return isTotalDown(idx) ? totalPatternDown : totalPatternUp;
                         }),
-                        borderColor: monthlyGrowthValues.map(function(v) {
-                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(231, 76, 60, 0.9)' : 'rgba(39, 174, 96, 0.9)');
+                        borderColor: totalValues.map(function(v, idx) {
+                            if (v === null || v === undefined) return 'transparent';
+                            return isTotalDown(idx) ? 'rgba(110, 110, 110, 0.9)' : 'rgba(41, 128, 185, 0.9)';
                         }),
                         borderWidth: 1,
-                        borderRadius: 2,
-                        barPercentage: 0.4,
+                        borderRadius: 3,
+                        categoryPercentage: 0.5,
+                        barPercentage: 1.0,
                     }
                 ]
             },
@@ -1054,18 +1046,16 @@ function renderFundChart(records, monthlyRecords) {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                var dsIndex = context.datasetIndex;
                                 var idx = context.dataIndex;
-                                var valuesArr = dsIndex === 0 ? dailyGrowthValues : monthlyGrowthValues;
-                                var equityArr = dsIndex === 0 ? dailyEquityValues : monthlyEquityValues;
-                                var val = valuesArr ? valuesArr[idx] : context.raw;
-                                if (val === null || val === undefined) return context.dataset.label + ': N/A';
-                                var text = context.dataset.label + ': ' + val.toFixed(2) + '%';
-                                var equityVal = equityArr ? equityArr[idx] : null;
-                                if (equityVal !== null && equityVal !== undefined) {
-                                    text += '  |  数值: ' + equityVal.toFixed(2);
+                                if (context.datasetIndex === 0) {
+                                    var gv = growthValues[idx];
+                                    if (gv === null || gv === undefined) return '增长率: N/A';
+                                    return '增长率: ' + gv.toFixed(2) + '%';
                                 }
-                                return text;
+                                var tv = totalValues[idx];
+                                if (tv === null || tv === undefined) return '金额: N/A';
+                                var prefix = idx >= 7 ? '月均值: ' : '金额: ';
+                                return prefix + tv.toFixed(2) + ' 金币';
                             }
                         }
                     }
@@ -1078,13 +1068,19 @@ function renderFundChart(records, monthlyRecords) {
                         }
                     },
                     y: {
+                        // 左竖轴单位：1 金币 / 1%；金额最高 100 金币，增长率最高 100%
                         min: 0,
                         max: 100,
                         grid: { color: 'rgba(0,0,0,0.06)' },
+                        title: {
+                            display: true,
+                            text: '增长率(%) / 金额(金币)',
+                            color: '#666',
+                            font: { size: 11, family: '微软雅黑' }
+                        },
                         ticks: {
-                            stepSize: 5,
-                            font: { size: 12, family: '微软雅黑' },
-                            callback: function(value) { return value.toFixed(0) + '%'; }
+                            stepSize: 10,
+                            font: { size: 12, family: '微软雅黑' }
                         }
                     }
                 }
