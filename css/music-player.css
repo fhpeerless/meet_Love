@@ -367,12 +367,21 @@
     position: absolute;
     bottom: -40px;
     line-height: 1;
-    color: rgba(190, 26, 37, 0.16);
+    color: #e74c3c;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
     animation-name: noteFloat;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     will-change: transform, opacity;
 }
+
+/* 逐个音符轮换彩色，悬浮时更明显 */
+.lyrics-notes span:nth-child(6n + 1) { color: #e74c3c; }  /* 红 */
+.lyrics-notes span:nth-child(6n + 2) { color: #e67e22; }  /* 橙 */
+.lyrics-notes span:nth-child(6n + 3) { color: #16a085; }  /* 青绿 */
+.lyrics-notes span:nth-child(6n + 4) { color: #27ae60; }  /* 绿 */
+.lyrics-notes span:nth-child(6n + 5) { color: #2980b9; }  /* 蓝 */
+.lyrics-notes span:nth-child(6n)     { color: #8e44ad; }  /* 紫 */
 
 @keyframes noteFloat {
     0%   { transform: translateY(0) rotate(-10deg) scale(0.9); opacity: 0; }
