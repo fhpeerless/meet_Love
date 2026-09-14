@@ -5,7 +5,7 @@ name: 账户日数据
 # 注意：GitHub Actions 的 cron 只能按 UTC 走，UTC 20:00 = 北京时间 04:00。
 on:
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 15 * * *'
   workflow_dispatch:
 
 permissions:
