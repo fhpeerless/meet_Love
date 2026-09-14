@@ -1,20 +1,26 @@
 {
-  "updated_at": "2026-09-13 20:47:36",
+  "updated_at": "2026-09-14 16:18:14",
   "current": {
-    "total_amount": 11.93,
-    "available": 3.13,
-    "unrealized_pnl": 0.3,
-    "total_profit": 0.63,
-    "total_profit_pct": 5.71,
+    "total_amount": 12.17,
+    "available": 3.41,
+    "unrealized_pnl": 0.27,
+    "total_profit": 1.06,
+    "total_profit_pct": 9.79,
     "open_count": 3,
-    "direction_text": "空 MRVL / 空 MSTR / 空 CRCL",
-    "time": "2026-09-13 20:47:36"
+    "direction_text": "多 CL / 多 BZ / 空 MRVL",
+    "time": "2026-09-14 16:18:14"
   },
   "daily": [
     {
       "date": "2026-09-13",
       "total": 11.93,
       "profit_pct": 5.71,
+      "open_count": 3
+    },
+    {
+      "date": "2026-09-14",
+      "total": 12.17,
+      "profit_pct": 9.79,
       "open_count": 3
     }
   ]
