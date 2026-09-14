@@ -780,8 +780,10 @@ function renderFundChart(records, monthlyRecords) {
         var labels = ['近7天', '', '', '', '', '', ''];
         var dailyGrowthValues = [];
         var dailyGrowthData = [];
+        var dailyEquityValues = [];
         var monthlyGrowthValues = [];
         var monthlyGrowthData = [];
+        var monthlyEquityValues = [];
 
         var barCount = Math.min(7, dailyData.length);
         var startIndex = dailyData.length - barCount;
@@ -796,16 +798,21 @@ function renderFundChart(records, monthlyRecords) {
                 var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
                 dailyGrowthValues.push(dailyVal);
                 dailyGrowthData.push(Math.abs(dailyVal));
+                // 当日数值（用于柱顶标签显示）
+                dailyEquityValues.push(current.equity == null ? null : Number(current.equity));
 
                 // 月数据集对应位置填null（不显示柱子）
                 monthlyGrowthValues.push(null);
                 monthlyGrowthData.push(null);
+                monthlyEquityValues.push(null);
             } else {
                 labels[i] = '--';
                 dailyGrowthValues.push(0);
                 dailyGrowthData.push(0);
+                dailyEquityValues.push(null);
                 monthlyGrowthValues.push(null);
                 monthlyGrowthData.push(null);
+                monthlyEquityValues.push(null);
             }
         }
 
@@ -820,17 +827,22 @@ function renderFundChart(records, monthlyRecords) {
                 // 日数据集对应位置填null（不显示柱子）
                 dailyGrowthValues.push(null);
                 dailyGrowthData.push(null);
+                dailyEquityValues.push(null);
 
                 // 使用前端根据 equity 计算的月增长率
                 var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
                 monthlyGrowthValues.push(monthlyVal);
                 monthlyGrowthData.push(Math.abs(monthlyVal));
+                // 当月数值（用于柱顶标签显示）
+                monthlyEquityValues.push(currentMonth.equity == null ? null : Number(currentMonth.equity));
             } else {
                 labels.push('--');
                 dailyGrowthValues.push(null);
                 dailyGrowthData.push(null);
+                dailyEquityValues.push(null);
                 monthlyGrowthValues.push(0);
                 monthlyGrowthData.push(0);
+                monthlyEquityValues.push(null);
             }
         }
 
@@ -876,12 +888,14 @@ function renderFundChart(records, monthlyRecords) {
                     var meta = chart.getDatasetMeta(dsIndex);
                     if (!meta || !meta.data) return;
 
-                    // 获取原始带符号的值
-                    var values;
+                    // 获取原始带符号的增长率数值，以及对应的当日/当月数值
+                    var values, equityValues;
                     if (dsIndex === 0) {
                         values = dailyGrowthValues;
+                        equityValues = dailyEquityValues;
                     } else if (dsIndex === 1) {
                         values = monthlyGrowthValues;
+                        equityValues = monthlyEquityValues;
                     } else {
                         return;
                     }
@@ -889,11 +903,22 @@ function renderFundChart(records, monthlyRecords) {
                     meta.data.forEach(function(bar, index) {
                         if (values[index] === undefined || values[index] === null) return;
                         var displayVal = values[index];
-                        // 柱形图按绝对值绘制，数值标签显示在柱顶
+                        // 柱形图按绝对值绘制，柱顶上方依次显示：数值、增长率
                         var barTop = bar.y;
                         var color = displayVal >= 0 ? '#e74c3c' : '#27ae60';
+
+                        // 第1行（靠近柱顶）：增长率
                         ctx.fillStyle = color;
+                        ctx.font = 'bold 11px 微软雅黑';
                         ctx.fillText(displayVal.toFixed(2) + '%', bar.x, barTop - 4);
+
+                        // 第2行（增长率上方）：当日/当月数值
+                        var equityVal = equityValues ? equityValues[index] : null;
+                        if (equityVal !== null && equityVal !== undefined) {
+                            ctx.fillStyle = '#888';
+                            ctx.font = '10px 微软雅黑';
+                            ctx.fillText(equityVal.toFixed(2), bar.x, barTop - 18);
+                        }
                     });
                 });
 
@@ -1032,9 +1057,15 @@ function renderFundChart(records, monthlyRecords) {
                                 var dsIndex = context.datasetIndex;
                                 var idx = context.dataIndex;
                                 var valuesArr = dsIndex === 0 ? dailyGrowthValues : monthlyGrowthValues;
+                                var equityArr = dsIndex === 0 ? dailyEquityValues : monthlyEquityValues;
                                 var val = valuesArr ? valuesArr[idx] : context.raw;
                                 if (val === null || val === undefined) return context.dataset.label + ': N/A';
-                                return context.dataset.label + ': ' + val.toFixed(2) + '%';
+                                var text = context.dataset.label + ': ' + val.toFixed(2) + '%';
+                                var equityVal = equityArr ? equityArr[idx] : null;
+                                if (equityVal !== null && equityVal !== undefined) {
+                                    text += '  |  数值: ' + equityVal.toFixed(2);
+                                }
+                                return text;
                             }
                         }
                     }
