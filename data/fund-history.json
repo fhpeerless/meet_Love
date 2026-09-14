@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-14 16:18:14",
+  "updated_at": "2026-09-15 03:47:06",
   "current": {
-    "total_amount": 12.17,
-    "available": 3.41,
-    "unrealized_pnl": 0.27,
-    "total_profit": 1.06,
-    "total_profit_pct": 9.79,
-    "open_count": 3,
-    "direction_text": "多 CL / 多 BZ / 空 MRVL",
-    "time": "2026-09-14 16:18:14"
+    "total_amount": 12.16,
+    "available": 12.16,
+    "unrealized_pnl": 0,
+    "total_profit": 0.84,
+    "total_profit_pct": 7.84,
+    "open_count": 0,
+    "direction_text": "无持仓",
+    "time": "2026-09-15 03:47:06"
   },
   "daily": [
     {
@@ -22,6 +22,12 @@
       "total": 12.17,
       "profit_pct": 9.79,
       "open_count": 3
+    },
+    {
+      "date": "2026-09-15",
+      "total": 12.16,
+      "profit_pct": 7.84,
+      "open_count": 0
     }
   ]
 }
