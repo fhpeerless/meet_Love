@@ -1,8 +1,8 @@
-name: 账户日数据
+name: 账户快照
 
-# 每天北京时间 04:00 通过 baba 接口取一次账户信息，写入 data/fund-history.json 并提交回仓库。
+# 每天北京时间 23:00 通过 baba 接口取一次账户信息，写入 data/fund-history.json 并提交回仓库。
 # 前端页面读取该文件里的每日总金额，自行计算日/月增长率。
-# 注意：GitHub Actions 的 cron 只能按 UTC 走，UTC 20:00 = 北京时间 04:00。
+# 注意：GitHub Actions 的 cron 只能按 UTC 走，UTC 15:00 = 北京时间 23:00。
 on:
   schedule:
     - cron: '0 15 * * *'
