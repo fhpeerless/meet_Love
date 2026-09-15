@@ -556,7 +556,7 @@ $(function() {
 
 // ===== 爱心储罐数据源 =====
 // 1) baba 程序对外只读接口（实时）：https://baba.xtwa.org/public/fund
-// 2) 仓库每日快照：./data/fund-history.json（GitHub 工作流每天 04:00 写入，作为兜底 + 增长率来源）
+// 2) 仓库每日快照：./data/fund-history.json（GitHub 工作流每天 23:00 写入，作为兜底 + 增长率来源）
 var FUND_API_BASE = 'https://baba.xtwa.org';
 var FUND_HISTORY_URL = './data/fund-history.json';
 
@@ -736,7 +736,7 @@ function renderFundData(live, hist) {
             renderFundChart(records, { ok: true, records: buildMonthlyRecords(daily) });
         });
     } else {
-        container.append('<div class="fund-chart-loading">暂无快照数据，每天凌晨4点自动生成</div>');
+        container.append('<div class="fund-chart-loading">暂无快照数据，每天 23:00 自动生成</div>');
     }
 }
 
