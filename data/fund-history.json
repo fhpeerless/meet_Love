@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-15 03:47:06",
+  "updated_at": "2026-09-16 02:49:47",
   "current": {
-    "total_amount": 12.16,
-    "available": 12.16,
-    "unrealized_pnl": 0,
-    "total_profit": 0.84,
-    "total_profit_pct": 7.84,
-    "open_count": 0,
-    "direction_text": "无持仓",
-    "time": "2026-09-15 03:47:06"
+    "total_amount": 15.65,
+    "available": 2.29,
+    "unrealized_pnl": 0.34,
+    "total_profit": 4.62,
+    "total_profit_pct": 42.83,
+    "open_count": 3,
+    "direction_text": "空 SKHYNIX / 空 SOXL / 空 MU",
+    "time": "2026-09-16 02:49:47"
   },
   "daily": [
     {
@@ -21,6 +21,12 @@
       "date": "2026-09-14",
       "total": 12.17,
       "profit_pct": 9.79,
+      "open_count": 3
+    },
+    {
+      "date": "2026-09-16",
+      "total": 15.65,
+      "profit_pct": 42.83,
       "open_count": 3
     }
   ]
