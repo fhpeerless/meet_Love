@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-16 02:49:47",
+  "updated_at": "2026-09-16 22:35:09",
   "current": {
-    "total_amount": 15.65,
-    "available": 2.29,
-    "unrealized_pnl": 0.34,
-    "total_profit": 4.62,
-    "total_profit_pct": 42.83,
-    "open_count": 3,
-    "direction_text": "空 SKHYNIX / 空 SOXL / 空 MU",
-    "time": "2026-09-16 02:49:47"
+    "total_amount": 11,
+    "available": 0,
+    "unrealized_pnl": -1.73,
+    "total_profit": -0.25,
+    "total_profit_pct": -2.47,
+    "open_count": 2,
+    "direction_text": "空 SNDK / 空 SNXX",
+    "time": "2026-09-16 22:35:09"
   },
   "daily": [
     {
@@ -28,6 +28,12 @@
       "total": 15.65,
       "profit_pct": 42.83,
       "open_count": 3
+    },
+    {
+      "date": "2026-09-16",
+      "total": 11,
+      "profit_pct": -2.47,
+      "open_count": 2
     }
   ]
 }
