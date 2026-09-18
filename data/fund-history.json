@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-17 22:40:51",
+  "updated_at": "2026-09-18 22:05:32",
   "current": {
-    "total_amount": 12.11,
-    "available": 0.97,
-    "unrealized_pnl": -0.13,
-    "total_profit": 0.74,
-    "total_profit_pct": 6.95,
+    "total_amount": 13.66,
+    "available": 0.85,
+    "unrealized_pnl": 0.07,
+    "total_profit": 1.88,
+    "total_profit_pct": 16.74,
     "open_count": 2,
-    "direction_text": "多 SOXL / 多 MU",
-    "time": "2026-09-17 22:40:51"
+    "direction_text": "多 MU / 多 SOXL",
+    "time": "2026-09-18 22:05:32"
   },
   "daily": [
     {
@@ -39,6 +39,12 @@
       "date": "2026-09-17",
       "total": 12.11,
       "profit_pct": 6.95,
+      "open_count": 2
+    },
+    {
+      "date": "2026-09-18",
+      "total": 13.66,
+      "profit_pct": 16.74,
       "open_count": 2
     }
   ]
