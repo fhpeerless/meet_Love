@@ -1115,17 +1115,24 @@ function renderValueChart(dailyData) {
         var canvas = document.getElementById('fund-chart');
         if (!canvas) return;
 
-        // 取最近 7 天（升序）
+        // 取最近 7 天（升序），不足 7 天时预留空位，保持横轴始终 7 个位置
         var last7 = dailyData.slice(-7);
+        var dayCount = last7.length;
 
         var labels = [];
         var valueData = [];
-        last7.forEach(function(d) {
-            var dateStr = d.snapshot_date || d.date || '';
-            var parts = dateStr.split('-');
-            labels.push(parts.length >= 3 ? (parseInt(parts[1]) + '/' + parseInt(parts[2])) : dateStr);
-            valueData.push(d.equity == null ? null : Number(d.equity));
-        });
+        for (var i = 0; i < 7; i++) {
+            if (i < dayCount) {
+                var d = last7[i];
+                var dateStr = d.snapshot_date || d.date || '';
+                var parts = dateStr.split('-');
+                labels.push(parts.length >= 3 ? (parseInt(parts[1]) + '/' + parseInt(parts[2])) : dateStr);
+                valueData.push(d.equity == null ? null : Number(d.equity));
+            } else {
+                labels.push('--');
+                valueData.push(null);
+            }
+        }
 
         // 计算每个点相对前一天的涨跌（第一个点视为上升）
         var valueDown = valueData.map(function(v, i) {
