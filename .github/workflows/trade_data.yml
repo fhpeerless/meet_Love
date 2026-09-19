@@ -3,9 +3,9 @@ name: 账户快照
 # 每天北京时间 23:00 通过 baba 接口取一次账户信息，写入 data/fund-history.json 并提交回仓库。
 # 工作流在写入当天快照时直接计算每日环比增长率，并回填当月均值与近7天最大回撤：
 #   daily 按月份分块：{ "2026-09": [ {date,total,growth_rate}, ... ], ... }
-#   month 记录每月均值：{ "2026-09": { snapshot_month, equity }, ... }
+#   month 记录每月均值及环比增长率：{ "2026-09": { snapshot_month, equity, growth_rate }, ... }
 #   stats 记录统计指标：{ "max_drawdown_7d": -5.32 }
-# 前端页面直接读取 growth_rate 与 month 均值，无需再自行计算。
+# 前端页面直接读取 growth_rate、month 均值与回撤，无需再自行计算。
 # 注意：GitHub Actions 的 cron 只能按 UTC 走，UTC 15:00 = 北京时间 23:00。
 on:
   schedule:
@@ -139,6 +139,23 @@ jobs:
                   'snapshot_month': month,
                   'equity': round(sum(totals) / len(totals), 2),
               }
+
+          # ---- 回填各月环比增长率（相对上一个月的均值）----
+          sorted_months = sorted(month_data.keys())
+          for idx, m in enumerate(sorted_months):
+              entry = month_data[m]
+              if not isinstance(entry, dict):
+                  continue
+              if idx == 0:
+                  entry['growth_rate'] = 0.0
+              else:
+                  prev = month_data[sorted_months[idx - 1]]
+                  prev_eq = prev.get('equity')
+                  cur_eq = entry.get('equity')
+                  if prev_eq not in (None, 0) and cur_eq is not None:
+                      entry['growth_rate'] = round((cur_eq - prev_eq) / prev_eq * 100, 2)
+                  else:
+                      entry['growth_rate'] = 0.0
 
           # ---- 计算近7天最大回撤 ----
           # 把按月份分块的 daily 拍平成按日期升序的 total 序列，取最近 7 个点

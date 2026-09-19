@@ -47,7 +47,8 @@
   "month": {
     "2026-09": {
       "snapshot_month": "2026-09",
-      "equity": 12.75
+      "equity": 12.75,
+      "growth_rate": 0.0
     }
   },
   "stats": {
