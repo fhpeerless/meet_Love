@@ -883,6 +883,38 @@ body {
     color: rgb(190, 26, 37);
 }
 
+.fund-chart-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-bottom: 12px;
+}
+
+.fund-chart-toggle-btn {
+    padding: 7px 22px;
+    font-size: 14px;
+    font-family: '微软雅黑', '宋体', sans-serif;
+    border: 2px solid rgb(190, 26, 37);
+    background: transparent;
+    color: rgb(190, 26, 37);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.fund-chart-toggle-btn:hover {
+    background: rgb(190, 26, 37);
+    color: white;
+}
+
+.fund-chart-toggle-btn.active {
+    background: rgb(190, 26, 37);
+    color: white;
+}
+
 .fund-chart-container {
     flex: 1;
     min-height: 300px;

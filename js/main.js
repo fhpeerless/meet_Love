@@ -578,6 +578,11 @@ function proxyApi(path) {
 
 var _chartJsLoading = false;
 
+// 图表切换状态：'days' 近7天 / 'months' 近7个月
+var _fundChartMode = 'days';
+// 缓存最近一次渲染所需的数据，用于切换时重新绘制
+var _fundChartData = null;
+
 function ensureChartJs(callback) {
     if (typeof Chart !== 'undefined') {
         callback();
@@ -732,17 +737,27 @@ function renderFundData(live, hist) {
     container.find('.fund-chart-loading').remove();
 
     if (records.length >= 1) {
+        // 缓存日/月数据，切换「近7天 / 近7个月」时无需重新请求接口
+        _fundChartData = {
+            records: records,
+            monthlyRecords: { ok: true, records: buildMonthlyRecords(daily) }
+        };
         ensureChartJs(function() {
-            renderFundChart(records, { ok: true, records: buildMonthlyRecords(daily) });
+            renderFundChart();
         });
     } else {
         container.append('<div class="fund-chart-loading">暂无快照数据，每天 23:00 自动生成</div>');
     }
 }
 
-function renderFundChart(records, monthlyRecords) {
+function renderFundChart() {
     try {
-        console.log('renderFundChart 开始, 日记录数:', records.length, '月记录数:', monthlyRecords ? monthlyRecords.records.length : 0);
+        if (!_fundChartData) {
+            return;
+        }
+        var records = _fundChartData.records;
+        var monthlyRecords = _fundChartData.monthlyRecords;
+        console.log('renderFundChart 开始, 模式:', _fundChartMode, '日记录数:', records.length, '月记录数:', monthlyRecords ? monthlyRecords.records.length : 0);
 
         var dailyData = records.slice();
         var monthlyData = monthlyRecords && monthlyRecords.ok ? monthlyRecords.records : [];
@@ -779,54 +794,57 @@ function renderFundChart(records, monthlyRecords) {
             }
         }
 
-        // ===== 组装 14 个分类：前 7 个为“近7天”，后 7 个为“近7个月” =====
+        // ===== 依据当前模式组装 7 个分类（近7天 或 近7个月）=====
         // 每个分类下并排两根柱子：增长率柱 + 金额柱
         // 竖轴单位：1 金币 / 1%，两者共用同一根竖轴
         var labels = [];
         var growthValues = [];   // 带符号的增长率(%)，用于柱顶文字
         var growthData = [];     // 柱形高度按绝对值绘制
         var totalValues = [];    // 当日总额 / 当月平均总额(金币)
+        var amountPrefix = _fundChartMode === 'months' ? '月均值: ' : '金额: ';
 
-        // ===== 第1部分: 近7天 (索引 0-6) =====
-        var dayCount = Math.min(7, dailyData.length);
-        var startIndex = dailyData.length - dayCount;
+        if (_fundChartMode === 'months') {
+            // 近7个月：取最近 7 个月（升序）
+            var monthCount = Math.min(7, monthlyData.length);
+            var monthStartIndex = monthlyData.length - monthCount;
+            for (var j = 0; j < 7; j++) {
+                if (j < monthCount) {
+                    var currentMonth = monthlyData[monthStartIndex + j];
+                    var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
+                    var monthTotal = currentMonth.equity == null ? null : Number(currentMonth.equity);
+                    var monthLabel = currentMonth.snapshot_month ? parseInt(currentMonth.snapshot_month.slice(5)) + '月' : '--';
 
-        for (var i = 0; i < 7; i++) {
-            if (i < dayCount) {
-                var current = dailyData[startIndex + i];
-                var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
-                var dayTotal = current.equity == null ? null : Number(current.equity);
-
-                labels.push(formatDate(current.snapshot_date));
-                growthValues.push(dailyVal);
-                growthData.push(Math.abs(dailyVal));
-                totalValues.push(dayTotal);
-            } else {
-                labels.push('--');
-                growthValues.push(null);
-                growthData.push(null);
-                totalValues.push(null);
+                    labels.push(monthLabel);
+                    growthValues.push(monthlyVal);
+                    growthData.push(Math.abs(monthlyVal));
+                    totalValues.push(monthTotal);
+                } else {
+                    labels.push('--');
+                    growthValues.push(null);
+                    growthData.push(null);
+                    totalValues.push(null);
+                }
             }
-        }
+        } else {
+            // 近7天：取最近 7 天（升序）
+            var dayCount = Math.min(7, dailyData.length);
+            var startIndex = dailyData.length - dayCount;
+            for (var i = 0; i < 7; i++) {
+                if (i < dayCount) {
+                    var current = dailyData[startIndex + i];
+                    var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
+                    var dayTotal = current.equity == null ? null : Number(current.equity);
 
-        // ===== 第2部分: 近7个月 (索引 7-13) =====
-        var monthCount = Math.min(7, monthlyData.length);
-        for (var j = 0; j < 7; j++) {
-            if (j < monthCount) {
-                var currentMonth = monthlyData[j];
-                var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
-                var monthTotal = currentMonth.equity == null ? null : Number(currentMonth.equity);
-                var monthLabel = currentMonth.snapshot_month ? parseInt(currentMonth.snapshot_month.slice(5)) + '月' : '--';
-
-                labels.push(monthLabel);
-                growthValues.push(monthlyVal);
-                growthData.push(Math.abs(monthlyVal));
-                totalValues.push(monthTotal);
-            } else {
-                labels.push('--');
-                growthValues.push(null);
-                growthData.push(null);
-                totalValues.push(null);
+                    labels.push(formatDate(current.snapshot_date));
+                    growthValues.push(dailyVal);
+                    growthData.push(Math.abs(dailyVal));
+                    totalValues.push(dayTotal);
+                } else {
+                    labels.push('--');
+                    growthValues.push(null);
+                    growthData.push(null);
+                    totalValues.push(null);
+                }
             }
         }
 
@@ -926,67 +944,6 @@ function renderFundChart(records, monthlyRecords) {
             }
         };
 
-        // 分隔线和分区标签插件（含自定义刻度标签绘制）
-        var sectionPlugin = {
-            id: 'sectionLabels',
-            afterDraw: function(chart) {
-                var ctx = chart.ctx;
-                var chartArea = chart.chartArea;
-                var xScale = chart.scales.x;
-
-                if (!xScale || !chartArea) return;
-
-                // 计算第7根和第8根柱子中间的X坐标
-                var separatorX = (xScale.getPixelForValue(6) + xScale.getPixelForValue(7)) / 2;
-                if (!separatorX) return;
-
-                ctx.save();
-
-                // 绘制垂直虚线分隔线
-                ctx.setLineDash([4, 4]);
-                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(separatorX, chartArea.top);
-                ctx.lineTo(separatorX, chartArea.bottom);
-                ctx.stroke();
-                ctx.setLineDash([]);
-
-                // 手动绘制 x 轴刻度标签（隐藏默认刻度，每个分类居中于一对柱子下方）
-                var labels = chart.data.labels;
-                ctx.font = '10px 微软雅黑';
-                ctx.textBaseline = 'top';
-                ctx.fillStyle = '#666';
-                var tickY = chartArea.bottom + 6;
-
-                for (var i = 0; i < labels.length; i++) {
-                    ctx.textAlign = 'center';
-                    ctx.fillText(labels[i], xScale.getPixelForValue(i), tickY);
-                }
-
-                // 计算"近7天"标签位置（第1-7根柱子中间）
-                var dayStartX = xScale.getPixelForValue(0);
-                var dayEndX = xScale.getPixelForValue(6);
-                var dayCenterX = dayStartX + (dayEndX - dayStartX) / 2;
-
-                // 计算"近7个月"标签位置（第8-14根柱子中间）
-                var monthStartX = xScale.getPixelForValue(7);
-                var monthEndX = xScale.getPixelForValue(13);
-                var monthCenterX = monthStartX + (monthEndX - monthStartX) / 2;
-
-                // 在X轴下方绘制分区标签
-                var labelY = chartArea.bottom + 30;
-                ctx.font = 'bold 12px 微软雅黑';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'top';
-                ctx.fillStyle = '#666';
-                ctx.fillText('— 近7天 —', dayCenterX, labelY);
-                ctx.fillText('— 近7个月均值 —', monthCenterX, labelY);
-
-                ctx.restore();
-            }
-        };
-
         // 金额柱使用斜纹填充，与实心的增长率柱形成明显的样式区别
         // 蓝色：现期数值不低于基期；灰色：现期数值比基期下降
         function makeStripePattern(fill, stroke) {
@@ -1057,8 +1014,7 @@ function renderFundChart(records, monthlyRecords) {
                 maintainAspectRatio: false,
                 animation: { duration: 800 },
                 layout: {
-                    // 底部留白要够：下面还要画 x 轴刻度(约 +6px) 和「— 近7天 —」分区标签(约 +30px)
-                    padding: { bottom: 56 }
+                    padding: { bottom: 8 }
                 },
                 plugins: {
                     legend: {
@@ -1080,8 +1036,7 @@ function renderFundChart(records, monthlyRecords) {
                                 }
                                 var tv = totalValues[idx];
                                 if (tv === null || tv === undefined) return '金额: N/A';
-                                var prefix = idx >= 7 ? '月均值: ' : '金额: ';
-                                return prefix + tv.toFixed(2) + ' 金币';
+                                return amountPrefix + tv.toFixed(2) + ' 金币';
                             }
                         }
                     }
@@ -1090,7 +1045,8 @@ function renderFundChart(records, monthlyRecords) {
                     x: {
                         grid: { display: false },
                         ticks: {
-                            display: false
+                            font: { size: 11, family: '微软雅黑' },
+                            color: '#666'
                         }
                     },
                     y: {
@@ -1111,7 +1067,7 @@ function renderFundChart(records, monthlyRecords) {
                     }
                 }
             },
-            plugins: [datalabelsPlugin, sectionPlugin]
+            plugins: [datalabelsPlugin]
         });
 
         console.log('图表创建成功');
@@ -1127,4 +1083,25 @@ function renderFundChart(records, monthlyRecords) {
 
 $(document).on('click', '#fund-refresh-btn', function() {
     loadFundData();
+});
+
+// 切换柱形图显示模式：近7天 / 近7个月
+function switchFundChartMode(mode) {
+    if (mode === _fundChartMode) return;
+    _fundChartMode = mode;
+    $('#fund-chart-days-btn').toggleClass('active', mode === 'days');
+    $('#fund-chart-months-btn').toggleClass('active', mode === 'months');
+    if (_fundChartData) {
+        ensureChartJs(function() {
+            renderFundChart();
+        });
+    }
+}
+
+$(document).on('click', '#fund-chart-days-btn', function() {
+    switchFundChartMode('days');
+});
+
+$(document).on('click', '#fund-chart-months-btn', function() {
+    switchFundChartMode('months');
 });
