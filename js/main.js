@@ -578,7 +578,7 @@ function proxyApi(path) {
 
 var _chartJsLoading = false;
 
-// 图表切换状态：'days' 近7天 / 'months' 近7个月
+// 图表切换状态：'days' 近7天增长 / 'months' 近7月均值 / 'drawdown' 近7天最大回撤
 var _fundChartMode = 'days';
 // 缓存最近一次渲染所需的数据，用于切换时重新绘制
 var _fundChartData = null;
@@ -639,10 +639,19 @@ function loadFundData() {
         .always(done);
 }
 
-// 每日快照去重（同一天只保留最后一条）并按日期升序
-function dedupeDaily(list) {
+// 把按月份分块的 daily 对象拍平为按日期升序的数组（同一天只保留最后一条）
+// 入参可能是新结构 { "2026-09": [...] }，也可能是旧结构数组
+function dedupeDaily(daily) {
     var out = [], index = {};
-    (list || []).forEach(function(d) {
+    var list = [];
+    if (Array.isArray(daily)) {
+        list = daily;
+    } else if (daily && typeof daily === 'object') {
+        Object.keys(daily).forEach(function(m) {
+            (daily[m] || []).forEach(function(d) { list.push(d); });
+        });
+    }
+    list.forEach(function(d) {
         if (!d || !d.date || d.total == null) return;
         if (index[d.date] != null) { out[index[d.date]] = d; return; }
         index[d.date] = out.length;
@@ -652,18 +661,13 @@ function dedupeDaily(list) {
     return out;
 }
 
-// 按仓库保存的每日总金额汇总出每月总金额（取当月所有快照的平均值）
-function buildMonthlyRecords(daily) {
-    var byMonth = {};
-    daily.forEach(function(d) {
-        if (!d || !d.date || d.total == null) return;
-        var m = d.date.slice(0, 7);
-        if (!byMonth[m]) byMonth[m] = { sum: 0, count: 0 };
-        byMonth[m].sum += Number(d.total);
-        byMonth[m].count += 1;
-    });
-    return Object.keys(byMonth).sort().map(function(m) {
-        return { snapshot_month: m, equity: byMonth[m].sum / byMonth[m].count };
+// 读取工作流已回填的每月均值 month 模块，返回升序数组
+// month: { "2026-09": { snapshot_month, equity }, ... }
+function buildMonthlyRecords(monthData) {
+    if (!monthData || typeof monthData !== 'object') return [];
+    return Object.keys(monthData).sort().map(function(m) {
+        var r = monthData[m] || {};
+        return { snapshot_month: r.snapshot_month || m, equity: r.equity };
     });
 }
 
@@ -730,9 +734,9 @@ function renderFundData(live, hist) {
         $('#fund-update-time').text('快照 ' + hist.updated_at);
     }
 
-    // 图表：用仓库保存的每日总金额，前端算出日/月增长率
+    // 图表：工作流已写入每日环比增长率(growth_rate)与每月均值(month)，前端直接读取
     var daily = dedupeDaily(hist && hist.daily);
-    var records = daily.map(function(d) { return { snapshot_date: d.date, equity: d.total }; });
+    var records = daily.map(function(d) { return { snapshot_date: d.date, equity: d.total, growth_rate: d.growth_rate }; });
     var container = $('.fund-chart-container');
     container.find('.fund-chart-loading').remove();
 
@@ -740,7 +744,7 @@ function renderFundData(live, hist) {
         // 缓存日/月数据，切换「近7天 / 近7个月」时无需重新请求接口
         _fundChartData = {
             records: records,
-            monthlyRecords: { ok: true, records: buildMonthlyRecords(daily) }
+            monthlyRecords: { ok: true, records: buildMonthlyRecords(hist && hist.month) }
         };
         ensureChartJs(function() {
             renderFundChart();
@@ -762,6 +766,12 @@ function renderFundChart() {
         var dailyData = records.slice();
         var monthlyData = monthlyRecords && monthlyRecords.ok ? monthlyRecords.records : [];
 
+        // ===== 最大回撤模式：切换到面积图展示近7天逐日回撤 =====
+        if (_fundChartMode === 'drawdown') {
+            renderDrawdownChart(dailyData);
+            return;
+        }
+
         // ===== 格式化日期辅助函数 =====
         function formatDate(dateStr) {
             if (!dateStr) return '--';
@@ -772,9 +782,12 @@ function renderFundChart() {
             return dateStr;
         }
 
-        // ===== 计算日增长率（后端不返回，前端根据 equity 计算）=====
+        // ===== 日增长率：优先用工作流写入的 growth_rate，缺失时按 equity 环比兜底 =====
         for (var di = dailyData.length - 1; di >= 0; di--) {
-            if (di === 0) {
+            var gr = dailyData[di].growth_rate;
+            if (gr !== null && gr !== undefined) {
+                dailyData[di].daily_growth_rate = Number(gr);
+            } else if (di === 0) {
                 dailyData[di].daily_growth_rate = 0;
             } else {
                 var prevEq = dailyData[di - 1].equity;
@@ -1081,16 +1094,134 @@ function renderFundChart() {
     }
 }
 
+// 最大回撤面积图：展示近7天每个点相对历史峰值的回落百分比（负值）
+function renderDrawdownChart(dailyData) {
+    try {
+        var canvas = document.getElementById('fund-chart');
+        if (!canvas) return;
+
+        // 取最近 7 天（升序）
+        var last7 = dailyData.slice(-7);
+
+        // 计算每个点相对历史峰值的回撤（%）
+        var labels = [];
+        var drawdownData = [];
+        var peak = null;
+        last7.forEach(function(d) {
+            var eq = d.equity == null ? null : Number(d.equity);
+            var dateStr = d.snapshot_date || d.date || '';
+            var parts = dateStr.split('-');
+            labels.push(parts.length >= 3 ? (parseInt(parts[1]) + '/' + parseInt(parts[2])) : dateStr);
+
+            if (eq == null) {
+                drawdownData.push(null);
+                return;
+            }
+            if (peak == null || eq > peak) {
+                peak = eq;
+            }
+            drawdownData.push(peak !== 0 ? parseFloat(((eq - peak) / peak * 100).toFixed(2)) : 0);
+        });
+
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+        canvas.style.width = canvas.offsetWidth + 'px';
+        canvas.style.height = canvas.offsetHeight + 'px';
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        if (window.fundChart) {
+            window.fundChart.destroy();
+        }
+
+        window.fundChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '回撤 (%)',
+                    data: drawdownData,
+                    fill: true,
+                    backgroundColor: 'rgba(39, 174, 96, 0.15)',
+                    borderColor: 'rgb(39, 174, 96)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: drawdownData.map(function(v) {
+                        return v == null ? 'transparent' : '#27ae60';
+                    }),
+                    tension: 0.3,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 800 },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { size: 13, family: '微软雅黑' },
+                            padding: 15,
+                            usePointStyle: true,
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var v = context.raw;
+                                if (v === null || v === undefined) return '回撤: N/A';
+                                return '回撤: ' + v.toFixed(2) + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11, family: '微软雅黑' }, color: '#666' }
+                    },
+                    y: {
+                        // 回撤为负值，向下到 0 之间
+                        max: 0,
+                        suggestedMin: undefined,
+                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        title: {
+                            display: true,
+                            text: '回撤 (%)',
+                            color: '#666',
+                            font: { size: 11, family: '微软雅黑' }
+                        },
+                        ticks: {
+                            font: { size: 12, family: '微软雅黑' },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        $('#fund-chart').show();
+    } catch (e) {
+        console.error('回撤面积图渲染失败:', e);
+        var container = $('.fund-chart-container');
+        container.find('.fund-chart-loading').remove();
+        container.append('<div class="fund-chart-loading">图表加载失败: ' + e.message + '</div>');
+    }
+}
+
 $(document).on('click', '#fund-refresh-btn', function() {
     loadFundData();
 });
 
-// 切换柱形图显示模式：近7天 / 近7个月
+// 切换柱形图显示模式：近7天增长 / 近7月均值 / 最大回撤
 function switchFundChartMode(mode) {
     if (mode === _fundChartMode) return;
     _fundChartMode = mode;
     $('#fund-chart-days-btn').toggleClass('active', mode === 'days');
     $('#fund-chart-months-btn').toggleClass('active', mode === 'months');
+    $('#fund-chart-drawdown-btn').toggleClass('active', mode === 'drawdown');
     if (_fundChartData) {
         ensureChartJs(function() {
             renderFundChart();
@@ -1104,4 +1235,8 @@ $(document).on('click', '#fund-chart-days-btn', function() {
 
 $(document).on('click', '#fund-chart-months-btn', function() {
     switchFundChartMode('months');
+});
+
+$(document).on('click', '#fund-chart-drawdown-btn', function() {
+    switchFundChartMode('drawdown');
 });

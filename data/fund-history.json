@@ -10,42 +10,47 @@
     "direction_text": "多 MU / 多 SOXL",
     "time": "2026-09-18 22:05:32"
   },
-  "daily": [
-    {
-      "date": "2026-09-13",
-      "total": 11.93,
-      "profit_pct": 5.71,
-      "open_count": 3
-    },
-    {
-      "date": "2026-09-14",
-      "total": 12.17,
-      "profit_pct": 9.79,
-      "open_count": 3
-    },
-    {
-      "date": "2026-09-15",
-      "total": 15.65,
-      "profit_pct": 42.83,
-      "open_count": 3
-    },
-    {
-      "date": "2026-09-16",
-      "total": 11,
-      "profit_pct": -2.47,
-      "open_count": 2
-    },
-    {
-      "date": "2026-09-17",
-      "total": 12.11,
-      "profit_pct": 6.95,
-      "open_count": 2
-    },
-    {
-      "date": "2026-09-18",
-      "total": 13.66,
-      "profit_pct": 16.74,
-      "open_count": 2
+  "daily": {
+    "2026-09": [
+      {
+        "date": "2026-09-13",
+        "total": 11.93,
+        "growth_rate": 0.0
+      },
+      {
+        "date": "2026-09-14",
+        "total": 12.17,
+        "growth_rate": 2.01
+      },
+      {
+        "date": "2026-09-15",
+        "total": 15.65,
+        "growth_rate": 28.59
+      },
+      {
+        "date": "2026-09-16",
+        "total": 11,
+        "growth_rate": -29.71
+      },
+      {
+        "date": "2026-09-17",
+        "total": 12.11,
+        "growth_rate": 10.09
+      },
+      {
+        "date": "2026-09-18",
+        "total": 13.66,
+        "growth_rate": 12.8
+      }
+    ]
+  },
+  "month": {
+    "2026-09": {
+      "snapshot_month": "2026-09",
+      "equity": 12.75
     }
-  ]
+  },
+  "stats": {
+    "max_drawdown_7d": -29.71
+  }
 }

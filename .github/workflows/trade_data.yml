@@ -1,7 +1,11 @@
 name: 账户快照
 
 # 每天北京时间 23:00 通过 baba 接口取一次账户信息，写入 data/fund-history.json 并提交回仓库。
-# 前端页面读取该文件里的每日总金额，自行计算日/月增长率。
+# 工作流在写入当天快照时直接计算每日环比增长率，并回填当月均值与近7天最大回撤：
+#   daily 按月份分块：{ "2026-09": [ {date,total,growth_rate}, ... ], ... }
+#   month 记录每月均值：{ "2026-09": { snapshot_month, equity }, ... }
+#   stats 记录统计指标：{ "max_drawdown_7d": -5.32 }
+# 前端页面直接读取 growth_rate 与 month 均值，无需再自行计算。
 # 注意：GitHub Actions 的 cron 只能按 UTC 走，UTC 15:00 = 北京时间 23:00。
 on:
   schedule:
@@ -48,12 +52,41 @@ jobs:
               hist = json.load(open(path, encoding='utf-8'))
           except Exception:
               hist = {}
-          if not isinstance(hist.get('daily'), list):
-              hist['daily'] = []
 
           now_cst = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)
           today = now_cst.strftime('%Y-%m-%d')
+          month = today[:7]
 
+          # ---- 兼容旧结构：若 daily 还是 list，先迁移成按月份分块的对象 ----
+          if isinstance(hist.get('daily'), list):
+              old = hist['daily']
+              new_daily = {}
+              for d in old:
+                  m = d.get('date', '')[:7]
+                  if not m:
+                      continue
+                  new_daily.setdefault(m, []).append(d)
+              # 对每个月份按日期升序，并补算环比增长率
+              for m, days in new_daily.items():
+                  days.sort(key=lambda x: x.get('date', ''))
+                  for i, d in enumerate(days):
+                      if i == 0:
+                          d['growth_rate'] = 0.0
+                      else:
+                          prev = days[i - 1].get('total')
+                          cur = d.get('total')
+                          if prev not in (None, 0):
+                              d['growth_rate'] = round((cur - prev) / prev * 100, 2)
+                          else:
+                              d['growth_rate'] = 0.0
+              hist['daily'] = new_daily
+
+          daily = hist.get('daily')
+          if not isinstance(daily, dict):
+              daily = {}
+              hist['daily'] = daily
+
+          # ---- 更新 current ----
           hist['updated_at'] = snap.get('time') or now_cst.strftime('%Y-%m-%d %H:%M:%S')
           hist['current'] = {
               'total_amount': snap.get('total_amount'),
@@ -66,18 +99,97 @@ jobs:
               'time': snap.get('time'),
           }
 
-          # 同一天重复跑只保留最新一条
-          hist['daily'] = [d for d in hist['daily'] if d.get('date') != today]
-          hist['daily'].append({
+          # ---- 计算当天环比增长率 ----
+          total_today = snap.get('total_amount')
+          month_days = daily.setdefault(month, [])
+
+          # 移除同一天旧记录（若存在）
+          month_days = [d for d in month_days if d.get('date') != today]
+          daily[month] = month_days
+
+          # 找到今天之前（跨月份）的最新一条记录，作为环比基期
+          prev_total = None
+          for m in sorted(daily.keys()):
+              for d in daily[m]:
+                  if d.get('date') and d['date'] < today:
+                      prev_total = d.get('total')
+
+          if prev_total is not None and prev_total != 0:
+              growth = round((total_today - prev_total) / prev_total * 100, 2)
+          else:
+              growth = 0.0
+
+          month_days.append({
               'date': today,
-              'total': snap.get('total_amount'),
-              'profit_pct': snap.get('total_profit_pct'),
-              'open_count': snap.get('open_count'),
+              'total': total_today,
+              'growth_rate': growth,
           })
-          hist['daily'].sort(key=lambda d: d.get('date', ''))
+          month_days.sort(key=lambda d: d.get('date', ''))
+          daily[month] = month_days
+
+          # ---- 回填当月均值（当月所有快照 total 的平均值）----
+          month_data = hist.get('month')
+          if not isinstance(month_data, dict):
+              month_data = {}
+              hist['month'] = month_data
+
+          totals = [d.get('total') for d in month_days if d.get('total') is not None]
+          if totals:
+              month_data[month] = {
+                  'snapshot_month': month,
+                  'equity': round(sum(totals) / len(totals), 2),
+              }
+
+          # ---- 计算近7天最大回撤 ----
+          # 把按月份分块的 daily 拍平成按日期升序的 total 序列，取最近 7 个点
+          def all_days_flat(d):
+              out = []
+              for m in sorted(d.keys()):
+                  for item in sorted(d[m], key=lambda x: x.get('date', '')):
+                      out.append(item)
+              return out
+
+          flat = all_days_flat(daily)
+          recent = [x.get('total') for x in flat[-7:] if x.get('total') is not None]
+
+          def max_drawdown(seq):
+              # 返回负百分比（如 -5.32），无回撤时为 0.0
+              if not seq:
+                  return 0.0
+              peak = seq[0]
+              mdd = 0.0
+              for v in seq:
+                  if peak != 0:
+                      dd = (v - peak) / peak
+                      if dd < mdd:
+                          mdd = dd
+                  if v > peak:
+                      peak = v
+              return round(mdd * 100, 2)
+
+          mdd_7d = max_drawdown(recent)
+
+          stats = hist.get('stats')
+          if not isinstance(stats, dict):
+              stats = {}
+          stats['max_drawdown_7d'] = mdd_7d
+          hist['stats'] = stats
+
+          # 保持顶层键顺序稳定：updated_at / current / daily / month / stats
+          ordered = {}
+          for k in ('updated_at', 'current', 'daily', 'month', 'stats'):
+              if k in hist:
+                  ordered[k] = hist[k]
+          for k in hist:
+              if k not in ordered:
+                  ordered[k] = hist[k]
+          hist = ordered
 
           json.dump(hist, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
-          print('已写入 %s，共 %d 天，今日总金额 %s' % (path, len(hist['daily']), snap.get('total_amount')))
+          total_days = sum(len(v) for v in daily.values())
+          print('已写入 %s，共 %d 天，今日总金额 %s，环比 %s%%，当月均值 %s，近7天最大回撤 %s%%' % (
+              path, total_days, total_today, growth,
+              month_data[month]['equity'] if month in month_data else 'N/A', mdd_7d))
           PY
 
       - name: 提交并推送
