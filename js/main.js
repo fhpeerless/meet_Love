@@ -662,12 +662,12 @@ function dedupeDaily(daily) {
 }
 
 // 读取工作流已回填的每月均值 month 模块，返回升序数组
-// month: { "2026-09": { snapshot_month, equity }, ... }
+// month: { "2026-09": { snapshot_month, equity, growth_rate }, ... }
 function buildMonthlyRecords(monthData) {
     if (!monthData || typeof monthData !== 'object') return [];
     return Object.keys(monthData).sort().map(function(m) {
         var r = monthData[m] || {};
-        return { snapshot_month: r.snapshot_month || m, equity: r.equity };
+        return { snapshot_month: r.snapshot_month || m, equity: r.equity, growth_rate: r.growth_rate };
     });
 }
 
@@ -792,31 +792,6 @@ function renderFundChart() {
             return dateStr;
         }
 
-        // ===== 日增长率：优先用工作流写入的 growth_rate，缺失时按 equity 环比兜底 =====
-        for (var di = dailyData.length - 1; di >= 0; di--) {
-            var gr = dailyData[di].growth_rate;
-            if (gr !== null && gr !== undefined) {
-                dailyData[di].daily_growth_rate = Number(gr);
-            } else if (di === 0) {
-                dailyData[di].daily_growth_rate = 0;
-            } else {
-                var prevEq = dailyData[di - 1].equity;
-                var currEq = dailyData[di].equity;
-                dailyData[di].daily_growth_rate = prevEq !== 0 ? ((currEq - prevEq) / prevEq) * 100 : 0;
-            }
-        }
-
-        // ===== 计算月增长率 ====
-        for (var mi = monthlyData.length - 1; mi >= 0; mi--) {
-            if (mi === 0) {
-                monthlyData[mi].monthly_growth_rate = 0;
-            } else {
-                var prevEq = monthlyData[mi - 1].equity;
-                var currEq = monthlyData[mi].equity;
-                monthlyData[mi].monthly_growth_rate = prevEq !== 0 ? ((currEq - prevEq) / prevEq) * 100 : 0;
-            }
-        }
-
         // ===== 依据当前模式组装 7 个分类（近7天 或 近7个月）=====
         // days 模式只展示增长率单柱；months 模式并排两根柱（增长率柱 + 月均值柱）
         var labels = [];
@@ -834,7 +809,7 @@ function renderFundChart() {
             for (var j = 0; j < 7; j++) {
                 if (j < monthCount) {
                     var currentMonth = monthlyData[monthStartIndex + j];
-                    var monthlyVal = parseFloat((currentMonth.monthly_growth_rate || 0).toFixed(2));
+                    var monthlyVal = parseFloat((currentMonth.growth_rate || 0).toFixed(2));
                     var monthTotal = currentMonth.equity == null ? null : Number(currentMonth.equity);
                     var monthLabel = currentMonth.snapshot_month ? parseInt(currentMonth.snapshot_month.slice(5)) + '月' : '--';
 
@@ -856,7 +831,7 @@ function renderFundChart() {
             for (var i = 0; i < 7; i++) {
                 if (i < dayCount) {
                     var current = dailyData[startIndex + i];
-                    var dailyVal = parseFloat((current.daily_growth_rate || 0).toFixed(2));
+                    var dailyVal = parseFloat((current.growth_rate || 0).toFixed(2));
 
                     labels.push(formatDate(current.snapshot_date));
                     growthValues.push(dailyVal);
@@ -1121,6 +1096,7 @@ function renderValueChart(dailyData) {
 
         var labels = [];
         var valueData = [];
+        var valueDown = [];
         for (var i = 0; i < 7; i++) {
             if (i < dayCount) {
                 var d = last7[i];
@@ -1128,19 +1104,15 @@ function renderValueChart(dailyData) {
                 var parts = dateStr.split('-');
                 labels.push(parts.length >= 3 ? (parseInt(parts[1]) + '/' + parseInt(parts[2])) : dateStr);
                 valueData.push(d.equity == null ? null : Number(d.equity));
+                // 涨跌直接取工作流写入的 growth_rate（负值视为下降）
+                var gr = d.growth_rate;
+                valueDown.push(gr !== null && gr !== undefined && Number(gr) < 0);
             } else {
                 labels.push('--');
                 valueData.push(null);
+                valueDown.push(false);
             }
         }
-
-        // 计算每个点相对前一天的涨跌（第一个点视为上升）
-        var valueDown = valueData.map(function(v, i) {
-            if (i === 0) return false;
-            var prev = valueData[i - 1];
-            if (prev == null || v == null) return false;
-            return v < prev;
-        });
 
         // 竖轴动态最大值：≤100 取 100；100~1000 取 1000
         var maxVal = 0;
