@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-18 22:05:32",
+  "updated_at": "2026-09-19 21:41:05",
   "current": {
-    "total_amount": 13.66,
-    "available": 0.85,
-    "unrealized_pnl": 0.07,
-    "total_profit": 1.88,
-    "total_profit_pct": 16.74,
-    "open_count": 2,
-    "direction_text": "多 MU / 多 SOXL",
-    "time": "2026-09-18 22:05:32"
+    "total_amount": 15.4,
+    "available": 0,
+    "unrealized_pnl": -1.65,
+    "total_profit": 3.69,
+    "total_profit_pct": 35.93,
+    "open_count": 3,
+    "direction_text": "多 MU / 多 SNXX / 多 SOXL",
+    "time": "2026-09-19 21:41:05"
   },
   "daily": {
     "2026-09": [
@@ -41,13 +41,18 @@
         "date": "2026-09-18",
         "total": 13.66,
         "growth_rate": 12.8
+      },
+      {
+        "date": "2026-09-19",
+        "total": 15.4,
+        "growth_rate": 12.74
       }
     ]
   },
   "month": {
     "2026-09": {
       "snapshot_month": "2026-09",
-      "equity": 12.75,
+      "equity": 13.13,
       "growth_rate": 0.0
     }
   },
