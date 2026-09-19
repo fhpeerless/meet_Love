@@ -910,18 +910,18 @@ function renderFundChart() {
                     meta.data.forEach(function(bar, index) {
                         var text, color, baseSize;
                         if (dsIndex === 0) {
-                            // 增长率柱：显示带符号百分比（涨绿色、跌红色）
+                            // 增长率柱：显示带符号百分比（同比上升绿色、下降灰色）
                             var gv = growthValues[index];
                             if (gv === null || gv === undefined) return;
                             text = gv.toFixed(2) + '%';
-                            color = gv >= 0 ? '#27ae60' : '#e74c3c';
+                            color = gv >= 0 ? '#27ae60' : '#7f8c8d';
                             baseSize = 11;
                         } else if (dsIndex === 1) {
-                            // 金额柱：显示实际金额(金币)，涨绿色、跌红色
+                            // 金额柱：显示实际金额(金币)，同比上升绿色、下降灰色
                             var tv = totalValues[index];
                             if (tv === null || tv === undefined) return;
                             text = tv.toFixed(2);
-                            color = isTotalDown(index) ? '#e74c3c' : '#27ae60';
+                            color = isTotalDown(index) ? '#7f8c8d' : '#27ae60';
                             baseSize = 10;
                         } else {
                             return;
@@ -945,7 +945,7 @@ function renderFundChart() {
         };
 
         // 金额柱使用斜纹填充，与实心的增长率柱形成明显的样式区别
-        // 绿色：同比上升（增长率 >= 0）；红色：同比下降（增长率 < 0）
+        // 绿色：同比上升（增长率 >= 0）；灰色：同比下降（增长率 < 0）
         function makeStripePattern(fill, stroke) {
             var pc = document.createElement('canvas');
             pc.width = 8;
@@ -963,7 +963,7 @@ function renderFundChart() {
             return ctx.createPattern(pc, 'repeat');
         }
         var totalPatternUp = makeStripePattern('rgba(39, 174, 96, 0.5)', 'rgba(39, 174, 96, 0.9)');
-        var totalPatternDown = makeStripePattern('rgba(231, 76, 60, 0.45)', 'rgba(231, 76, 60, 0.9)');
+        var totalPatternDown = makeStripePattern('rgba(160, 160, 160, 0.45)', 'rgba(110, 110, 110, 0.9)');
 
         // 现期金额是否比基期下降（基期取上一个周期，即增长率为负）
         function isTotalDown(index) {
@@ -980,10 +980,10 @@ function renderFundChart() {
                         label: '增长率 (%)',
                         data: growthData,
                         backgroundColor: growthValues.map(function(v) {
-                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(39, 174, 96, 0.85)' : 'rgba(231, 76, 60, 0.85)');
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgba(39, 174, 96, 0.85)' : 'rgba(160, 160, 160, 0.85)');
                         }),
                         borderColor: growthValues.map(function(v) {
-                            return v === null ? 'transparent' : (v >= 0 ? 'rgb(39, 174, 96)' : 'rgb(231, 76, 60)');
+                            return v === null ? 'transparent' : (v >= 0 ? 'rgb(39, 174, 96)' : 'rgb(120, 120, 120)');
                         }),
                         borderWidth: 1,
                         borderRadius: 3,
@@ -1000,7 +1000,7 @@ function renderFundChart() {
                         }),
                         borderColor: totalValues.map(function(v, idx) {
                             if (v === null || v === undefined) return 'transparent';
-                            return isTotalDown(idx) ? 'rgba(231, 76, 60, 0.9)' : 'rgba(39, 174, 96, 0.9)';
+                            return isTotalDown(idx) ? 'rgba(110, 110, 110, 0.9)' : 'rgba(39, 174, 96, 0.9)';
                         }),
                         borderWidth: 1,
                         borderRadius: 3,
