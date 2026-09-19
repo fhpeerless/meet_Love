@@ -1000,7 +1000,8 @@ function renderFundChart() {
                 label: '增长率 (%)',
                 data: growthData,
                 backgroundColor: growthValues.map(function(v) {
-                    return v === null ? 'transparent' : (v >= 0 ? 'rgba(39, 174, 96, 0.85)' : 'rgba(160, 160, 160, 0.85)');
+                    if (v === null) return 'transparent';
+                    return v >= 0 ? totalPatternUp : totalPatternDown;
                 }),
                 borderColor: growthValues.map(function(v) {
                     return v === null ? 'transparent' : (v >= 0 ? 'rgb(39, 174, 96)' : 'rgb(120, 120, 120)');
@@ -1126,6 +1127,14 @@ function renderValueChart(dailyData) {
             valueData.push(d.equity == null ? null : Number(d.equity));
         });
 
+        // 计算每个点相对前一天的涨跌（第一个点视为上升）
+        var valueDown = valueData.map(function(v, i) {
+            if (i === 0) return false;
+            var prev = valueData[i - 1];
+            if (prev == null || v == null) return false;
+            return v < prev;
+        });
+
         // 竖轴动态最大值：≤100 取 100；100~1000 取 1000
         var maxVal = 0;
         valueData.forEach(function(v) {
@@ -1140,6 +1149,26 @@ function renderValueChart(dailyData) {
         var ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+        // 斜线填充图案：绿色上升 / 灰色下降
+        function makeValueStripe(fill, stroke) {
+            var pc = document.createElement('canvas');
+            pc.width = 8;
+            pc.height = 8;
+            var pctx = pc.getContext('2d');
+            pctx.fillStyle = fill;
+            pctx.fillRect(0, 0, 8, 8);
+            pctx.strokeStyle = stroke;
+            pctx.lineWidth = 2;
+            pctx.beginPath();
+            pctx.moveTo(-2, 2); pctx.lineTo(2, -2);
+            pctx.moveTo(0, 8); pctx.lineTo(8, 0);
+            pctx.moveTo(6, 10); pctx.lineTo(10, 6);
+            pctx.stroke();
+            return ctx.createPattern(pc, 'repeat');
+        }
+        var valuePatternUp = makeValueStripe('rgba(39, 174, 96, 0.5)', 'rgba(39, 174, 96, 0.9)');
+        var valuePatternDown = makeValueStripe('rgba(160, 160, 160, 0.45)', 'rgba(110, 110, 110, 0.9)');
+
         if (window.fundChart) {
             window.fundChart.destroy();
         }
@@ -1151,8 +1180,14 @@ function renderValueChart(dailyData) {
                 datasets: [{
                     label: '总额 (金币)',
                     data: valueData,
-                    backgroundColor: 'rgba(39, 174, 96, 0.85)',
-                    borderColor: 'rgb(39, 174, 96)',
+                    backgroundColor: valueData.map(function(v, i) {
+                        if (v === null || v === undefined) return 'transparent';
+                        return valueDown[i] ? valuePatternDown : valuePatternUp;
+                    }),
+                    borderColor: valueData.map(function(v, i) {
+                        if (v === null || v === undefined) return 'transparent';
+                        return valueDown[i] ? 'rgba(110, 110, 110, 0.9)' : 'rgba(39, 174, 96, 0.9)';
+                    }),
                     borderWidth: 1,
                     borderRadius: 3,
                     categoryPercentage: 0.6,
