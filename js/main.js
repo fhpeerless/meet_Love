@@ -1141,7 +1141,7 @@ function renderDrawdownChart(dailyData) {
                 datasets: [{
                     label: '回撤 (%)',
                     data: drawdownData,
-                    fill: true,
+                    fill: false,
                     backgroundColor: 'rgba(39, 174, 96, 0.15)',
                     borderColor: 'rgb(39, 174, 96)',
                     borderWidth: 2,
