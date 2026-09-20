@@ -1,0 +1,43 @@
+name: 更新版本号
+
+# 定期运行 update_version.py，自动更新 index.html 里的静态资源版本号并提交回仓库，
+# 强制浏览器刷新缓存，避免用户长期看到旧代码。
+#
+# 执行间隔：168 小时 = 7 天（GitHub Actions 的 cron 无法表达"每 168 小时"，
+# 因此用每周一次等价实现，即每 7 天执行一次）。
+# cron '0 0 * * 0' = 每周日 00:00 UTC = 北京时间每周日 08:00。
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-version
+  cancel-in-progress: false
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 运行版本号更新脚本
+        run: |
+          set -euo pipefail
+          python3 update_version.py
+
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "版本号无变化，跳过提交"
+            exit 0
+          fi
+          git commit -m "chore: 更新静态资源版本号 $(TZ=Asia/Shanghai date +%F)"
+          git push
