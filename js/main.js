@@ -578,7 +578,7 @@ function proxyApi(path) {
 
 var _chartJsLoading = false;
 
-// 图表切换状态：'days' 近7天增长 / 'months' 近7月均值 / 'value' 近7天数值
+// 图表切换状态：'days' 近7天增长 / 'months' 近7月均值
 var _fundChartMode = 'days';
 // 缓存最近一次渲染所需的数据，用于切换时重新绘制
 var _fundChartData = null;
@@ -776,12 +776,6 @@ function renderFundChart() {
         var dailyData = records.slice();
         var monthlyData = monthlyRecords && monthlyRecords.ok ? monthlyRecords.records : [];
 
-        // ===== 数值模式：展示近7天每日总额柱形图 =====
-        if (_fundChartMode === 'value') {
-            renderValueChart(dailyData);
-            return;
-        }
-
         // ===== 格式化日期辅助函数 =====
         function formatDate(dateStr) {
             if (!dateStr) return '--';
@@ -793,14 +787,12 @@ function renderFundChart() {
         }
 
         // ===== 依据当前模式组装 7 个分类（近7天 或 近7个月）=====
-        // days 模式只展示增长率单柱；months 模式并排两根柱（增长率柱 + 月均值柱）
+        // 两种模式都是双柱：增长率柱 + 金额/月均值柱
         var labels = [];
         var growthValues = [];   // 带符号的增长率(%)，用于柱顶文字
         var growthData = [];     // 柱形高度按绝对值绘制
         var totalValues = [];    // 当日总额 / 当月平均总额(金币)
-        var amountPrefix = '月均值: ';
-        // 近7天增长：只显示增长率，不显示金额柱
-        var showAmount = _fundChartMode === 'months';
+        var amountPrefix = _fundChartMode === 'months' ? '月均值: ' : '金额: ';
 
         if (_fundChartMode === 'months') {
             // 近7个月：取最近 7 个月（升序）
@@ -825,18 +817,19 @@ function renderFundChart() {
                 }
             }
         } else {
-            // 近7天：取最近 7 天（升序），只展示增长率
+            // 近7天：取最近 7 天（升序），增长率柱 + 当日总额柱
             var dayCount = Math.min(7, dailyData.length);
             var startIndex = dailyData.length - dayCount;
             for (var i = 0; i < 7; i++) {
                 if (i < dayCount) {
                     var current = dailyData[startIndex + i];
                     var dailyVal = parseFloat((current.growth_rate || 0).toFixed(2));
+                    var dayTotal = current.equity == null ? null : Number(current.equity);
 
                     labels.push(formatDate(current.snapshot_date));
                     growthValues.push(dailyVal);
                     growthData.push(Math.abs(dailyVal));
-                    totalValues.push(null);
+                    totalValues.push(dayTotal);
                 } else {
                     labels.push('--');
                     growthValues.push(null);
@@ -969,7 +962,7 @@ function renderFundChart() {
             return gv !== null && gv !== undefined && gv < 0;
         }
 
-        // 依据 showAmount 决定是否追加金额柱
+        // 双柱：增长率柱 + 金额/月均值柱
         var datasets = [
             {
                 label: '增长率 (%)',
@@ -983,13 +976,11 @@ function renderFundChart() {
                 }),
                 borderWidth: 1,
                 borderRadius: 3,
-                // days 单柱居中；months 两根柱紧挨着
-                categoryPercentage: showAmount ? 0.5 : 0.6,
-                barPercentage: showAmount ? 1.0 : 0.8,
-            }
-        ];
-        if (showAmount) {
-            datasets.push({
+                // 两根柱紧挨着
+                categoryPercentage: 0.5,
+                barPercentage: 1.0,
+            },
+            {
                 label: '金额 (金币)',
                 data: totalValues,
                 backgroundColor: totalValues.map(function(v, idx) {
@@ -1004,8 +995,8 @@ function renderFundChart() {
                 borderRadius: 3,
                 categoryPercentage: 0.5,
                 barPercentage: 1.0,
-            });
-        }
+            }
+        ];
 
         window.fundChart = new Chart(ctx, {
             type: 'bar',
@@ -1059,7 +1050,7 @@ function renderFundChart() {
                         grid: { color: 'rgba(0,0,0,0.06)' },
                         title: {
                             display: true,
-                            text: showAmount ? '增长率(%) / 金额(金币)' : '增长率(%)',
+                            text: '增长率(%) / 金额(金币)',
                             color: '#666',
                             font: { size: 11, family: '微软雅黑' }
                         },
@@ -1084,161 +1075,16 @@ function renderFundChart() {
     }
 }
 
-// 数值柱形图：展示近7天每日总额（金币）
-function renderValueChart(dailyData) {
-    try {
-        var canvas = document.getElementById('fund-chart');
-        if (!canvas) return;
-
-        // 取最近 7 天（升序），不足 7 天时预留空位，保持横轴始终 7 个位置
-        var last7 = dailyData.slice(-7);
-        var dayCount = last7.length;
-
-        var labels = [];
-        var valueData = [];
-        var valueDown = [];
-        for (var i = 0; i < 7; i++) {
-            if (i < dayCount) {
-                var d = last7[i];
-                var dateStr = d.snapshot_date || d.date || '';
-                var parts = dateStr.split('-');
-                labels.push(parts.length >= 3 ? (parseInt(parts[1]) + '/' + parseInt(parts[2])) : dateStr);
-                valueData.push(d.equity == null ? null : Number(d.equity));
-                // 涨跌直接取工作流写入的 growth_rate（负值视为下降）
-                var gr = d.growth_rate;
-                valueDown.push(gr !== null && gr !== undefined && Number(gr) < 0);
-            } else {
-                labels.push('--');
-                valueData.push(null);
-                valueDown.push(false);
-            }
-        }
-
-        // 竖轴动态最大值：≤100 取 100；100~1000 取 1000
-        var maxVal = 0;
-        valueData.forEach(function(v) {
-            if (v !== null && v !== undefined && v > maxVal) maxVal = v;
-        });
-        var yMax = maxVal <= 100 ? 100 : (maxVal <= 1000 ? 1000 : Math.ceil(maxVal / 1000) * 1000);
-
-        canvas.width = canvas.offsetWidth * 2;
-        canvas.height = canvas.offsetHeight * 2;
-        canvas.style.width = canvas.offsetWidth + 'px';
-        canvas.style.height = canvas.offsetHeight + 'px';
-        var ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // 斜线填充图案：绿色上升 / 灰色下降
-        function makeValueStripe(fill, stroke) {
-            var pc = document.createElement('canvas');
-            pc.width = 8;
-            pc.height = 8;
-            var pctx = pc.getContext('2d');
-            pctx.fillStyle = fill;
-            pctx.fillRect(0, 0, 8, 8);
-            pctx.strokeStyle = stroke;
-            pctx.lineWidth = 2;
-            pctx.beginPath();
-            pctx.moveTo(-2, 2); pctx.lineTo(2, -2);
-            pctx.moveTo(0, 8); pctx.lineTo(8, 0);
-            pctx.moveTo(6, 10); pctx.lineTo(10, 6);
-            pctx.stroke();
-            return ctx.createPattern(pc, 'repeat');
-        }
-        var valuePatternUp = makeValueStripe('rgba(39, 174, 96, 0.5)', 'rgba(39, 174, 96, 0.9)');
-        var valuePatternDown = makeValueStripe('rgba(160, 160, 160, 0.45)', 'rgba(110, 110, 110, 0.9)');
-
-        if (window.fundChart) {
-            window.fundChart.destroy();
-        }
-
-        window.fundChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '总额 (金币)',
-                    data: valueData,
-                    backgroundColor: valueData.map(function(v, i) {
-                        if (v === null || v === undefined) return 'transparent';
-                        return valueDown[i] ? valuePatternDown : valuePatternUp;
-                    }),
-                    borderColor: valueData.map(function(v, i) {
-                        if (v === null || v === undefined) return 'transparent';
-                        return valueDown[i] ? 'rgba(110, 110, 110, 0.9)' : 'rgba(39, 174, 96, 0.9)';
-                    }),
-                    borderWidth: 1,
-                    borderRadius: 3,
-                    categoryPercentage: 0.6,
-                    barPercentage: 0.8,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: { duration: 800 },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            font: { size: 13, family: '微软雅黑' },
-                            padding: 15,
-                            usePointStyle: true,
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                var v = context.raw;
-                                if (v === null || v === undefined) return '总额: N/A';
-                                return '总额: ' + v.toFixed(2) + ' 金币';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 11, family: '微软雅黑' }, color: '#666' }
-                    },
-                    y: {
-                        min: 0,
-                        max: yMax,
-                        grid: { color: 'rgba(0,0,0,0.06)' },
-                        title: {
-                            display: true,
-                            text: '总额 (金币)',
-                            color: '#666',
-                            font: { size: 11, family: '微软雅黑' }
-                        },
-                        ticks: {
-                            font: { size: 12, family: '微软雅黑' }
-                        }
-                    }
-                }
-            }
-        });
-
-        $('#fund-chart').show();
-    } catch (e) {
-        console.error('数值柱形图渲染失败:', e);
-        var container = $('.fund-chart-container');
-        container.find('.fund-chart-loading').remove();
-        container.append('<div class="fund-chart-loading">图表加载失败: ' + e.message + '</div>');
-    }
-}
-
 $(document).on('click', '#fund-refresh-btn', function() {
     loadFundData();
 });
 
-// 切换柱形图显示模式：近7天增长 / 近7月均值 / 近7天数值
+// 切换柱形图显示模式：近7天增长 / 近7月均值
 function switchFundChartMode(mode) {
     if (mode === _fundChartMode) return;
     _fundChartMode = mode;
     $('#fund-chart-days-btn').toggleClass('active', mode === 'days');
     $('#fund-chart-months-btn').toggleClass('active', mode === 'months');
-    $('#fund-chart-value-btn').toggleClass('active', mode === 'value');
     if (_fundChartData) {
         ensureChartJs(function() {
             renderFundChart();
@@ -1252,8 +1098,4 @@ $(document).on('click', '#fund-chart-days-btn', function() {
 
 $(document).on('click', '#fund-chart-months-btn', function() {
     switchFundChartMode('months');
-});
-
-$(document).on('click', '#fund-chart-value-btn', function() {
-    switchFundChartMode('value');
 });
