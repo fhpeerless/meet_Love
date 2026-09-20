@@ -962,11 +962,12 @@ function renderFundChart() {
             return gv !== null && gv !== undefined && gv < 0;
         }
 
-        // 双柱：增长率柱 + 金额/月均值柱
+        // 双柱：增长率柱（左轴 y）+ 金额/月均值柱（右轴 y1）
         var datasets = [
             {
                 label: '增长率 (%)',
                 data: growthData,
+                yAxisID: 'y',
                 backgroundColor: growthValues.map(function(v) {
                     if (v === null) return 'transparent';
                     return v >= 0 ? totalPatternUp : totalPatternDown;
@@ -983,6 +984,7 @@ function renderFundChart() {
             {
                 label: '金额 (金币)',
                 data: totalValues,
+                yAxisID: 'y1',
                 backgroundColor: totalValues.map(function(v, idx) {
                     if (v === null || v === undefined) return 'transparent';
                     return isTotalDown(idx) ? totalPatternDown : totalPatternUp;
@@ -997,6 +999,24 @@ function renderFundChart() {
                 barPercentage: 1.0,
             }
         ];
+
+        // 右侧数值轴范围：
+        // ≤100 -> 0~100；>100 -> min 与 max 相差 10 倍（100~1000、1000~10000 ...）
+        var currentTotal = (window.__fundSnapshot && window.__fundSnapshot.total_amount != null)
+            ? Number(window.__fundSnapshot.total_amount) : null;
+        var y1Min = 0;
+        var y1Max = 100;
+        if (currentTotal != null && currentTotal > 0) {
+            if (currentTotal <= 100) {
+                y1Min = 0;
+                y1Max = 100;
+            } else {
+                // min 取当前数值所在量级的底（100、1000、10000...），max = min * 10
+                var base = Math.pow(10, Math.floor(Math.log10(currentTotal)));
+                y1Min = base;
+                y1Max = base * 10;
+            }
+        }
 
         window.fundChart = new Chart(ctx, {
             type: 'bar',
@@ -1047,15 +1067,31 @@ function renderFundChart() {
                     y: {
                         min: 0,
                         max: 100,
+                        position: 'left',
                         grid: { color: 'rgba(0,0,0,0.06)' },
                         title: {
                             display: true,
-                            text: '增长率(%) / 金额(金币)',
+                            text: '增长率(%)',
                             color: '#666',
                             font: { size: 11, family: '微软雅黑' }
                         },
                         ticks: {
                             stepSize: 10,
+                            font: { size: 12, family: '微软雅黑' }
+                        }
+                    },
+                    y1: {
+                        min: y1Min,
+                        max: y1Max,
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        title: {
+                            display: true,
+                            text: '金额(金币)',
+                            color: '#666',
+                            font: { size: 11, family: '微软雅黑' }
+                        },
+                        ticks: {
                             font: { size: 12, family: '微软雅黑' }
                         }
                     }
