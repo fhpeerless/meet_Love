@@ -170,6 +170,14 @@
     max-height: 100%;
     overflow: hidden;
     box-sizing: border-box;
+    /* 动态音符层以整个白底为定位基准 */
+    position: relative;
+}
+
+/* 白底上的真实内容统一抬到音符层之上 */
+.music-player-container > *:not(.lyrics-notes) {
+    position: relative;
+    z-index: 1;
 }
 
 .current-song-info {
@@ -344,17 +352,18 @@
     cursor: pointer;
 }
 
-/* 歌词区外层：负责背景与圆角；动态音符在文字下面浮动 */
+/* 歌词区外层：只负责圆角与滚动，背景透明让音符透出来 */
 .lyrics-wrap {
     position: relative;
     flex: 1;
     min-height: 0;
     display: flex;
-    background: #fafafa;
+    background: transparent;
     border-radius: 12px;
     overflow: hidden;
 }
 
+/* 动态音符层：铺满整个播放器白底，位于所有内容之下 */
 .lyrics-notes {
     position: absolute;
     inset: 0;
@@ -365,14 +374,14 @@
 
 .lyrics-notes span {
     position: absolute;
-    bottom: -40px;
+    top: 105%;
     line-height: 1;
     color: #e74c3c;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
     animation-name: noteFloat;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    will-change: transform, opacity;
+    will-change: top, opacity;
 }
 
 /* 逐个音符轮换彩色，悬浮时更明显 */
@@ -384,10 +393,10 @@
 .lyrics-notes span:nth-child(6n)     { color: #8e44ad; }  /* 紫 */
 
 @keyframes noteFloat {
-    0%   { transform: translateY(0) rotate(-10deg) scale(0.9); opacity: 0; }
+    0%   { top: 105%; transform: rotate(-10deg) scale(0.9); opacity: 0; }
     12%  { opacity: 1; }
     80%  { opacity: 0.9; }
-    100% { transform: translateY(-420px) rotate(12deg) scale(1.2); opacity: 0; }
+    100% { top: -10%; transform: rotate(12deg) scale(1.2); opacity: 0; }
 }
 
 .lyrics-display {
