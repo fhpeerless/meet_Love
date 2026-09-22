@@ -207,9 +207,10 @@ $(function() {
             $('#desktop-lyrics').addClass('desktop-lyrics-show');
         }
         
-        $diaryEntries.animate({
-            scrollTop: $diaryEntries[0].scrollHeight
-        }, 'slow');
+        // 日记已改为倒序（最新在最前），不再自动滑到底部
+        // $diaryEntries.animate({
+        //     scrollTop: $diaryEntries[0].scrollHeight
+        // }, 'slow');
     });
 });
 
