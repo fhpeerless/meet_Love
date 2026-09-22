@@ -82,7 +82,15 @@ $(function() {
     function loadDiary() {
         $.getJSON('config/diary.json', function(data) {
             $diaryEntries.empty();
-            $.each(data, function(index, entry) {
+            // 倒序显示：最新日期的日记排在最前面（解析「2026年04月01日」格式后比较）
+            function parseCnDate(s) {
+                var m = (s || '').match(/(\d+)\s*年\s*(\d+)\s*月\s*(\d+)\s*日/);
+                return m ? (+m[1]) * 10000 + (+m[2]) * 100 + (+m[3]) : 0;
+            }
+            var sorted = data.slice().sort(function(a, b) {
+                return parseCnDate(b.date) - parseCnDate(a.date);
+            });
+            $.each(sorted, function(index, entry) {
                 var entryHtml = '<div class="diary-entry">' +
                     '<div class="diary-entry-header">' +
                     '<h3>' + entry.date + '</h3>';
