@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-22 22:19:54",
+  "updated_at": "2026-09-23 22:40:29",
   "current": {
-    "total_amount": 18.98,
-    "available": 3.38,
-    "unrealized_pnl": 0.92,
-    "total_profit": 7.39,
-    "total_profit_pct": 63.02,
+    "total_amount": 13.24,
+    "available": 0,
+    "unrealized_pnl": -6.98,
+    "total_profit": 1.27,
+    "total_profit_pct": 11.78,
     "open_count": 2,
-    "direction_text": "多 SOXL / 多 SNDK",
-    "time": "2026-09-22 22:19:54"
+    "direction_text": "多 SNDK / 多 SNXX",
+    "time": "2026-09-23 22:40:29"
   },
   "daily": {
     "2026-09": [
@@ -56,17 +56,22 @@
         "date": "2026-09-22",
         "total": 18.98,
         "growth_rate": 37.24
+      },
+      {
+        "date": "2026-09-23",
+        "total": 13.24,
+        "growth_rate": -30.24
       }
     ]
   },
   "month": {
     "2026-09": {
       "snapshot_month": "2026-09",
-      "equity": 13.86,
+      "equity": 13.8,
       "growth_rate": 0.0
     }
   },
   "stats": {
-    "max_drawdown_7d": -29.71
+    "max_drawdown_7d": -30.24
   }
 }
