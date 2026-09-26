@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-25 22:59:04",
+  "updated_at": "2026-09-26 22:05:36",
   "current": {
-    "total_amount": 11.03,
-    "available": 0,
-    "unrealized_pnl": -0.78,
-    "total_profit": -0.5,
-    "total_profit_pct": -4.72,
+    "total_amount": 13,
+    "available": 0.53,
+    "unrealized_pnl": 0.05,
+    "total_profit": 1.48,
+    "total_profit_pct": 13.47,
     "open_count": 2,
-    "direction_text": "多 SOXL / 多 KORU",
-    "time": "2026-09-25 22:59:04"
+    "direction_text": "空 SNXX / 多 KORU",
+    "time": "2026-09-26 22:05:36"
   },
   "daily": {
     "2026-09": [
@@ -71,13 +71,18 @@
         "date": "2026-09-25",
         "total": 11.03,
         "growth_rate": -6.68
+      },
+      {
+        "date": "2026-09-26",
+        "total": 13,
+        "growth_rate": 17.86
       }
     ]
   },
   "month": {
     "2026-09": {
       "snapshot_month": "2026-09",
-      "equity": 13.4,
+      "equity": 13.37,
       "growth_rate": 0.0
     }
   },
