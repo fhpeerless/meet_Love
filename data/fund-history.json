@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-09-30 00:19:44",
+  "updated_at": "2026-10-01 00:15:03",
   "current": {
-    "total_amount": 10.09,
-    "available": 0.41,
-    "unrealized_pnl": -0.95,
-    "total_profit": -1.37,
-    "total_profit_pct": -13.77,
-    "open_count": 3,
-    "direction_text": "空 SNXX / 多 NVDA / 多 SOXL",
-    "time": "2026-09-30 00:19:44"
+    "total_amount": 8.65,
+    "available": 5.66,
+    "unrealized_pnl": -1.17,
+    "total_profit": -2.82,
+    "total_profit_pct": -29.45,
+    "open_count": 1,
+    "direction_text": "空 SNXX",
+    "time": "2026-10-01 00:15:03"
   },
   "daily": {
     "2026-09": [
@@ -92,6 +92,13 @@
         "total": 10.09,
         "growth_rate": -9.26
       }
+    ],
+    "2026-10": [
+      {
+        "date": "2026-10-01",
+        "total": 8.65,
+        "growth_rate": -14.27
+      }
     ]
   },
   "month": {
@@ -99,9 +106,14 @@
       "snapshot_month": "2026-09",
       "equity": 13.02,
       "growth_rate": 0.0
+    },
+    "2026-10": {
+      "snapshot_month": "2026-10",
+      "equity": 8.65,
+      "growth_rate": -33.56
     }
   },
   "stats": {
-    "max_drawdown_7d": -24.02
+    "max_drawdown_7d": -34.86
   }
 }
