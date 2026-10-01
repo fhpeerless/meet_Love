@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-01 00:15:03",
+  "updated_at": "2026-10-02 00:52:39",
   "current": {
-    "total_amount": 8.65,
-    "available": 5.66,
-    "unrealized_pnl": -1.17,
-    "total_profit": -2.82,
-    "total_profit_pct": -29.45,
-    "open_count": 1,
-    "direction_text": "空 SNXX",
-    "time": "2026-10-01 00:15:03"
+    "total_amount": 8.37,
+    "available": 0.8,
+    "unrealized_pnl": 0.19,
+    "total_profit": -3.09,
+    "total_profit_pct": -27.88,
+    "open_count": 2,
+    "direction_text": "空 ARM / 空 AVGO",
+    "time": "2026-10-02 00:52:39"
   },
   "daily": {
     "2026-09": [
@@ -98,6 +98,11 @@
         "date": "2026-10-01",
         "total": 8.65,
         "growth_rate": -14.27
+      },
+      {
+        "date": "2026-10-02",
+        "total": 8.37,
+        "growth_rate": -3.24
       }
     ]
   },
@@ -109,11 +114,11 @@
     },
     "2026-10": {
       "snapshot_month": "2026-10",
-      "equity": 8.65,
-      "growth_rate": -33.56
+      "equity": 8.51,
+      "growth_rate": -34.64
     }
   },
   "stats": {
-    "max_drawdown_7d": -34.86
+    "max_drawdown_7d": -36.97
   }
 }
