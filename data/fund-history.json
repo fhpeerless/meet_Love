@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-03 00:05:40",
+  "updated_at": "2026-10-03 22:34:04",
   "current": {
-    "total_amount": 8.37,
-    "available": 1.62,
-    "unrealized_pnl": -0.56,
-    "total_profit": -3.12,
-    "total_profit_pct": -30.03,
+    "total_amount": 8.3,
+    "available": 0.49,
+    "unrealized_pnl": -0.65,
+    "total_profit": -3.21,
+    "total_profit_pct": -30.55,
     "open_count": 2,
     "direction_text": "多 SOXL / 空 SNXX",
-    "time": "2026-10-03 00:05:40"
+    "time": "2026-10-03 22:34:04"
   },
   "daily": {
     "2026-09": [
@@ -106,8 +106,8 @@
       },
       {
         "date": "2026-10-03",
-        "total": 8.37,
-        "growth_rate": 0.0
+        "total": 8.3,
+        "growth_rate": -0.84
       }
     ]
   },
@@ -119,11 +119,11 @@
     },
     "2026-10": {
       "snapshot_month": "2026-10",
-      "equity": 8.46,
-      "growth_rate": -35.02
+      "equity": 8.44,
+      "growth_rate": -35.18
     }
   },
   "stats": {
-    "max_drawdown_7d": -36.97
+    "max_drawdown_7d": -37.5
   }
 }
