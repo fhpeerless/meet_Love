@@ -393,13 +393,19 @@ $(function() {
         return positions;
     }
 
-    function updateProgressBar(state) {
+    function updateProgressBar(state, liveCount) {
         var now = new Date();
         var dayOfYear = getDayOfYear(now.getMonth() + 1, now.getDate());
         var percent = (dayOfYear / 365) * 100;
         $('#progress-bar-fill').css('width', percent + '%');
         $('#progress-bar-thumb').css('left', percent + '%');
-        $('#progress-bar-state').text(state.label).css('left', percent + '%');
+
+        // 状态文字里的数字用树上实际爱心数，保证与画面一致
+        var label = state.label;
+        if (liveCount !== undefined && liveCount !== null) {
+            label = label.replace(/\((\d+)\s*\/\s*(\d+)\)/, '(' + liveCount + '/$2)');
+        }
+        $('#progress-bar-state').text(label).css('left', percent + '%');
     }
 
     updateProgressBar(getTreeState());
@@ -412,6 +418,8 @@ $(function() {
     if (initialState.state === 'RIPE' || initialState.state === 'FALLING') {
         tree.fillBlooms(initialState.fruitCount);
     }
+    // 开场就用树上实际爱心数刷新状态文字，保证与画面一致
+    updateProgressBar(initialState, tree.blooms.length);
 
     if (initialState.state === 'SPROUTING') {
         var positions = generateSproutHeartPositions(initialState.sproutCount, tree.seed.heart.figure, width, height);
@@ -489,13 +497,14 @@ $(function() {
                 tree.bloomLimit = currentState.fruitCount;
                 tree.ripeMode = currentState.state === 'RIPE' || currentState.state === 'FALLING';
                 tree.yellowRatio = currentState.yellowRatio;
-                updateProgressBar(currentState);
+                updateProgressBar(currentState, tree.blooms.length);
 
                 // 刚进入熟透/掉落：直接补齐爱心，之后由 bloomLimit 递减实现掉落
                 if ((currentState.state === 'RIPE' || currentState.state === 'FALLING') &&
                     prevState.state !== 'RIPE' && prevState.state !== 'FALLING') {
                     tree.blooms = [];
                     tree.fillBlooms(currentState.fruitCount);
+                    updateProgressBar(currentState, tree.blooms.length);
                 }
 
                 if (currentState.state === 'SPROUTING') {

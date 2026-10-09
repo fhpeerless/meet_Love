@@ -365,13 +365,11 @@
             this.blooms.push(bloom);
         },
 
-        // 直接从缓存补齐到指定数量（用于熟透/掉落阶段开场就把爱心铺满树上）
+        // 直接从缓存构建到指定数量（不消耗缓存，便于后续增减时反复取用）
         fillBlooms: function (count) {
             var s = this, cache = s.bloomsCache;
             var target = Math.max(0, Math.min(count || 0, cache.length));
-            while (s.blooms.length < target && cache.length) {
-                s.blooms.push(cache.shift());
-            }
+            s.blooms = cache.slice(0, target);
         },
 
         removeBloom: function (bloom) {
@@ -516,26 +514,17 @@
                 return;
             }
             limit = limit || Infinity;
-            // 掉落阶段：上限变小时，把多出来的爱心从树上摘掉，数量随进度减少
-            while (blooms.length > limit) {
-                blooms.pop();
-            }
-            if (blooms.length) {
-                for (var i = blooms.length - 1; i >= 0; i--) {
-                    blooms[i].jump();
+            // 树上爱心数严格等于上限：多了摘掉，少了从缓存补回（飘出的爱心已回到原位循环）
+            if (blooms.length > limit) {
+                blooms.length = limit;
+            } else if (blooms.length < limit) {
+                var cache = s.bloomsCache;
+                for (var i = blooms.length; i < limit && i < cache.length; i++) {
+                    blooms.push(cache[i]);
                 }
             }
-            if ((blooms.length && blooms.length < limit && blooms.length < 3) || !blooms.length) {
-                var bloom = this.opt.bloom || {},
-                    width = bloom.width || this.width,
-                    height = bloom.height || this.height,
-                    figure = this.seed.heart.figure;
-                var r = 240, x, y;
-                for (var i = 0; i < random(1,2); i++) {
-                    if (blooms.length >= limit) break;
-                    var randomImage = window.fallingImages ? window.fallingImages[Math.floor(Math.random() * window.fallingImages.length)] : null;
-                    blooms.push(this.createBloom(random(400, 600), random(200, 500), r, figure, null, 1, null, 1, new Point(random(600,1200), 720), random(200,300), randomImage));
-                }
+            for (var i = blooms.length - 1; i >= 0; i--) {
+                blooms[i].jump();
             }
         },
 
@@ -680,6 +669,11 @@
         this.image = image || null;
 
         this.figure = figure;
+
+        // 记录初始位置/角度/速度，飘出屏幕后回到原位循环展示
+        this.home = new Point(point.x, point.y);
+        this.homeAngle = this.angle;
+        this.homeSpeed = speed;
     }
     Bloom.prototype = {
         setFigure: function(figure) {
@@ -731,7 +725,10 @@
             var s = this, height = s.tree.height;
 
             if (s.point.x < -20 || s.point.y > height + 20) {
-                s.tree.removeBloom(s);
+                // 飘出屏幕后回到树上原位，循环复用，保证树上爱心数量恒定
+                s.point = s.home.clone ? s.home.clone() : new Point(s.home.x, s.home.y);
+                s.angle = s.homeAngle;
+                s.speed = s.homeSpeed;
             } else {
                 s.draw();
                 s.point = s.place.sub(s.point).div(s.speed).add(s.point);
