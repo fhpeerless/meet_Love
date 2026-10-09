@@ -358,13 +358,14 @@ $(function() {
             var yellowRatio = yellowCount / FRUIT_TOTAL;
             return { state: 'RIPENING', label: '成熟中 (' + yellowCount + '/' + FRUIT_TOTAL + ')', fruitCount: FRUIT_TOTAL, yellowCount: yellowCount, yellowRatio: yellowRatio, sproutCount: 0 };
         }
-        if (md >= 1006 && md < 1101) {
-            return { state: 'RIPE', label: '已熟透', fruitCount: FRUIT_TOTAL, yellowCount: FRUIT_TOTAL, yellowRatio: 1, sproutCount: 0 };
-        }
-        if (md >= 1101 && md < 1226) {
-            var daysSince = getDaysBetween(1101, md);
-            var totalDays = getDaysBetween(1101, 1226);
+        if (md >= 1006 && md < 1226) {
+            // 熟透后就开始掉落：树上显示的爱心中数从满树逐渐减少，到 12月25日休眠减为 0
+            var daysSince = getDaysBetween(1006, md);
+            var totalDays = getDaysBetween(1006, 1226);
             var remaining = Math.max(0, Math.round(FRUIT_TOTAL * (1 - daysSince / totalDays)));
+            if (remaining >= FRUIT_TOTAL) {
+                return { state: 'RIPE', label: '已熟透', fruitCount: FRUIT_TOTAL, yellowCount: FRUIT_TOTAL, yellowRatio: 1, sproutCount: 0 };
+            }
             return { state: 'FALLING', label: '果实掉落 (' + remaining + '/' + FRUIT_TOTAL + ')', fruitCount: remaining, yellowCount: remaining, yellowRatio: 1, sproutCount: 0 };
         }
         return { state: 'DORMANT', label: '休眠中', fruitCount: 0, yellowCount: 0, yellowRatio: 0, sproutCount: 0 };
@@ -406,6 +407,11 @@ $(function() {
     tree.bloomLimit = initialState.fruitCount;
     tree.ripeMode = initialState.state === 'RIPE' || initialState.state === 'FALLING';
     tree.yellowRatio = initialState.yellowRatio;
+
+    // 掉落/熟透阶段：开场直接补齐到当前应有的爱心数量，避免从少量慢慢长出来
+    if (initialState.state === 'RIPE' || initialState.state === 'FALLING') {
+        tree.fillBlooms(initialState.fruitCount);
+    }
 
     if (initialState.state === 'SPROUTING') {
         var positions = generateSproutHeartPositions(initialState.sproutCount, tree.seed.heart.figure, width, height);
@@ -484,6 +490,13 @@ $(function() {
                 tree.ripeMode = currentState.state === 'RIPE' || currentState.state === 'FALLING';
                 tree.yellowRatio = currentState.yellowRatio;
                 updateProgressBar(currentState);
+
+                // 刚进入熟透/掉落：直接补齐爱心，之后由 bloomLimit 递减实现掉落
+                if ((currentState.state === 'RIPE' || currentState.state === 'FALLING') &&
+                    prevState.state !== 'RIPE' && prevState.state !== 'FALLING') {
+                    tree.blooms = [];
+                    tree.fillBlooms(currentState.fruitCount);
+                }
 
                 if (currentState.state === 'SPROUTING') {
                     if (prevState.state !== 'SPROUTING' || currentState.sproutCount !== prevState.sproutCount) {

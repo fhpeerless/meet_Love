@@ -365,6 +365,15 @@
             this.blooms.push(bloom);
         },
 
+        // 直接从缓存补齐到指定数量（用于熟透/掉落阶段开场就把爱心铺满树上）
+        fillBlooms: function (count) {
+            var s = this, cache = s.bloomsCache;
+            var target = Math.max(0, Math.min(count || 0, cache.length));
+            while (s.blooms.length < target && cache.length) {
+                s.blooms.push(cache.shift());
+            }
+        },
+
         removeBloom: function (bloom) {
             var blooms = this.blooms;
             for (var i = 0; i < blooms.length; i++) {
@@ -506,13 +515,17 @@
                 s.blooms = [];
                 return;
             }
+            limit = limit || Infinity;
+            // 掉落阶段：上限变小时，把多出来的爱心从树上摘掉，数量随进度减少
+            while (blooms.length > limit) {
+                blooms.pop();
+            }
             if (blooms.length) {
                 for (var i = blooms.length - 1; i >= 0; i--) {
                     blooms[i].jump();
                 }
             }
-            limit = limit || Infinity;
-            if ((blooms.length && blooms.length < 3) || !blooms.length) {
+            if ((blooms.length && blooms.length < limit && blooms.length < 3) || !blooms.length) {
                 var bloom = this.opt.bloom || {},
                     width = bloom.width || this.width,
                     height = bloom.height || this.height,
