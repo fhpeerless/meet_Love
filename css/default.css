@@ -17,36 +17,40 @@ body {
 	top: 0;
 	left: 0;
 	right: 0;
-	background: rgba(255, 192, 203, 0.95);
+	background: transparent;
 	padding: 15px;
 	display: flex;
 	justify-content: center;
 	gap: 30px;
 	z-index: 1000;
-	box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+	text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
 .nav-btn {
 	padding: 12px 40px;
 	font-size: 18px;
 	font-family: '微软雅黑', '宋体', sans-serif;
-	border: 2px solid rgb(190, 26, 37);
-	background: transparent;
-	color: rgb(190, 26, 37);
+	border: 2px solid rgba(255, 192, 203, 0.85);
+	background: rgba(255, 255, 255, 0.08);
+	color: #ffd9e2;
 	border-radius: 25px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	font-weight: bold;
+	text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(4px);
 }
 
 .nav-btn:hover {
-	background: rgb(190, 26, 37);
-	color: white;
+	background: rgba(190, 26, 37, 0.85);
+	border-color: rgb(190, 26, 37);
+	color: #fff;
 }
 
 .nav-btn.active {
-	background: rgb(190, 26, 37);
-	color: white;
+	background: rgba(190, 26, 37, 0.9);
+	border-color: rgb(190, 26, 37);
+	color: #fff;
 }
 
 .music-btn {
@@ -54,8 +58,9 @@ body {
 }
 
 .music-btn.playing {
-	background: rgb(190, 26, 37);
-	color: white;
+	background: rgba(190, 26, 37, 0.9);
+	border-color: rgb(190, 26, 37);
+	color: #fff;
 	animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -90,19 +95,21 @@ body {
 
 #diary-content h2 {
 	text-align: center;
-	color: rgb(190, 26, 37);
+	color: #ffd9e2;
 	margin-bottom: 10px;
 	font-size: 32px;
 	flex-shrink: 0;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
 
 .diary-intro {
 	text-align: center;
-	color: #FF8C00;
+	color: #ffb347;
 	font-size: 21px;
 	margin-bottom: 30px;
 	font-style: italic;
 	flex-shrink: 0;
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
 #diary-entries {
@@ -113,15 +120,17 @@ body {
 }
 
 .diary-entry {
-	background: white;
+	background: rgba(255, 255, 255, 0.08);
 	padding: 25px;
 	margin-bottom: 25px;
 	border-radius: 15px;
-	box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+	backdrop-filter: blur(6px);
 }
 
 .diary-entry h3 {
-	color: rgb(190, 26, 37);
+	color: #ffd9e2;
 	margin-top: 0;
 	margin-bottom: 15px;
 	font-size: 20px;
@@ -129,7 +138,7 @@ body {
 
 .diary-entry p {
 	line-height: 1.8;
-	color: #333;
+	color: #e6ecf7;
 	font-size: 16px;
 }
 
@@ -177,7 +186,7 @@ body {
 	height: 680px;
 	margin-top: 10px;
 	margin-bottom: 50px;
-	background: #ffc0cb;
+	background: transparent;
 	border-radius: 15px;
 }
 
@@ -514,7 +523,7 @@ body {
 }
 
 .diary-subtitle {
-	color: #888 !important;
+	color: #b9c4d6 !important;
 	font-size: 14px !important;
 	margin-bottom: 10px !important;
 	font-style: italic;
@@ -644,9 +653,9 @@ body {
 	padding: 6px 16px;
 	font-size: 13px;
 	font-family: '微软雅黑', '宋体', sans-serif;
-	border: 1.5px solid rgb(190, 26, 37);
-	background: transparent;
-	color: rgb(190, 26, 37);
+	border: 1.5px solid rgba(255, 192, 203, 0.8);
+	background: rgba(255, 255, 255, 0.08);
+	color: #ffd9e2;
 	border-radius: 20px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -656,8 +665,9 @@ body {
 }
 
 .diary-play-btn:hover {
-	background: rgb(190, 26, 37);
-	color: white;
+	background: rgba(190, 26, 37, 0.9);
+	border-color: rgb(190, 26, 37);
+	color: #fff;
 	transform: scale(1.05);
 }
 
@@ -812,10 +822,11 @@ body {
 
 #fund-content h2 {
     text-align: center;
-    color: rgb(190, 26, 37);
+    color: #ffd9e2;
     margin-bottom: 15px;
     font-size: 32px;
     flex-shrink: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
 
 .fund-status-cards {
@@ -828,12 +839,14 @@ body {
 }
 
 .fund-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     padding: 15px 20px;
     min-width: 130px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
     transition: transform 0.2s;
 }
 
@@ -843,19 +856,19 @@ body {
 
 .fund-card-label {
     font-size: 13px;
-    color: #888;
+    color: #b9c4d6;
     margin-bottom: 6px;
 }
 
 .fund-card-value {
     font-size: 24px;
     font-weight: bold;
-    color: rgb(190, 26, 37);
+    color: #ffd9e2;
 }
 
 .fund-card-unit {
     font-size: 12px;
-    color: #aaa;
+    color: #9aa7bd;
     margin-top: 2px;
 }
 
@@ -866,21 +879,23 @@ body {
     gap: 10px;
     flex-shrink: 0;
     margin-bottom: 12px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 20px;
     padding: 8px 20px;
     align-self: center;
+    backdrop-filter: blur(6px);
 }
 
 .fund-badge-label {
     font-size: 14px;
-    color: #666;
+    color: #b9c4d6;
 }
 
 .fund-badge-value {
     font-size: 16px;
     font-weight: bold;
-    color: rgb(190, 26, 37);
+    color: #ffd9e2;
 }
 
 .fund-chart-toggle {
@@ -896,9 +911,9 @@ body {
     padding: 7px 22px;
     font-size: 14px;
     font-family: '微软雅黑', '宋体', sans-serif;
-    border: 2px solid rgb(190, 26, 37);
-    background: transparent;
-    color: rgb(190, 26, 37);
+    border: 2px solid rgba(255, 192, 203, 0.8);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffd9e2;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -906,22 +921,26 @@ body {
 }
 
 .fund-chart-toggle-btn:hover {
-    background: rgb(190, 26, 37);
-    color: white;
+    background: rgba(190, 26, 37, 0.9);
+    border-color: rgb(190, 26, 37);
+    color: #fff;
 }
 
 .fund-chart-toggle-btn.active {
-    background: rgb(190, 26, 37);
-    color: white;
+    background: rgba(190, 26, 37, 0.9);
+    border-color: rgb(190, 26, 37);
+    color: #fff;
 }
 
 .fund-chart-container {
     flex: 1;
     min-height: 300px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     padding: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
     position: relative;
 }
 
@@ -935,7 +954,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #999;
+    color: #b9c4d6;
     font-size: 16px;
 }
 
@@ -952,9 +971,9 @@ body {
     padding: 10px 30px;
     font-size: 16px;
     font-family: '微软雅黑', '宋体', sans-serif;
-    border: 2px solid rgb(190, 26, 37);
-    background: transparent;
-    color: rgb(190, 26, 37);
+    border: 2px solid rgba(255, 192, 203, 0.8);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffd9e2;
     border-radius: 25px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -962,18 +981,19 @@ body {
 }
 
 .fund-btn:hover {
-    background: rgb(190, 26, 37);
-    color: white;
+    background: rgba(190, 26, 37, 0.9);
+    border-color: rgb(190, 26, 37);
+    color: #fff;
 }
 
 .fund-update-time {
     font-size: 13px;
-    color: #aaa;
+    color: #9aa7bd;
 }
 
 .fund-error {
     text-align: center;
-    color: #ff6b6b;
+    color: #ff8a8a;
     font-size: 16px;
     padding: 20px;
 }

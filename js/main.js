@@ -153,7 +153,7 @@ $(function() {
             });
 
         }).fail(function() {
-            $diaryEntries.html('<p style="text-align:center;color:#666;">加载日记失败，请确保config/diary.json文件存在</p>');
+            $diaryEntries.html('<p style="text-align:center;color:#b9c4d6;">加载日记失败，请确保config/diary.json文件存在</p>');
         });
     }
 
@@ -450,8 +450,8 @@ $(function() {
         foot.draw();
         tree.snapshot("p2", -20, 0, 610, 680);
 
-        canvas.parent().css({"background": "url(" + tree.toDataURL('image/png') + ") no-repeat center", "background-color": "#ffc0cb"});
-        canvas.css("background", "#ffc0cb");
+        canvas.parent().css({"background": "url(" + tree.toDataURL('image/png') + ") no-repeat center", "background-color": "transparent"});
+        canvas.css("background", "transparent");
         $await(Jscex.Async.sleep(300));
         canvas.css("background", "none");
     }));
@@ -1028,6 +1028,9 @@ function renderFundChart() {
             }
         }
 
+        // 深色背景下，图例等全局文字用浅色
+        if (window.Chart && Chart.defaults) Chart.defaults.color = '#b9c4d6';
+
         window.fundChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -1071,22 +1074,23 @@ function renderFundChart() {
                         grid: { display: false },
                         ticks: {
                             font: { size: 11, family: '微软雅黑' },
-                            color: '#666'
+                            color: '#b9c4d6'
                         }
                     },
                     y: {
                         min: 0,
                         max: 100,
                         position: 'left',
-                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
                         title: {
                             display: true,
                             text: '增长率(%)',
-                            color: '#666',
+                            color: '#b9c4d6',
                             font: { size: 11, family: '微软雅黑' }
                         },
                         ticks: {
                             stepSize: 10,
+                            color: '#b9c4d6',
                             font: { size: 12, family: '微软雅黑' }
                         }
                     },
@@ -1098,10 +1102,11 @@ function renderFundChart() {
                         title: {
                             display: true,
                             text: '金额(金币)',
-                            color: '#666',
+                            color: '#b9c4d6',
                             font: { size: 11, family: '微软雅黑' }
                         },
                         ticks: {
+                            color: '#b9c4d6',
                             font: { size: 12, family: '微软雅黑' }
                         }
                     }
