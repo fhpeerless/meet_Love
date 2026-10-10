@@ -234,11 +234,21 @@ body {
 	font-size: 28px;
 	display: none;
 	z-index: 10;
+	/* 与主标题 .title-char 同色渐变 */
+	background: linear-gradient(90deg, #FFECD2 0%, #FCB69F 50%, #FFECD2 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.5),
+				 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 #clock-box a {
 	font-size: 28px;
 	text-decoration: none;
+	/* 覆盖父级透明的 text-fill，让「老己」正常显示自己的颜色 */
+	-webkit-text-fill-color: currentColor;
+	background: none;
 }
 
 #clock {
@@ -247,6 +257,12 @@ body {
 
 #clock .digit {
 	font-size: 64px;
+	background: linear-gradient(90deg, #FFECD2 0%, #FCB69F 50%, #FFECD2 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.5),
+				 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 #canvas {
@@ -707,13 +723,16 @@ body {
 
 #tree-status-bar {
     width: 1100px;
-    margin: 8px auto 0;
     padding: 8px 15px 12px;
     background: rgba(10, 14, 39, 0.85);
     border-radius: 12px;
     box-sizing: border-box;
-    position: relative;
-    z-index: 5;
+    /* 固定在视口最下方，切到音乐等其他模块时也保持在底部 */
+    position: fixed;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    z-index: 900;
 }
 
 #progress-bar-container {
