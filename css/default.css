@@ -1,7 +1,7 @@
 body {
 	margin: 0;
 	padding: 0;
-	background: linear-gradient(to bottom, #0a0e27 0%, #0d1b3e 30%, #112240 60%, #0a1628 100%);
+	background: transparent;
 	font-size: 20px;
 	font-family: '微软雅黑', '宋体', sans-serif;
 	color: #000000;
@@ -80,6 +80,8 @@ body {
 	padding-bottom: 50px;
 	overflow: hidden;
 	box-sizing: border-box;
+	position: relative;
+	z-index: 1;
 }
 
 #diary-content {
@@ -149,6 +151,8 @@ body {
 	justify-content: flex-end;
 	padding-top: 80px;
 	align-items: center;
+	position: relative;
+	z-index: 1;
 }
 
 #main-title {
@@ -826,6 +830,8 @@ body {
     padding-bottom: 50px;
     overflow: hidden;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
 }
 
 #fund-content {
