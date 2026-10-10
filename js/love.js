@@ -218,7 +218,9 @@
 
     Tree = function(canvas, width, height, opt) {
         this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
+        // willReadFrequently: 爱心树快照会频繁调用 getImageData 读像素，
+        // 开启该选项可避免浏览器每次读回 GPU 图像，提升性能并消除控制台提示
+        this.ctx = canvas.getContext('2d', { willReadFrequently: true });
         this.width = width;
         this.height = height;
         this.opt = opt || {};
