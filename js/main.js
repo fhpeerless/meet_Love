@@ -144,33 +144,12 @@ $(function() {
 
             $diaryEntries.find('[data-douyin-url]').each(function() {
                 var $embed = $(this);
-                var url = $embed.data('douyin-url');
                 var douyinType = $embed.data('douyin-type') || 'video';
                 var typeLabel = douyinType === 'note' ? '图文' : '视频';
-                var $label = $embed.find('.douyin-embed-label');
-                var $hint = $embed.find('.douyin-embed-hint');
-                var proxyUrl = 'https://speedgh.xtwa.org/' + url;
-                fetch(proxyUrl)
-                    .then(function(res) { return res.json(); })
-                    .then(function(data) {
-                        if (data && data.data) {
-                            var desc = data.data.desc || '';
-                            var author = data.data.author ? data.data.author.nickname : '';
-                            if (desc) $label.text(desc);
-                            if (author) $hint.text('@' + author);
-                            return;
-                        }
-                        if (data && data.error) {
-                            console.warn('Worker error:', data);
-                        }
-                        $label.text('查看抖音' + typeLabel);
-                        $hint.text('点此跳转抖音查看 ↗');
-                    })
-                    .catch(function(err) {
-                        console.warn('Fetch error:', err);
-                        $label.text('查看抖音' + typeLabel);
-                        $hint.text('点此跳转抖音查看 ↗');
-                    });
+                // 抖音无公开稳定的解析接口（通用转发只能拿到 HTML 网页，解析不出标题/作者），
+                // 这里不做请求，直接展示跳转提示，避免控制台报错。
+                $embed.find('.douyin-embed-label').text('查看抖音' + typeLabel);
+                $embed.find('.douyin-embed-hint').text('点此跳转抖音查看 ↗');
             });
 
         }).fail(function() {
