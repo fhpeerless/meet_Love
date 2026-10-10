@@ -149,7 +149,7 @@ $(function() {
                 var typeLabel = douyinType === 'note' ? '图文' : '视频';
                 var $label = $embed.find('.douyin-embed-label');
                 var $hint = $embed.find('.douyin-embed-hint');
-                var proxyUrl = 'https://wild-tree-2dbf.68208932.workers.dev/?url=' + encodeURIComponent(url);
+                var proxyUrl = 'https://speedgh.xtwa.org/' + url;
                 fetch(proxyUrl)
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
