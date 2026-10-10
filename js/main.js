@@ -149,7 +149,7 @@ $(function() {
                 var typeLabel = douyinType === 'note' ? '图文' : '视频';
                 var $label = $embed.find('.douyin-embed-label');
                 var $hint = $embed.find('.douyin-embed-hint');
-                var proxyUrl = 'https://speedgh.xtwa.org/' + url;
+                var proxyUrl = 'https://wild-tree-2dbf.68208932.workers.dev/?url=' + encodeURIComponent(url);
                 fetch(proxyUrl)
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
@@ -625,8 +625,8 @@ function ensureChartJs(callback) {
     }
     _chartJsLoading = true;
     var urls = [
-        'https://speedgh.xtwa.org/https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js',
-        'https://speedgh.xtwa.org/https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.7/chart.umd.min.js'
+        'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.7/chart.umd.min.js'
     ];
     var tryLoad = function(index) {
         if (index >= urls.length) {
