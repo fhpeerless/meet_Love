@@ -214,6 +214,17 @@
     <script type="text/javascript" src="./js/main.js?v=20261010" charset="utf-8"></script>
     <script type="text/javascript" src="./js/stars-bg.js?v=20261010" charset="utf-8"></script>
     <script type="text/javascript" src="./js/butterfly.js?v=20261010" charset="utf-8"></script>
+
+    <!-- 注册全站加速 Service Worker：拦截本站静态资源，改用 jsDelivr 加速（见 sw.js） -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('./sw.js').catch(function(err) {
+                console.warn('[加速] Service Worker 注册失败:', err);
+            });
+        });
+    }
+    </script>
     
 
 </body>
