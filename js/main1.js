@@ -454,8 +454,6 @@ $(function() {
         canvas.css("background", "transparent");
         $await(Jscex.Async.sleep(300));
         canvas.css("background", "none");
-
-        canvas.parent().addClass('tree-sway');
     }));
 
     var jumpAnimate = eval(Jscex.compile("async", function () {

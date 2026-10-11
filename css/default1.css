@@ -194,17 +194,6 @@ body {
 	border-radius: 15px;
 }
 
-#wrap.tree-sway {
-	transform-origin: 50% 100%;
-	animation: tree-sway 6s ease-in-out infinite;
-}
-@keyframes tree-sway {
-	0%, 100% { transform: rotate(0deg); }
-	25%      { transform: rotate(1deg); }
-	50%      { transform: rotate(0deg); }
-	75%      { transform: rotate(-1deg); }
-}
-
 #text {
 	width: 400px;
 	height: 425px;
