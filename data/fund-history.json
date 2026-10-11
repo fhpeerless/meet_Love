@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-10 23:41:57",
+  "updated_at": "2026-10-12 00:08:09",
   "current": {
-    "total_amount": 13.82,
-    "available": 0.62,
-    "unrealized_pnl": -0.3,
-    "total_profit": 2.45,
-    "total_profit_pct": 23.42,
+    "total_amount": 13.41,
+    "available": 0.13,
+    "unrealized_pnl": -0.72,
+    "total_profit": 2.03,
+    "total_profit_pct": 20.31,
     "open_count": 3,
     "direction_text": "空 AMD / 空 AAOI / 空 KORU",
-    "time": "2026-10-10 23:41:57"
+    "time": "2026-10-12 00:08:09"
   },
   "daily": {
     "2026-09": [
@@ -138,6 +138,11 @@
         "date": "2026-10-10",
         "total": 13.82,
         "growth_rate": -4.62
+      },
+      {
+        "date": "2026-10-12",
+        "total": 13.41,
+        "growth_rate": -2.97
       }
     ]
   },
@@ -149,11 +154,11 @@
     },
     "2026-10": {
       "snapshot_month": "2026-10",
-      "equity": 10.1,
-      "growth_rate": -22.43
+      "equity": 10.43,
+      "growth_rate": -19.89
     }
   },
   "stats": {
-    "max_drawdown_7d": -6.67
+    "max_drawdown_7d": -7.45
   }
 }
