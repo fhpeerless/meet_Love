@@ -8,7 +8,7 @@ $(function() {
     var $musicSection = $('#music-section');
 
     function initTitleAnimation() {
-        var titleText = "我站在爱心树下，等一个可以把计时归零的人！";
+        var titleText = "我站在爱心树下，找一个可以能把计时归零的人！";
         var $titleContainer = $('#main-title');
         $titleContainer.empty();
         
