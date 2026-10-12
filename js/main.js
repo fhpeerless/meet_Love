@@ -389,27 +389,34 @@ $(function() {
         }
     }
 
-    var seedAnimate = eval(Jscex.compile("async", function () {
+    // jscex 已移除：sleep 改用原生 Promise 实现，原来的 $await 全部换成原生 async/await
+    function sleep(ms) {
+        return new Promise(function (resolve) {
+            setTimeout(resolve, ms);
+        });
+    }
+
+    var seedAnimate = async function () {
         seed.draw();
         while (seed.canScale()) {
             seed.scale(0.95);
-            $await(Jscex.Async.sleep(10));
+            await sleep(10);
         }
         while (seed.canMove()) {
             seed.move(0, 2);
             foot.draw();
-            $await(Jscex.Async.sleep(10));
+            await sleep(10);
         }
-    }));
+    };
 
-    var growAnimate = eval(Jscex.compile("async", function () {
+    var growAnimate = async function () {
         do {
             tree.grow();
-            $await(Jscex.Async.sleep(10));
+            await sleep(10);
         } while (tree.canGrow());
-    }));
+    };
 
-    var flowAnimate = eval(Jscex.compile("async", function () {
+    var flowAnimate = async function () {
         var maxBlooms = tree.bloomLimit;
         var released = 0;
         do {
@@ -418,28 +425,28 @@ $(function() {
                 tree.flower(batch);
                 released += batch;
             }
-            $await(Jscex.Async.sleep(10));
+            await sleep(10);
         } while (tree.canFlower() && released < maxBlooms);
-    }));
+    };
 
-    var moveAnimate = eval(Jscex.compile("async", function () {
+    var moveAnimate = async function () {
         tree.snapshot("p1", 240, 0, 610, 680);
         while (tree.move("p1", -20, 0)) {
             foot.draw();
-            $await(Jscex.Async.sleep(10));
+            await sleep(10);
         }
         foot.draw();
         tree.snapshot("p2", -20, 0, 610, 680);
 
         canvas.parent().css({"background": "url(" + tree.toDataURL('image/png') + ") no-repeat center", "background-color": "transparent"});
         canvas.css("background", "transparent");
-        $await(Jscex.Async.sleep(300));
+        await sleep(300);
         canvas.css("background", "none");
 
         canvas.parent().addClass('tree-sway');
-    }));
+    };
 
-    var jumpAnimate = eval(Jscex.compile("async", function () {
+    var jumpAnimate = async function () {
         var ctx = tree.ctx;
         var currentState = getTreeState();
         var frameCount = 0;
@@ -484,11 +491,11 @@ $(function() {
                 }
             }
 
-            $await(Jscex.Async.sleep(25));
+            await sleep(25);
         }
-    }));
+    };
 
-    var textAnimate = eval(Jscex.compile("async", function () {
+    var textAnimate = async function () {
         var together = new Date();
         together.setFullYear(2016, 02, 27);
         together.setHours(0);
@@ -529,22 +536,22 @@ $(function() {
 
         while (true) {
             timeElapse(together);
-            $await(Jscex.Async.sleep(1000));
+            await sleep(1000);
         }
-    }));
+    };
 
-    var runAsync = eval(Jscex.compile("async", function () {
-        $await(seedAnimate());
-        $await(growAnimate());
-        $await(flowAnimate());
-        $await(moveAnimate());
+    var runAsync = async function () {
+        await seedAnimate();
+        await growAnimate();
+        await flowAnimate();
+        await moveAnimate();
 
-        textAnimate().start();
+        textAnimate(); // 时钟与照片轮播是常驻循环，不等待它
 
-        $await(jumpAnimate());
-    }));
+        await jumpAnimate();
+    };
 
-    runAsync().start();
+    runAsync();
 })();
 
 // ===== 爱心储罐数据源 =====

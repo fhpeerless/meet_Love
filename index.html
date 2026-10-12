@@ -10,28 +10,25 @@
     <meta name="describe" content="爱情面前是是一张白纸! ">
     <!-- 静态资源版本号：改过 css/js 后，运行 python update_version.py 自动把下面所有 ?v= 统一改成新值（当天日期，同日重复运行自动递增字母序号），
          浏览器就会重新下载，不再吃缓存。页面右下角会显示当前生效的版本号，可用来确认有没有吃到旧缓存。 -->
-    <link type="text/css" rel="stylesheet" href="./css/default.css?v=20261012">
-    <link type="text/css" rel="stylesheet" href="./css/music-player.css?v=20261012">
-    <link type="text/css" rel="stylesheet" href="./css/stars-bg.css?v=20261012">
+    <link type="text/css" rel="stylesheet" href="./css/default.css?v=20261012a">
+    <link type="text/css" rel="stylesheet" href="./css/music-player.css?v=20261012a">
+    <link type="text/css" rel="stylesheet" href="./css/stars-bg.css?v=20261012a">
     <!-- 预连接关键外部资源（Chart.js 懒加载时用到；baba.xtwa.org 是爱心储罐接口） -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://baba.xtwa.org" crossorigin>
     <!-- 星空背景必须排在最前：defer 脚本按文档顺序执行，它只有 4KB 且零依赖，
          最先执行才能最快铺出深色背景，否则要等后面 ~350KB 脚本下载完才会出现。 -->
-    <script type="text/javascript" src="./js/stars-bg.js?v=20261012" defer></script>
+    <script type="text/javascript" src="./js/stars-bg.js?v=20261012a" defer></script>
     <!-- Chart.js 不再在 head 预加载：main.js 的 ensureChartJs() 会在点开「爱心储罐」时
          懒加载（jsDelivr + cdnjs 双源）。此前它作为第一个 defer 从外部 CDN 加载，
          国内网络一旦卡住，后面所有脚本都会排队干等，页面就长时间空白。 -->
     <!-- defer：按文档顺序执行，不阻塞 HTML 解析，首屏渲染更快 -->
-    <script type="text/javascript" src="./js/jquery.min.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/jscex.min.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/jscex-parser.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/jscex-jit.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/jscex-builderbase.min.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/jscex-async.min.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/jscex-async-powerpack.min.js?v=20261012" defer></script>
-    <script type="text/javascript" src="./js/functions.js?v=20261012" charset="utf-8" defer></script>
-    <script type="text/javascript" src="./js/love.js?v=20261012" charset="utf-8" defer></script>
+    <script type="text/javascript" src="./js/jquery.min.js?v=20261012a" defer></script>
+    <!-- jscex 全家桶（jscex + parser + jit + builderbase + async + powerpack，约 110KB）已移除：
+         main.js 的爱心树动画改用原生 async/await 实现，不再需要运行时编译，
+         也消除了启动时 Jscex.compile 带来的同步阻塞。 -->
+    <script type="text/javascript" src="./js/functions.js?v=20261012a" charset="utf-8" defer></script>
+    <script type="text/javascript" src="./js/love.js?v=20261012a" charset="utf-8" defer></script>
 
 </head>
 
@@ -219,9 +216,9 @@
     </div>
 
     
-    <script type="text/javascript" src="./js/music-player.js?v=20261012" charset="utf-8" defer></script>
-    <script type="text/javascript" src="./js/main.js?v=20261012" charset="utf-8" defer></script>
-    <script type="text/javascript" src="./js/butterfly.js?v=20261012" charset="utf-8" defer></script>
+    <script type="text/javascript" src="./js/music-player.js?v=20261012a" charset="utf-8" defer></script>
+    <script type="text/javascript" src="./js/main.js?v=20261012a" charset="utf-8" defer></script>
+    <script type="text/javascript" src="./js/butterfly.js?v=20261012a" charset="utf-8" defer></script>
 
     <!-- 卸载旧的加速 Service Worker：之前注册的 sw.js 会把资源改写去 jsDelivr，
          而 jsDelivr 的 @main 分支有超长缓存，导致一直加载旧代码。这里主动注销并清缓存。 -->
