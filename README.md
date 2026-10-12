@@ -63,7 +63,8 @@ git push origin 2026.10.13
 curl -I "https://cdn.jsdelivr.net/gh/fhpeerless/meet_Love@2026.10.13/js/main.js"
 ```
 
-如果第 7 步返回 404：等几秒重试（jsDelivr 首次请求才去 GitHub 拉取）；仍然 404 就到 GitHub 用这个名字发一个 Release —— jsDelivr 对 Release 的支持是官方保证的。
+如果第 7 步返回 404：等几秒重试（jsDelivr 首次请求才会去 GitHub 拉取）。
+本项目已实测：**只推 tag、不用发 Release，jsDelivr 就能解析**（第一个 tag `2026.10.12` 验证通过），响应头里会有 `X-JSD-Version: 版本号` 和 `Cache-Control: public, max-age=31536000, immutable`。真遇到解析不到的情况，再到 GitHub 用同名 tag 发一个 Release 兜底即可。
 
 ## 别踩的坑
 
