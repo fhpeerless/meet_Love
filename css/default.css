@@ -1,7 +1,8 @@
 body {
 	margin: 0;
 	padding: 0;
-	background: transparent;
+	/* 与星空 canvas 顶部渐变色一致：JS 还没跑起来时也不会是白屏 */
+	background: #03061a;
 	font-size: 20px;
 	font-family: '微软雅黑', '宋体', sans-serif;
 	color: #000000;

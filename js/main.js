@@ -207,27 +207,8 @@ $(function() {
     canvas.attr("width", width);
     canvas.attr("height", height);
 
-    var fallingPhotos = [
-        "https://note.youdao.com/yws/api/personal/file/WEB590105f1a9d07ac686e941d38cdad971?method=download&inline=true&shareKey=60cbe361e727d561d2425f3fd26b3cf1",
-        "https://note.youdao.com/yws/api/personal/file/WEB726ae6fa64eed5a096d10745a5fc99ac?method=download&inline=true&shareKey=0db2aab9fa92b3d2066a676f7ba3ca31",
-        "falling-photos/3.jpg",
-        "falling-photos/4.jpg",
-        "falling-photos/5.jpg"
-    ];
-    
-    var loadedImages = [];
-    var imagesLoaded = 0;
-    
-    fallingPhotos.forEach(function(src, index) {
-        var img = new Image();
-        img.onload = function() {
-            imagesLoaded++;
-        };
-        img.src = src;
-        loadedImages.push(img);
-    });
-    
-    window.fallingImages = loadedImages;
+    // 掉落照片模块已移除：window.fallingImages 与 love.js 里的 drawHeartPhotos 都没有调用方，
+    // 原实现只会白白请求 2 张有道云笔记外链 + 3 张仓库里不存在的 falling-photos/*.jpg（404）。
 
     var opts = {
         seed: {
