@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-20 00:47:23",
+  "updated_at": "2026-10-20 22:39:26",
   "current": {
-    "total_amount": 85.54,
-    "available": 85.54,
-    "unrealized_pnl": 0,
-    "total_profit": 0.32,
-    "total_profit_pct": 0.4,
-    "open_count": 0,
-    "direction_text": "无持仓",
-    "time": "2026-10-20 00:47:23"
+    "total_amount": 87.22,
+    "available": 51.15,
+    "unrealized_pnl": -5.29,
+    "total_profit": 3.42,
+    "total_profit_pct": 4.66,
+    "open_count": 4,
+    "direction_text": "空 AAOI / 空 AMD / 空 LITE / 空 KORU",
+    "time": "2026-10-20 22:39:26"
   },
   "daily": {
     "2026-09": [
@@ -176,8 +176,8 @@
       },
       {
         "date": "2026-10-20",
-        "total": 85.54,
-        "growth_rate": -19.21
+        "total": 87.22,
+        "growth_rate": -17.62
       }
     ]
   },
@@ -189,8 +189,8 @@
     },
     "2026-10": {
       "snapshot_month": "2026-10",
-      "equity": 25.16,
-      "growth_rate": 93.24
+      "equity": 25.26,
+      "growth_rate": 94.01
     }
   },
   "stats": {
