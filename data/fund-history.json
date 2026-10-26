@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-10-25 22:05:33",
+  "updated_at": "2026-10-27 00:28:55",
   "current": {
-    "total_amount": 131.34,
-    "available": 71.18,
-    "unrealized_pnl": -5.29,
-    "total_profit": 48.03,
-    "total_profit_pct": 65.79,
+    "total_amount": 128.5,
+    "available": 68.56,
+    "unrealized_pnl": -0.14,
+    "total_profit": 45.69,
+    "total_profit_pct": 58.13,
     "open_count": 7,
-    "direction_text": "空 AMD / 空 AAOI / 空 KORU / 空 LITE / 空 SOXL / 空 SNXX / 空 SNDK",
-    "time": "2026-10-25 22:05:33"
+    "direction_text": "空 SNDK / 多 SNXX / 多 SOXL / 多 AMD / 多 KORU / 多 AAOI / 多 LITE",
+    "time": "2026-10-27 00:28:55"
   },
   "daily": {
     "2026-09": [
@@ -203,6 +203,11 @@
         "date": "2026-10-25",
         "total": 131.34,
         "growth_rate": -4.31
+      },
+      {
+        "date": "2026-10-27",
+        "total": 128.5,
+        "growth_rate": -2.16
       }
     ]
   },
@@ -214,11 +219,11 @@
     },
     "2026-10": {
       "snapshot_month": "2026-10",
-      "equity": 46.09,
-      "growth_rate": 253.99
+      "equity": 49.67,
+      "growth_rate": 281.49
     }
   },
   "stats": {
-    "max_drawdown_7d": -24.68
+    "max_drawdown_7d": -8.56
   }
 }
