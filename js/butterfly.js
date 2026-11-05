@@ -28,7 +28,7 @@
         var n = function(v) { return v == null ? '--' : Number(v).toFixed(2); };
         if (d.total_amount != null) chips.push('总金额 ' + n(d.total_amount));
         if (d.total_profit_pct != null) {
-            chips.push('总盈亏 ' + (d.total_profit_pct > 0 ? '+' : '') + n(d.total_profit_pct) + '%');
+            chips.push('总收入 ' + (d.total_profit_pct > 0 ? '+' : '') + n(d.total_profit_pct) + '%');
         }
         if (d.open_count != null) chips.push('投资 ' + d.open_count + ' 笔');
         return chips;
