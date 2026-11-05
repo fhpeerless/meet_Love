@@ -1140,3 +1140,48 @@ $(document).on('click', '#fund-chart-days-btn', function() {
 $(document).on('click', '#fund-chart-months-btn', function() {
     switchFundChartMode('months');
 });
+
+// ===== 右上角月亮：按当日爱心储罐增长率显示表情 =====
+// 正增长 -> 微笑；负增长 -> 流泪；0 或无数据 -> 平静。
+// 数据取自工作流每日写入的 data/fund-history.json，daily 里的 growth_rate 就是当日环比增长率。
+function initMoonMood() {
+    var $moon = $('#moon-mood');
+    if (!$moon.length) return;
+
+    function applyMood(rate, date) {
+        $moon.removeClass('state-neutral state-smile state-cry');
+        var label;
+
+        if (rate == null || isNaN(rate)) {
+            $moon.addClass('state-neutral');
+            label = '今日爱心储罐增长率暂无数据';
+        } else if (rate > 0) {
+            $moon.addClass('state-smile');
+            label = '今日爱心储罐增长率为正（' + date + ' +' + Number(rate).toFixed(2) + '%），月亮在微笑';
+        } else if (rate < 0) {
+            $moon.addClass('state-cry');
+            label = '今日爱心储罐增长率为负（' + date + ' ' + Number(rate).toFixed(2) + '%），月亮在流泪';
+        } else {
+            $moon.addClass('state-neutral');
+            label = '今日爱心储罐增长率持平（' + date + ' 0.00%），月亮很平静';
+        }
+
+        $moon.attr('aria-label', label).attr('title', label);
+    }
+
+    $.getJSON(FUND_HISTORY_URL).done(function(hist) {
+        var daily = dedupeDaily(hist && hist.daily);
+        if (!daily.length) {
+            applyMood(null);
+            return;
+        }
+        var latest = daily[daily.length - 1];
+        applyMood(latest.growth_rate, latest.date);
+    }).fail(function() {
+        applyMood(null);
+    });
+}
+
+$(function() {
+    initMoonMood();
+});

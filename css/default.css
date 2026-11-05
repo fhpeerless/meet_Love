@@ -1034,3 +1034,77 @@ body {
     font-size: 16px;
     padding: 20px;
 }
+
+/* ===== 右上角月亮：随当日爱心储罐增长率切换表情（正增长微笑 / 负增长流泪 / 无数据平静） ===== */
+.moon-widget {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    width: 72px;
+    height: 72px;
+    z-index: 900;
+    cursor: default;
+    filter: drop-shadow(0 0 14px rgba(255, 231, 170, 0.45));
+    animation: moon-float 6s ease-in-out infinite;
+}
+
+.moon-widget svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* 嘴型和眼泪默认隐藏，按状态显示 */
+.moon-mouth,
+.moon-tears {
+    display: none;
+}
+
+.moon-widget.state-neutral .moon-mouth-neutral {
+    display: inline;
+}
+
+.moon-widget.state-smile .moon-mouth-smile {
+    display: inline;
+}
+
+.moon-widget.state-cry .moon-mouth-cry,
+.moon-widget.state-cry .moon-tears {
+    display: inline;
+}
+
+.moon-widget.state-cry .moon-tears ellipse {
+    animation: moon-tear-drop 1.8s ease-in infinite;
+}
+
+.moon-widget.state-cry .moon-tear-right {
+    animation-delay: 0.9s;
+}
+
+@keyframes moon-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes moon-tear-drop {
+    0% { transform: translateY(0); opacity: 0; }
+    15% { opacity: 1; }
+    75% { opacity: 0.85; }
+    100% { transform: translateY(22px); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+    .moon-widget {
+        width: 50px;
+        height: 50px;
+        top: 8px;
+        right: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .moon-widget,
+    .moon-widget.state-cry .moon-tears ellipse {
+        animation: none;
+    }
+}
