@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-07 01:10:24",
+  "updated_at": "2026-11-08 00:05:47",
   "current": {
-    "total_amount": 224.25,
-    "available": 188.41,
-    "unrealized_pnl": 0.27,
-    "total_profit": 211.76,
-    "total_profit_pct": 1759.56,
-    "open_count": 3,
-    "direction_text": "空 AXTI / 空 SNXX / 空 SOXL",
-    "time": "2026-11-07 01:10:24"
+    "total_amount": 218.14,
+    "available": 218.14,
+    "unrealized_pnl": 0,
+    "total_profit": 208.41,
+    "total_profit_pct": 2252.96,
+    "open_count": 0,
+    "direction_text": "无持仓",
+    "time": "2026-11-08 00:05:47"
   },
   "daily": {
     "2026-09": [
@@ -255,6 +255,11 @@
         "date": "2026-11-07",
         "total": 224.25,
         "growth_rate": -6.92
+      },
+      {
+        "date": "2026-11-08",
+        "total": 218.14,
+        "growth_rate": -2.72
       }
     ]
   },
@@ -271,8 +276,8 @@
     },
     "2026-11": {
       "snapshot_month": "2026-11",
-      "equity": 201.97,
-      "growth_rate": 209.25
+      "equity": 204.28,
+      "growth_rate": 212.79
     }
   },
   "stats": {
