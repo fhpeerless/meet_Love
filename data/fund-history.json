@@ -1,14 +1,14 @@
 {
-  "updated_at": "2026-11-15 00:22:02",
+  "updated_at": "2026-11-16 00:47:45",
   "current": {
-    "total_amount": 51.43,
-    "available": 51.43,
-    "unrealized_pnl": 38.7,
-    "total_profit": 189.61,
-    "total_profit_pct": -312.37,
-    "open_count": 2,
-    "direction_text": "多 SOXL / 空 AAOI",
-    "time": "2026-11-15 00:22:02"
+    "total_amount": 47.87,
+    "available": 36.11,
+    "unrealized_pnl": 37.12,
+    "total_profit": 185.37,
+    "total_profit_pct": -300.78,
+    "open_count": 3,
+    "direction_text": "多 SOXL / 空 AAOI / 空 COHR",
+    "time": "2026-11-16 00:47:45"
   },
   "daily": {
     "2026-09": [
@@ -295,6 +295,11 @@
         "date": "2026-11-15",
         "total": 51.43,
         "growth_rate": 2.49
+      },
+      {
+        "date": "2026-11-16",
+        "total": 47.87,
+        "growth_rate": -6.92
       }
     ]
   },
@@ -311,11 +316,11 @@
     },
     "2026-11": {
       "snapshot_month": "2026-11",
-      "equity": 165.6,
-      "growth_rate": 153.56
+      "equity": 157.75,
+      "growth_rate": 141.54
     }
   },
   "stats": {
-    "max_drawdown_7d": -76.96
+    "max_drawdown_7d": -75.84
   }
 }
